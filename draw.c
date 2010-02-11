@@ -1,42 +1,137 @@
 
 #include "draw.h"
-#include "color.h"
-#include "defs.h"
+#include "math.h"
 
-void (*color_func[COLORFUNC])(guchar *pixels, guint x, guint y, guint n_channels, guint rowstride, guint iter, guint itermax, guchar *convdivcol) = {
-	clblue,
-	divconv
+const guchar clbluedef[4 * 48] = {
+	  0,   0,   0, 255,
+	  0,   0,  31, 255,
+	  0,   0,  63, 255,
+	  0,   0,  95, 255,
+	  0,   0, 127, 255,
+	  0,   0, 159, 255,
+	  0,   0, 191, 255,
+	  0,   0, 223, 255,
+	  0,   0, 255, 255,
+	  0,  31, 255, 255,
+	  0,  63, 255, 255,
+	  0,  95, 255, 255,
+	  0, 127, 255, 255,
+	  0, 159, 255, 255,
+	  0, 191, 255, 255,
+	  0, 223, 255, 255,
+	  0, 255, 255, 255,
+	 31, 255, 255, 255,
+	 63, 255, 255, 255,
+	 95, 255, 255, 255,
+	127, 255, 255, 255,
+	159, 255, 255, 255,
+	191, 255, 255, 255,
+	223, 255, 255, 255,
+	255, 255, 255, 255,
+	223, 255, 255, 255,
+	191, 255, 255, 255,
+	159, 255, 255, 255,
+	127, 255, 255, 255,
+	 95, 255, 255, 255,
+	 63, 255, 255, 255,
+	 31, 255, 255, 255,
+	  0, 255, 255, 255,
+	  0, 223, 255, 255,
+	  0, 191, 255, 255,
+	  0, 159, 255, 255,
+	  0, 127, 255, 255,
+	  0,  95, 255, 255,
+	  0,  63, 255, 255,
+	  0,  31, 255, 255,
+	  0,   0, 255, 255,
+	  0,   0, 223, 255,
+	  0,   0, 191, 255,
+	  0,   0, 159, 255,
+	  0,   0, 127, 255,
+	  0,   0,  95, 255,
+	  0,   0,  63, 255,
+	  0,   0,  31, 255
 };
 
-void redraw_drawing(struct winctl *w, gint x, gint y, gint width, gint height)
-{
-	g_assert(w->pixbufshow != NULL);
-	gdk_draw_pixbuf(w->drawing->window, NULL, w->pixbufshow, x, y, x, y, width, height, GDK_RGB_DITHER_NORMAL, 0, 0);
-}
+const ColorFunc color_func[COLORFUNC] = {
+	clblue,
+	divconv,
+	cldixius_1,
+	cldixius_2
+};
 
-void resize_drawing(struct winctl *w)
+inline static void put_pixel(guchar *pixels, guint x, guint y, guint n_channels, guint rowstride, const guchar *color);
+
+void clblue(const struct iterate_param *param, guint x, guint y, guint iter)
 {
-	gint width = w->drawing->allocation.width;
-	gint height = w->drawing->allocation.height;
-	if (!w->pixbufcalc)  {
-		// Create blank screen on startup:
-		w->pixbufcalc = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, width, height);
-		clearpixbuf(w->pixbufcalc);
-		w->pixbufshow = g_object_ref(w->pixbufcalc);
+	if (iter > param->itermax) {
+		put_pixel(param->pixels, x, y, param->n_channels, param->rowstride, param->color);
 	} else {
-		g_assert(w->pixbufshow != NULL);
-		g_object_unref(w->pixbufshow);
-
-		if (width == gdk_pixbuf_get_width(w->pixbufcalc) && height == gdk_pixbuf_get_height(w->pixbufcalc)) {
-			w->pixbufshow = g_object_ref(w->pixbufcalc);
-		} else {
-			w->pixbufshow = gdk_pixbuf_scale_simple(w->pixbufcalc, width, height, INTERPOLATION);
-		}
+		put_pixel(param->pixels, x, y, param->n_channels, param->rowstride, (clbluedef + (iter % 48) * 4));
 	}
 }
 
+void divconv(const struct iterate_param *param, guint x, guint y, guint iter)
+{
+	if (iter > param->itermax) {
+		put_pixel(param->pixels, x, y, param->n_channels, param->rowstride, param->color);
+	} else {
+		put_pixel(param->pixels, x, y, param->n_channels, param->rowstride, param->color + 4);
+	}
+}
 
-static void put_pixel(guchar *pixels, guint x, guint y, guint n_channels, guint rowstride, const guchar *color);
+void cldixius_1(const struct iterate_param *param, guint x, guint y, guint iter)
+{
+	guchar color[4];
+
+	if (iter == param->itermax) {
+		color[0] = 255;
+		color[1] = 255;
+		color[2] = 255;
+		color[3] = 255;
+	} else {
+		guchar result;
+		long double x;
+		x = sqrt((long double) iter); /// sqrt((long double) period);
+		x = 0.5 + 0.5 * cos(x);
+		result = (guchar)(255 * x);
+		color[0] = result;
+		color[1] = 0;// result;
+		color[2] = 0;// result;
+		color[3] = 255;
+
+	}
+	put_pixel(param->pixels, x, y, param->n_channels, param->rowstride, color);
+
+}
+
+void cldixius_2(const struct iterate_param *param, guint x, guint y, guint iter)
+{
+	guchar color[4];
+
+	if (iter == param->itermax) {
+		color[0] = 0;
+		color[1] = 0;
+		color[2] = 0;
+		color[3] = 255;
+	} else {
+		guchar result;
+		long double x;
+		x = 0.5 - 0.5 * cos(sqrt ((long double) iter));
+		if (x < 0.35) {
+			result = (guchar) ((exp (-0.5 * pow ((x - 0.35) / 0.1, 2)) + exp (-0.5 * pow ((x + 0.65) / 0.4, 2))) * 244);
+		} else { 
+			result = (guchar) (exp (-0.5 * pow ((x - 0.35) / 0.4, 2)) * 255); 
+		}
+		color[0] = result;
+		color[1] = result;
+		color[2] = result;
+		color[3] = 255;
+
+	}
+	put_pixel(param->pixels, x, y, param->n_channels, param->rowstride, color);
+
+}
 
 void clearpixbuf(GdkPixbuf *pixbuf)
 {
@@ -58,25 +153,7 @@ void clearpixbuf(GdkPixbuf *pixbuf)
 	}
 }
 
-void clblue(guchar *pixels, guint x, guint y, guint n_channels, guint rowstride, guint iter, guint itermax, guchar *convdivcolor)
-{
-	if (iter > itermax) {
-		put_pixel(pixels, x, y, n_channels, rowstride, convdivcolor);
-	} else {
-		put_pixel(pixels, x, y, n_channels, rowstride, (clbluedef + (iter % 48) * 4));
-	}
-}
-
-void divconv(guchar *pixels, guint x, guint y, guint n_channels, guint rowstride, guint iter, guint itermax, guchar *convdivcol)
-{
-	if (iter > itermax) {
-		put_pixel(pixels, x, y, n_channels, rowstride, convdivcol);
-	} else {
-		put_pixel(pixels, x, y, n_channels, rowstride, convdivcol + 4);
-	}
-}
-
-static void put_pixel(guchar *pixels, guint x, guint y, guint n_channels, guint rowstride, const guchar *color)
+inline static void put_pixel(guchar *pixels, guint x, guint y, guint n_channels, guint rowstride, const guchar *color)
 {
 	guint i;
 	guchar *p;

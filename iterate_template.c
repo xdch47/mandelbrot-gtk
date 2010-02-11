@@ -8,38 +8,46 @@
 // 	IT_FIRST_FOR --> code after first for-statement
 // the variables itre, itim hold the real-/imaginary part of the current point.
 
-gpointer IT_FUNC_NAME(struct threaddata *p)
+gpointer IT_FUNC_NAME(struct iteration_data *p)
 {
-	gdouble b_im, itre, itim, dre, dim;
-	guint ystart, x, y, xmax, ymax, xo, yo;
-	guint iter, itermax;
+	guint y, yo;
+	gdouble dim, b_re;
+	register guint x, xo, iter;
+	register gdouble itre, dre, itim;
+	guint xstart, xmax, ymax;
+	guint itermax;
+	guint id;
+	const struct iterate_param *param;
 	gboolean *retval;
-	IT_VAR
 	
 	retval = (gboolean *)g_malloc(sizeof(gboolean));
 	*retval = TRUE;
-	b_im = p->b_im;
-	ystart = p->ystart;
-	xmax = p->xmax;
-	ymax = p->ymax;
-	xo = p->xoffset;
-	yo = p->yoffset;
+	id = p->number;
+	b_re = p->b_re;
 	dre = p->dre;
 	dim = p->dim;
-	itermax = p->itermax;
+	param = p->param;
+	xstart = param->xstart[id];
+	ymax = param->ymax;
+	xmax = param->xmax;
+	yo = param->yoffset;
+	xo = param->xoffset;
+	itermax = param->itermax;
 
-	itre = p->b_re;
-	for (x = p->xstart; x < xmax; x += xo, itre += dre) {
+	IT_VAR
+
+	itim = p->b_im;
+	for (y = param->ystart[id]; y < ymax; y += yo, itim += dim) {
 #ifdef IT_FIRST_FOR
 		IT_FIRST_FOR
 #endif
 		if (g_mutex_trylock(p->state_mutex)) {
-			if (*p->pause) {
+			if (*p->state) {
 				// pause thread:
-				if (*p->pause == THREAD_PAUSE) {
+				if (*p->state == PAUSE) {
 					g_cond_wait(p->resume_cond, p->state_mutex);
 				}
-				if (*p->pause == THREAD_TERMINATE) {
+				if (*p->state == KILL) {
 					g_mutex_unlock(p->state_mutex);
 					*retval = FALSE;
 					break;
@@ -48,20 +56,15 @@ gpointer IT_FUNC_NAME(struct threaddata *p)
 			g_mutex_unlock(p->state_mutex);
 		}
 
-		itim = b_im;
-		for (y = ystart; y < ymax; y += yo, itim += dim) {
+		itre = b_re;
+		for (x = xstart; x < xmax; x += xo, itre += dre) {
 			iter = 0;
 
 			IT_INLINE_FUNC
 
-			p->setcolor(p->pixels, x, y, p->n_channels, p->rowstride, iter, itermax, p->convdivcol);
+			param->setcolor(param, x, y, iter);
 		}
 	}
-	g_free(p->convdivcol);
 	return (gpointer)retval;
 }
 
-#undef IT_FUNC_NAME
-#undef IT_VAR
-#undef IT_INLINE_FUNC
-#undef IT_FIRST_FOR

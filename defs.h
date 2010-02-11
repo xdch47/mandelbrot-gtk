@@ -4,8 +4,14 @@
 
 #include <gtk/gtk.h>
 
+#define LVERSION "0.2-rc1"
+
 // labels:
 #define LWCAP "Mandelbrot- / Juliamenge"
+#define LCAPM " Mandelbrotmenge [%0.2fs] "
+#define LCAPJ "Juliamenge [%0.2fs]"
+#define LCAPMRENDER "Mandelbrotmenge wird gerendert.."
+#define LCAPJRENDER "Juliamenge wird gerendert.."
 #define LCOORD "Komplexe Zahlenebene"
 #define LFKT "Funktionsdaten"
 #define LDEGREE "Mandelbrotmenge der Ordnung:"
@@ -18,7 +24,7 @@
 #define LITER "Anzahl der Iterationen"
 #define LCALC " _Zeichnen "
 #define LSTOP " _Stop "
-#define LRESET " R_eset "
+#define LRESET " _Reset "
 #define LCLOSE " _Beenden "
 #define LTHREADPAUSE "Der Renderprozess würde gestoppt. Soll er fortgesetzt oder neugestarted werden?"
 #define LCONTDRAW " _Fortsetzen"
@@ -29,12 +35,12 @@ const gchar *LCPLX[4];
 #define BUFSIZE 200
 #define NUMFORMAT "%.12f"
 #define LFILE "_Datei"
-#define LOPTION "_Option"
-#define LXYSCALE "Seitenverhältnis beibehalten"
-#define LSETCPLX "_Komplex Ebene an Bildgröße anpassen"
+#define LPREFMENU "_Einstellungen"
+#define LZOOMPROP "Seitenverhältnis beibehalten"
+#define LSETCPLX "Komplex _Ebene an Bildgröße anpassen"
 #define LSETCOLOR "F_arben für"
 #define LCOLORALGO "Aktueller _Farb-Algorithmus"
-#define LPREF "_Einstellungen..."
+#define LPREF "_Konfiguration"
 #define LHELP "?"
 #define LCONVCOLOR "_Konvergente Menge"
 #define LDIVCOLOR "_Divergente Menge"
@@ -42,11 +48,12 @@ const gchar *LCPLX[4];
 #define LCOLCAPDIV "Farben für die divergente Menge"
 const gchar *LPJMENU[6];
 const gdouble JDEFINES[12];
-#define COLORFUNC 2
+#define COLORFUNC 4
 const gchar *LCOLOR[COLORFUNC];
 const gdouble CPLXPLANE[4];
 const gdouble MCPLXPLANE[4];
-// save:
+
+// save dialog:
 #define LSAVECAP "Speichern.."
 #define LSAVEPATH "Speichern unter.."
 #define LFILECHOOSER "Speichern.."
@@ -57,7 +64,38 @@ const gdouble MCPLXPLANE[4];
 #define LHEIGTH "Höhe (in Pixel):"
 #define LRESTOREVAL "Aktuelle _Werte"
 #define LSAVEBTN "_Speichern"
+#define LSAVECLOSE "S_chließen"
 #define LSSETCPLX "_Zahleneb. anpassen"
+#define LSAVELABEL "Bitte warten..\nGrafik wird gerendert..."
+#define LSAVELABELDONE "Grafik wurde gespeichert."
+#define LSAVELABELCANCEL "Rendervorgang abgebrochen."
+#define LSAVEDONE "_OK"
+#define LSAVECANCEL "Sind sie sicher, dass sie das Speicher abbrechen wollen?"
+#define LSAVEERROR "Error: Die Datei \"%s\" konnte nicht zum Schreiben geöffnet werden"
+#define LDIRERR "Das angegeben Verzeichnis existiert nicht!"
+#define LPERMERR "Sie haben nicht die notwendigen Rechte um die Datei im angegebenen Verzeichnis ablegen zu können!"
+#define LFILEERR "Sie müssen eine Dateiname angeben."
+#define LFILEEXISTS "Die Datei \"%s\" existiert bereits. Sind sie sicher, dass sie die Datei überschreiben wollen?"
+
+// preference dialog:
+#define LCPREF "Einstellungen"
+#define LPREFSTDCPLX "Komplexe Eb. (Std)"
+#define LPREFLSTDCPLX "Standardeinstellung für die Komplexe Zahlenebene:\n(Reset-Werte)"
+#define LPREFSTDMCPLX "Komplexe Eb. (Mb)"
+#define LPREFLSTDMCPLX "Standardeinstellung für die Komplexe Zahlenebene\nder Mandelbortmenge (Nur 2te Ordnung): "
+#define LPREFRESET "_Zurücksetzen"
+#define LPREFDEFAULT "_Defaultwerte"
+#define LPREFMISC "Verschiedenes"
+#define LPREFZOOMFACTOR "Zoomfaktor"
+#define LPREFLZOOM "Zoomfaktor in Prozent:"
+#define LPREFTHREADS "Threads"
+#define LPREFTHREADSCOUNT "Anzahl Render-Threads:"
+#define LPREFITER "Iterationstief"
+#define LPREFLITER "Iterationstiefe bei \"j von der Mandelbrotmenge\":"
+#define LPREFFOCUSCOLOR "Focus-Farbe"
+#define LPREFLFOCUSCOLOR "Farbe des Zoom-Vierecks:"
+#define LPREFOK "_OK"
+#define LPREFCANCEL "_Abbrechen"
 
 // response:
 #define RESPONSE_CONTDRAW 1
@@ -66,7 +104,8 @@ const gdouble MCPLXPLANE[4];
 
 // errors:
 #define LOWITERMAX 10
-#define HIITERMAX 99999
+#define HIITERMAX 100000
+#define MAXTHREADS 512
 #define LOWDEGREE -100.0
 #define HIDEGREE 100.0
 #define ERRVAL "\"%s\" ist kein gültiger Wert eingeben!"
@@ -75,40 +114,12 @@ const gdouble MCPLXPLANE[4];
 #define ERRITERMAX "Gegen sie einen gültigen Wert für maximale Anzahle der Iterationen ein. (Zw. %d und %d)"
 #define ERRDEGREE "Gegen sie einen gültigen Wert für die Ordnung der Mandelbrotmenge. (Zw. %f und %f)"
 
-#define DEFITERMAX "100"
 
 // config file
-#define CONFIGFILE ".config"
-#define CONFGROUPAPP "data"
-#define CONFCPLXPLANE "complex-plane"
-#define CONFITERMAX "max-iterations"
-#define CONFDEG "degree"
-#define CONFJ "calculate_juliaset"
-#define CONFJRE "repart_j"
-#define CONFJIM "impart_j"
-#define CONFGROUPSIZE "size"
-#define CONFWIDTH "width"
-#define CONFHEIGHT "height"
-#define CONFGROUPPREF "preference"
-#define CONFXYSCALE "xyscale"
-#define CONFCOLORALGO "color-algorithmen"
-#define CONFCOLORCONV "convergent-color"
-#define CONFCOLORDIV "divergent-color"
-
-// threads
-#define CALCTHREADS 4
-#define REDRAWTIME 100
-#define THREAD_PAUSE 1
-#define THREAD_TERMINATE 2
-const guint XSTART[CALCTHREADS];
-const guint YSTART[CALCTHREADS];
-const guint XOFFSET[CALCTHREADS];
-const guint YOFFSET[CALCTHREADS];
+#define CONFIGDIR "mandelbrot"
+#define CONFIGFILE "config.xml"
 
 #define INTERPOLATION GDK_INTERP_BILINEAR
-
-// Doubleclick scale-factor
-#define SCALEFACTOR 0.65
 
 #endif /* __DEF_H__ */
 

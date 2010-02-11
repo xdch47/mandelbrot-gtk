@@ -1,10 +1,10 @@
 
 #include <stdlib.h>
 #include <errno.h>
-#include "validate.h"
+#include "interface.h"
 #include "defs.h"
 
-gboolean validatecplx(GtkWidget *txtcplx[4], gdouble cplx[4], GtkWidget *win)
+gboolean validate_cplx(GtkWidget *txtcplx[4], gdouble cplx[4], GtkWidget *win)
 {
 	gint i;
 	gchar *endptr;
@@ -34,7 +34,7 @@ gboolean validatecplx(GtkWidget *txtcplx[4], gdouble cplx[4], GtkWidget *win)
 	return TRUE;
 }
 
-gboolean validateitermax(GtkWidget *txtitermax, guint *itermax, GtkWidget *win)
+gboolean validate_itermax(GtkWidget *txtitermax, guint *itermax, GtkWidget *win)
 {
 	gchar *endptr;
 	*itermax = strtol(gtk_entry_get_text(GTK_ENTRY(txtitermax)), &endptr, 10);
@@ -48,9 +48,24 @@ gboolean validateitermax(GtkWidget *txtitermax, guint *itermax, GtkWidget *win)
 	return TRUE;
 }
 
+gboolean validate_degree(GtkWidget *txtdegree, gdouble *degree, GtkWidget *win)
+{
+	gchar *endptr;
+	*degree = strtod(gtk_entry_get_text(GTK_ENTRY(txtdegree)), &endptr);
+	if (*endptr != '\0' || errno == ERANGE || *degree < LOWDEGREE || *degree > HIDEGREE) {
+		gchar msg[BUFSIZE];
+		g_snprintf(msg, BUFSIZE, ERRDEGREE, LOWDEGREE, HIDEGREE);
+		errdialog(GTK_WINDOW(win), msg);
+		gtk_widget_grab_focus(txtdegree);
+		return FALSE;
+	}
+	return TRUE;
+
+}
+
 void errdialog(GtkWindow *win, gchar *msg)
 {
-	GtkWidget *dialog = gtk_message_dialog_new(win, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, msg);
+	GtkWidget *dialog = gtk_message_dialog_new(win, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "%s", msg);
 	gtk_dialog_run(GTK_DIALOG(dialog));
 	gtk_widget_destroy(dialog);
 }

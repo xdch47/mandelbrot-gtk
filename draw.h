@@ -4,13 +4,16 @@
 
 #include <gtk/gtk.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
-#include "interface.h"
+#include "defs.h"
+#include "render.h"
 
-void (*color_func[COLORFUNC])(guchar *pixels, guint x, guint y, guint n_channels, guint rowstride, guint iter, guint itermax, guchar *convdivcol);
+const guchar clbluedef[4 * 48];
+const ColorFunc color_func[COLORFUNC];
+
 void clearpixbuf(GdkPixbuf *pixbuf);
-void clblue(guchar *pixels, guint x, guint y, guint n_channels, guint rowstride, guint iter, guint itermax, guchar *convdivcol);
-void divconv(guchar *pixels, guint x, guint y, guint n_channels, guint rowstride, guint iter, guint itermax, guchar *convdivcol);
-void redraw_drawing(struct winctl *w, gint x, gint y, gint width, gint height);
-void resize_drawing(struct winctl *w);
+void clblue(const struct iterate_param *param, guint x, guint y, guint iter);
+void divconv(const struct iterate_param *param, guint x, guint y, guint iter);
+void cldixius_1(const struct iterate_param *param, guint x, guint y, guint iter);
+void cldixius_2(const struct iterate_param *param, guint x, guint y, guint iter);
 
 #endif /* __DRAW_H__ */

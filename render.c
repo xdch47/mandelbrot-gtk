@@ -1,307 +1,235 @@
 
-#include <stdlib.h>
-#include <errno.h>
 #include "render.h"
-#include "iterate.h"
-#include "draw.h"
-#include "validate.h"
+#include "defs.h"
 
-static void render_thread(struct winctl *w);
-static void add_redraw_idle(struct winctl *w);
-static void remove_redraw_idle(struct winctl *w);
-static gboolean redraw(struct winctl *w);
+#define sqr(x) ((x) * (x))
 
-gboolean is_render_thread_alive(struct winctl *w)
+static void render_thread(struct render_thread *r);
+static void add_idle(struct render_thread *r);
+static void remove_idle(struct render_thread *r);
+static gboolean idle_wrapper(struct render_thread *r);
+
+/*
+static guint factor(guint num)
 {
-	gboolean alive;
-	g_mutex_lock(w->threadstate_mutex);
-	alive = w->runthread;
-	g_mutex_unlock(w->threadstate_mutex);
-	return alive;
+	guint i, f = 1;
+	for (i = 1; sqr(i) <= num; ++i) {
+		if (num % i == 0) {
+			f = i;
+		}
+	}
+	return f;
+}
+*/
+
+struct render_thread *render_thread_new(IdleFunc idle_func, ThreaddestroyFunc destroy, gpointer data)
+{
+	struct render_thread *r = (struct render_thread *)g_malloc(sizeof(struct render_thread));
+	r->control_mutex = g_mutex_new();
+	r->state_mutex = g_mutex_new();
+	r->idle_mutex = g_mutex_new();
+	r->resume_cond = g_cond_new();
+	r->control_thread = NULL;
+	r->isalive = FALSE;
+	r->state = RUN;
+	r->idle_func = idle_func;
+	r->idle_tag = 0;
+	r->destroy = destroy;
+	r->userdata = data;
+	r->it_data = NULL;
+	return r;
 }
 
-gboolean is_render_thread_pause(struct winctl *w)
+void iterate_param_init(struct iterate_param *param, guint count)
 {
-	gboolean pause;
-	g_mutex_lock(w->threadstate_mutex);
-	pause = w->pausethread;
-	g_mutex_unlock(w->threadstate_mutex);
-	return pause;
+	guint i, j;
+	guint xo, yo;
+	// TODO: implement for various number of threads
+	param->threads_count = count;
+	param->xstart = (guint *)g_malloc(sizeof(guint) * count);
+	param->ystart = (guint *)g_malloc(sizeof(guint) * count);
+	param->row_count = (guint *)g_malloc(sizeof(guint) * count);
+
+//	yo = factor(count);
+//	xo = count / yo;
+	xo = 1;
+	yo = count;
+
+	for (i = 0; i < count; i += yo) {
+		for (j = 0; j < yo; ++j) {
+//			param->xstart[i + j] = i / yo;
+//			param->ystart[i + j] = j;
+			param->xstart[i + j] = 0;
+			param->ystart[i + j] = i + j;
+		}
+	}
+
+	param->xoffset = xo;
+	param->yoffset = yo;
 }
 
-gboolean start_render_thread(struct winctl *w)
+void iterate_param_free(struct iterate_param *param)
+{
+	g_free(param->xstart);
+	g_free(param->ystart);
+	g_free(param->row_count);
+}
+
+void render_thread_free(struct render_thread *r)
+{
+	g_mutex_free(r->control_mutex);
+	g_mutex_free(r->state_mutex);
+	g_mutex_free(r->idle_mutex);
+	g_cond_free(r->resume_cond);
+	g_free(r);
+}
+
+gboolean start_render_thread(struct render_thread *r, const struct iterate_param *param)
 {
 	guint i;
-	gdouble degree;
-	guint itermax;
-	gdouble cplx[4];
-	gdouble jre, jim;
-	int errno;
-	gchar *endptr;
-	struct threaddata *it;
-
-	// validate complex plane
-	if (!validatecplx(w->txtcplx, cplx, w->win)) {
-		return FALSE;
+	struct iteration_data *it;
+	g_mutex_lock(r->control_mutex);
+	r->it_data = (struct iteration_data *)g_malloc(sizeof(struct iteration_data) * param->threads_count);
+	for (i = 0, it = r->it_data; i < param->threads_count; ++i, ++it) {
+		it->param = param;
+		it->number = i;
+		it->dre = (param->cplxplane[1] - param->cplxplane[0]) / (gdouble)param->xmax;
+		it->dim = (param->cplxplane[2] - param->cplxplane[3]) / (gdouble)param->ymax;
+		it->b_re = param->cplxplane[0] + (gdouble)param->xstart[i] * it->dre;
+		it->b_im = param->cplxplane[3] + (gdouble)param->ystart[i] * it->dim;
+		it->dre *= (gdouble)param->xoffset;
+		it->dim *= (gdouble)param->yoffset;
+		it->state_mutex = r->state_mutex;
+		it->resume_cond = r->resume_cond;
+		it->state = &r->state;
+		param->row_count[i] = 0; 
 	}
-	// degree of mandelbrot-/julia-set:
-	degree = strtod(gtk_entry_get_text(GTK_ENTRY(w->txtdegree)), &endptr);
-	if (*endptr != '\0' || errno == ERANGE || degree < LOWDEGREE || degree > HIDEGREE) {
-		gchar msg[BUFSIZE];
-		g_snprintf(msg, BUFSIZE, ERRDEGREE, LOWDEGREE, HIDEGREE);
-		errdialog(GTK_WINDOW(w->win), msg);
-		gtk_widget_grab_focus(w->txtdegree);
-		return FALSE;
-	}
-	// max. iterations:
-	if (!validateitermax(w->txtitermax, &itermax, w->win)) {
-			return FALSE;
-	}
-	// julia const:
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w->chkjulia))) {
-		jre = strtod(gtk_entry_get_text(GTK_ENTRY(w->txtjre)), &endptr);
-		if (*endptr != '\0' || errno == ERANGE ) {
-			gchar msg[BUFSIZE];
-			g_snprintf(msg, BUFSIZE, ERRVAL, gtk_entry_get_text(GTK_ENTRY(w->txtjre)));
-			errdialog(GTK_WINDOW(w->win), msg);
-			gtk_widget_grab_focus(w->txtjre);
-			return FALSE;
-		}
-		jim = strtod(gtk_entry_get_text(GTK_ENTRY(w->txtjim)), &endptr);
-		if (*endptr != '\0' || errno == ERANGE ) {
-			gchar msg[BUFSIZE];
-			g_snprintf(msg, BUFSIZE, ERRVAL, gtk_entry_get_text(GTK_ENTRY(w->txtjim)));
-			errdialog(GTK_WINDOW(w->win), msg);
-			gtk_widget_grab_focus(w->txtjim);
-			return FALSE;
-		}
-		w->mandelbrot = FALSE;
-	} else {
-		jre = 0;
-		jim = 0;
-		w->mandelbrot = TRUE;
-	}
+	r->param = param;
 
-	// okay, no error occured, redraw, write threaddata, start thread:
-	kill_render_thread(w);
-	if (w->pixbufcalc)
-		g_object_unref(w->pixbufcalc);
-	if (w->pixbufshow) 
-		g_object_unref(w->pixbufshow);
+	add_idle(r);
 
-	w->pixbufcalc = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, w->drawing->allocation.width, w->drawing->allocation.height);
-	clearpixbuf(w->pixbufcalc);
-	w->pixbufshow = g_object_ref(w->pixbufcalc);
-	gdk_window_invalidate_rect(w->drawing->window, NULL, FALSE);
-	gdk_draw_pixbuf(w->drawing->window, NULL, w->pixbufcalc, 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
-	
-	gtk_button_set_label(GTK_BUTTON(w->btncalc), LSTOP);
-
-	g_mutex_lock(w->thread_control_mutex);
-	for (i = 0, it = w->data; i < CALCTHREADS; ++i, ++it) {
-		it->xmax = gdk_pixbuf_get_width(w->pixbufcalc);
-		it->ymax = gdk_pixbuf_get_height(w->pixbufcalc);
-		it->dre = (cplx[1] - cplx[0]) / (gdouble)it->xmax;
-		it->dim = (cplx[2] - cplx[3]) / (gdouble)it->ymax;
-		it->b_re = cplx[0] + (gdouble)XSTART[i] * it->dre;
-		it->b_im = cplx[3] + (gdouble)YSTART[i] * it->dim;
-		it->dre *= (gdouble)XOFFSET[i];
-		it->dim *= (gdouble)YOFFSET[i];
-		it->jre = jre;
-		it->jim = jim;
-		it->xstart = XSTART[i];
-		it->ystart = YSTART[i];
-		it->xoffset = XOFFSET[i];
-		it->yoffset = YOFFSET[i];
-		it->itermax = itermax;
-		it->pixels = gdk_pixbuf_get_pixels(w->pixbufcalc);
-		it->n_channels = gdk_pixbuf_get_n_channels (w->pixbufcalc);
-		it->rowstride = gdk_pixbuf_get_rowstride (w->pixbufcalc);
-		it->state_mutex = w->threadstate_mutex;
-		it->resume_cond = w->resume_cond;
-		it->pause = &w->pausethread;
-		if (w->color_func_index != 1) {
-			it->convdivcol = (guchar *)g_malloc(sizeof(guchar) * 4);
-			it->convdivcol[0] = (guchar)(w->convcol.red >> 8);
-			it->convdivcol[1] = (guchar)(w->convcol.green >> 8);
-			it->convdivcol[2] = (guchar)(w->convcol.blue >> 8);
-			it->convdivcol[3] = 0xff;
-		} else {
-			it->convdivcol = (guchar *)g_malloc(sizeof(guchar) * 8);
-			it->convdivcol[0] = (guchar)(w->convcol.red >> 8);
-			it->convdivcol[1] = (guchar)(w->convcol.green >> 8);
-			it->convdivcol[2] = (guchar)(w->convcol.blue >> 8);
-			it->convdivcol[3] = 0xff;
-			it->convdivcol[4] = (guchar)(w->divcol.red >> 8);
-			it->convdivcol[5] = (guchar)(w->divcol.green >> 8);
-			it->convdivcol[6] = (guchar)(w->divcol.blue >> 8);
-			it->convdivcol[7] = 0xff;
-		}
-		it->setcolor = color_func[w->color_func_index];
-		it->degree = degree;
-		w->cplx[i] = cplx[i];
-	}
-
-	add_redraw_idle(w);
-
-	g_mutex_lock(w->threadstate_mutex);
-	w->runthread = TRUE;
-	w->pausethread = FALSE;
-	w->render_thread = g_thread_create((GThreadFunc)render_thread, (gpointer)w, TRUE, NULL);
-	g_mutex_unlock(w->threadstate_mutex);
-	g_mutex_unlock(w->thread_control_mutex);
+	g_mutex_lock(r->state_mutex);
+	r->isalive = TRUE;
+	r->state = RUN;
+	r->control_thread = g_thread_create((GThreadFunc)render_thread, (gpointer)r, TRUE, NULL);
+	g_mutex_unlock(r->state_mutex);
+	g_mutex_unlock(r->control_mutex);
 	return TRUE;
 }
 
-void pause_render_thread(struct winctl *w)
+void render_thread_pause(struct render_thread *r)
 {
-	g_mutex_lock(w->thread_control_mutex);
-	if (is_render_thread_alive(w)) {
-		g_mutex_lock(w->threadstate_mutex);
-		w->pausethread = THREAD_PAUSE;
-		gtk_button_set_label(GTK_BUTTON(w->btncalc), LCALC);
-		g_mutex_unlock(w->threadstate_mutex);
-		remove_redraw_idle(w);
+	g_mutex_lock(r->control_mutex);
+	if (is_render_thread_alive(r)) {
+		g_mutex_lock(r->state_mutex);
+		r->state = PAUSE;
+		g_mutex_unlock(r->state_mutex);
+		remove_idle(r);
 	}
-	g_mutex_unlock(w->thread_control_mutex);
+	g_mutex_unlock(r->control_mutex);
 }
 
-void resume_render_thread(struct winctl *w)
+void render_thread_resume(struct render_thread *r)
 {
-	g_mutex_lock(w->thread_control_mutex);
-	g_mutex_lock(w->threadstate_mutex);
-	w->pausethread = 0;
-	add_redraw_idle(w);
-	g_cond_broadcast(w->resume_cond);
-	gtk_button_set_label(GTK_BUTTON(w->btncalc), LSTOP);
-	g_mutex_unlock(w->threadstate_mutex);
-	g_mutex_unlock(w->thread_control_mutex);
+	g_mutex_lock(r->control_mutex);
+	g_mutex_lock(r->state_mutex);
+	r->state = RUN;
+	add_idle(r);
+	g_cond_broadcast(r->resume_cond);
+	g_mutex_unlock(r->state_mutex);
+	g_mutex_unlock(r->control_mutex);
 }
 
-
-void kill_render_thread(struct winctl *w)
+void render_thread_kill(struct render_thread *r)
 {
-	g_mutex_lock(w->thread_control_mutex);
-	remove_redraw_idle(w);
-	if (w->render_thread) {
-		g_mutex_lock(w->threadstate_mutex);
-		w->pausethread = THREAD_TERMINATE;
-		g_mutex_unlock(w->threadstate_mutex);
-		g_cond_broadcast(w->resume_cond);
+	g_mutex_lock(r->control_mutex);
+	remove_idle(r);
+	if (r->control_thread) {
+		g_mutex_lock(r->state_mutex);
+		r->state = KILL;
+		g_mutex_unlock(r->state_mutex);
+		g_cond_broadcast(r->resume_cond);
 		gdk_threads_leave();
-		g_thread_join(w->render_thread);
+		g_thread_join(r->control_thread);
 		gdk_threads_enter();
-		w->render_thread = NULL;
+		r->control_thread = NULL;
 	}
-	g_mutex_unlock(w->thread_control_mutex);
-}
-void init_render_thread(struct winctl *w)
-{
-	w->thread_control_mutex = g_mutex_new();
-	w->threadstate_mutex = g_mutex_new();
-	w->redraw_mutex = g_mutex_new();
-	w->resume_cond = g_cond_new();
-	w->render_thread = NULL;
-	w->runthread = FALSE;
-	w->redraw_idle = 0;
+	g_mutex_unlock(r->control_mutex);
 }
 
-void destroy_render_thread(struct winctl *w)
+gboolean is_render_thread_alive(struct render_thread *r)
 {
-	kill_render_thread(w);
-
-	g_mutex_free(w->threadstate_mutex);
-	g_mutex_free(w->redraw_mutex);
-	g_cond_free(w->resume_cond);
+	gboolean isalive;
+	g_mutex_lock(r->state_mutex);
+	isalive = r->isalive;
+	g_mutex_unlock(r->state_mutex);
+	return isalive;
 }
 
-static void render_thread(struct winctl *w)
+gboolean is_render_thread_pause(struct render_thread *r)
 {
-	guint i;
-	GThread *calc_thread[CALCTHREADS];
+	enum thread_state state;
+	g_mutex_lock(r->state_mutex);
+	state = r->state;
+	g_mutex_unlock(r->state_mutex);
+	return (state == PAUSE) ? TRUE : FALSE;
+}
+
+static void render_thread(struct render_thread *r)
+{
+	guint i, threads_count = r->param->threads_count;
+	GThread **iteration_thread = (GThread **)(g_malloc(sizeof(GThread *) * threads_count));
 	gboolean succ;
 
-	for (i = 0; i < CALCTHREADS; ++i) 
-		if (w->data->degree == 2.0) {
-			if (w->mandelbrot)
-				calc_thread[i] = g_thread_create((GThreadFunc)mandelbrot_set, (gpointer)(w->data + i), TRUE, NULL);
-			else
-				calc_thread[i] = g_thread_create((GThreadFunc)julia_set, (gpointer)(w->data + i), TRUE, NULL);
-		} else {
-			if (w->mandelbrot)
-				calc_thread[i] = g_thread_create((GThreadFunc)mandelbrot_set_deg, (gpointer)(w->data + i), TRUE, NULL);
-			else
-				calc_thread[i] = g_thread_create((GThreadFunc)julia_set_deg, (gpointer)(w->data + i), TRUE, NULL);
-		}
-	
+	for (i = 0; i < threads_count; ++i) {
+		iteration_thread[i] = g_thread_create(r->param->iterate_func, (gpointer)(r->it_data + i), TRUE, NULL);
+	}
+
 	succ = TRUE;
-	for (i = 0; i < CALCTHREADS; ++i) {
+	for (i = 0; i < threads_count; ++i) {
 		gboolean *tmp;
-		tmp = g_thread_join(calc_thread[i]);
+		tmp = g_thread_join(iteration_thread[i]);
 		succ = succ && *tmp;
 		g_free(tmp);
 	}
+	g_free(r->it_data);
+	g_free(iteration_thread);
 
-	remove_redraw_idle(w);
+	remove_idle(r);
+	g_mutex_lock(r->state_mutex);
+	succ = succ && r->state != KILL;
+	r->isalive = FALSE;
+	r->state = RUN;
+	g_mutex_unlock(r->state_mutex);
 
-	g_mutex_lock(w->threadstate_mutex);
-	succ = succ && w->pausethread != THREAD_TERMINATE;
-	g_mutex_unlock(w->threadstate_mutex);
-	if (succ) {
-		gdk_threads_enter();
-		if (w->pixbufshow)
-			g_object_unref(w->pixbufshow);
-		w->pixbufshow = gdk_pixbuf_scale_simple(w->pixbufcalc, w->drawing->allocation.width, w->drawing->allocation.height, INTERPOLATION);
-		gdk_draw_pixbuf(w->drawing->window, NULL, w->pixbufshow, 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
-		gtk_button_set_label(GTK_BUTTON(w->btncalc), LCALC);
-		gtk_window_set_resizable(GTK_WINDOW(w->win), TRUE);
-		gtk_widget_set_size_request(w->win, -1, -1);
-		gdk_window_invalidate_rect(w->drawing->window, NULL, FALSE);
-		gdk_threads_leave();
-	}
-	g_mutex_lock(w->threadstate_mutex);
-	w->runthread = FALSE;
-	w->pausethread = 0;
-	g_mutex_unlock(w->threadstate_mutex);
-
+	r->destroy(succ, r->userdata);
 	return;
-		
+}
+	
+static void add_idle(struct render_thread *r) 
+{
+	g_mutex_lock(r->idle_mutex);
+	if (!r->idle_tag) 
+		r->idle_tag = g_idle_add((GSourceFunc)idle_wrapper, r);
+	g_mutex_unlock(r->idle_mutex);
 }
 
-static void add_redraw_idle(struct winctl *w) 
+static void remove_idle(struct render_thread *r)
 {
-	g_mutex_lock(w->redraw_mutex);
-	if (!w->redraw_idle) 
-		w->redraw_idle = g_idle_add((GSourceFunc)redraw, w);
-	g_mutex_unlock(w->redraw_mutex);
-}
-
-static void remove_redraw_idle(struct winctl *w)
-{
-	g_mutex_lock(w->redraw_mutex);
-	if (w->redraw_idle) {
-		w->redraw_idle = 0;
+	g_mutex_lock(r->idle_mutex);
+	if (r->idle_tag) {
+		r->idle_tag = 0;
 	}
-	g_mutex_unlock(w->redraw_mutex);
+	g_mutex_unlock(r->idle_mutex);
 }
 
-static gboolean redraw(struct winctl *w)
+static gboolean idle_wrapper(struct render_thread *r)
 {
 	gboolean retval;
-	gint width, height;
-	g_mutex_lock(w->redraw_mutex);
-	gdk_threads_enter();
-	width = w->drawing->allocation.width;
-	height = w->drawing->allocation.height;
-	if (width != gdk_pixbuf_get_width(w->pixbufcalc) || height != gdk_pixbuf_get_height(w->pixbufcalc)) {
-		g_assert(w->pixbufshow != NULL);
-		g_object_unref(w->pixbufshow);
-		w->pixbufshow = gdk_pixbuf_scale_simple(w->pixbufcalc, width, height, INTERPOLATION);
-	}
-	redraw_drawing(w, 0, 0, -1, -1);
-	retval = w->redraw_idle ? TRUE : FALSE;
-	gdk_threads_leave();
-	g_mutex_unlock(w->redraw_mutex);
+
+	r->idle_func(r->userdata);
+	g_mutex_lock(r->idle_mutex);
+	retval = (r->idle_tag) ? TRUE : FALSE;
+	g_mutex_unlock(r->idle_mutex);
 	return retval;
 }
-

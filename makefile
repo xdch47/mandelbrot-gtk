@@ -26,26 +26,25 @@ EXECUTABLE      := mandelbrot
 
 # ------------  list of all source files  --------------------------------------
 SOURCES         := main.c defs.c interface.c layout.c config.c \
-	render.c iterate.c draw.c color.c storedrawing.c validate.c
+	render.c iterate.c draw.c storedrawing.c validate.c pref.c
 
 # ------------  compiler  ------------------------------------------------------
 CC              := gcc
 
 # ------------  compiler flags  ------------------------------------------------
 DEBUG_CFLAGS    := -Wall -O0 -g
-RELEASE_CFLAGS  := -Wall -O2
+RELEASE_CFLAGS  := -Wall -O2 -pipe -mtune=native -march=native
 
 #-------------  Directories  ---------------------------------------------------
-OBJ_DIR         := ./obj
-DEBUG_DIR       := ./Debug
-RELEASE_DIR     := ./Release
+DEBUG_DIR       := ./debug
+RELEASE_DIR     := ./release
 
 # ------------  linker flags  --------------------------------------------------
 DEBUG_LDFLAGS   := -g
 RELEASE_LDFLAGS :=
 
 ifeq (YES, ${DEBUG})
-CFLAGS          := ${DEBUG_CFLAGS}
+CFLAGS          := ${DEBUG_CFLAGS} 
 LDFLAGS         := ${DEBUG_LDFLAGS}
 OUT_DIR         := ${DEBUG_DIR}
 else
@@ -55,28 +54,16 @@ OUT_DIR         := ${RELEASE_DIR}
 endif
 
 # ------------  additional pkg-config includes and libraries  ------------------
-PKG_CONF_ARG    = gtk+-2.0 gthread-2.0 libconfig
+PKG_CONF_ARG    = gtk+-2.0 gthread-2.0 libxml-2.0
 
-# ------------  additional system include directories  -------------------------
-GLOBAL_INC_DIR  =
+# ------------  additional include directories  --------------------------------
+INC_DIR  = 
 
-# ------------  additional system library directories  -------------------------
-GLOBAL_LIB_DIR  =
+# ------------  additional library directories  --------------------------------
+LIB_DIR  =
 
-# ------------  additional system libraries  -----------------------------------
-GLOBAL_LIBS     =
-
-# ------------  system libraries  ----------------------------------------------
-SYS_LIBS        = -lm
-
-# ------------  private include directories  -----------------------------------
-LOCAL_INC_DIR   =
-
-# ------------  private library directories  -----------------------------------
-LOCAL_LIB_DIR   =
-
-# ------------  private libraries  ---------------------------------------------
-LOCAL_LIBS      =
+# ------------  additional libraries  ------------------------------------------
+LIBS     = -lm
 
 # ------------  archive generation ---------------------------------------------
 TARBALL_EXCLUDE = *.{o,gz,zip}
@@ -100,16 +87,14 @@ endif
 # The following statements usually need not to be changed
 #===============================================================================
 C_SOURCES       = $(SOURCES)
-ALL_INC_DIR     = $(addprefix -I, $(LOCAL_INC_DIR) $(GLOBAL_INC_DIR)) $(INC_DIR_PKG_CONF)
-ALL_LIB_DIR     = $(addprefix -L, $(LOCAL_LIB_DIR) $(GLOBAL_LIB_DIR))
-GLOBAL_LIBSS    = $(addprefix $(GLOBAL_LIB_DIR)/, $(GLOBAL_LIBS))
-LOCAL_LIBSS     = $(addprefix $(LOCAL_LIB_DIR)/, $(LOCAL_LIBS))
+ALL_INC_DIR     = $(addprefix -I, $(INC_DIR)) $(INC_DIR_PKG_CONF)
+ALL_LIB_DIR     = $(addprefix -L, $(LIB_DIR))
 ALL_CFLAGS      = $(CFLAGS) $(ALL_INC_DIR)
 ALL_LFLAGS      = $(LDFLAGS) $(ALL_LIB_DIR)
 BASENAMES       = $(basename $(C_SOURCES))
 
 # ------------  generate the names of the object files  ------------------------
-OBJECTS         = $(addprefix $(OBJ_DIR)/, $(addsuffix .o,$(BASENAMES)))
+OBJECTS         = $(addprefix $(OUT_DIR)/, $(addsuffix .o,$(BASENAMES)))
 
 # ------------  make (and start) the executable  -------------------------------
 all: $(OUT_DIR)/$(EXECUTABLE)
@@ -118,24 +103,21 @@ ifeq (YES, ${START})
 endif
 
 # ------------  make the executable  -------------------------------------------
-$(OUT_DIR)/$(EXECUTABLE):    $(OBJ_DIR) $(OUT_DIR) $(OBJECTS)
+$(OUT_DIR)/$(EXECUTABLE): $(OUT_DIR) $(OBJECTS)
 	$(CC) $(ALL_LFLAGS) -o $(OUT_DIR)/$(EXECUTABLE) $(OBJECTS) \
-		$(LOCAL_LIBSS) $(GLOBAL_LIBSS) $(SYS_LIBS) $(LIBS_PKG_CONF)
+		$(ALL_LIB_DIR) $(LIBS) $(LIBS_PKG_CONF)
 
 #-------------  Create the directories -----------------------------------------
-$(OBJ_DIR):
-	@mkdir -p $(OBJ_DIR)
-
 $(OUT_DIR):
 	@mkdir -p $(OUT_DIR)
 
 # ------------  make the objects  ----------------------------------------------
-$(OBJ_DIR)/%.o:	%.c
+$(OUT_DIR)/%.o:	%.c
 	$(CC)  -c $(ALL_CFLAGS) $< -o $@
 
 # ------------  remove generated files  ----------------------------------------
 clean:
-	@rm -rf $(DEBUG_DIR) $(RELEASE_DIR) $(OBJ_DIR)
+	@rm -rf $(DEBUG_DIR) $(RELEASE_DIR)
 
 # ------------ tarball generation ----------------------------------------------
 tarball:
@@ -156,19 +138,7 @@ zip:
 
 #-------------  create dependencies  -------------------------------------------
 depend:
-	@makedepend -s'#object dependencies' -m -Y. -Y$(LOCAL_INC_DIR) -p$(OBJ_DIR)/ -- $(SOURCES) 2>/dev/null
+	@gcc -E -MM $(SOURCES) > ./.depend
 
-#object dependencies
+include .depend
 
-./obj/defs.o: defs.h
-./obj/interface.o: interface.h defs.h iterate.h layout.h config.h render.h
-./obj/interface.o: draw.h
-./obj/layout.o: interface.h defs.h iterate.h layout.h storedrawing.h
-./obj/config.o: config.h interface.h defs.h iterate.h
-./obj/render.o: render.h interface.h defs.h iterate.h draw.h validate.h
-./obj/iterate.o: iterate.h render.h interface.h defs.h iterate_template.c
-./obj/draw.o: draw.h interface.h defs.h iterate.h color.h
-./obj/color.o: color.h
-./obj/storedrawing.o: storedrawing.h interface.h defs.h iterate.h layout.h
-./obj/storedrawing.o: validate.h
-./obj/validate.o: validate.h defs.h

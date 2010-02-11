@@ -1,20 +1,20 @@
+
 #include <glib/gprintf.h>
 #include <gdk/gdkkeysyms.h>
 #include <stdlib.h>
 #include "interface.h"
-#include "layout.h"
-#include "storedrawing.h"
 
+static GtkWidget *convdiv_menu(struct winctl *w);
 static void chkj_toggled(GtkWidget *widget, struct winctl *w);
-static void toggle_xyscale(GtkWidget *widget, struct winctl *w);
+static void toggle_zoomprop(GtkWidget *widget, struct winctl *w);
 static void menu_setcplxplane(GtkWidget *widget, struct winctl *w);
 static void insert_j(GtkWidget *widget, struct winctl *w);
-static void change_color_algo(GtkWidget *widget, struct winctl *w);
 static gboolean pjmenu(GtkWidget *widget, GdkEventButton *event, struct winctl *w);
-static GtkWidget *convdiv_menu(struct winctl *w);
+static void change_color_algo(GtkWidget *widget, struct winctl *w);
 static void change_convcol(GtkWidget *widget, struct winctl *w);
 static void change_divcol(GtkWidget *widget, struct winctl *w);
 static void store_drawing(GtkWidget *widget, struct winctl *w);
+static void about(GtkWidget *widget, struct winctl *w);
 
 GtkWidget *createcplxplane(GtkWidget *txtcplx[4])
 {
@@ -38,19 +38,6 @@ GtkWidget *createcplxplane(GtkWidget *txtcplx[4])
 	gtk_container_set_border_width(GTK_CONTAINER(table), 5);
 	gtk_container_add(GTK_CONTAINER(frame), table);
 	return frame;
-}
-
-static GtkWidget *convdiv_menu(struct winctl *w)
-{
-	GtkWidget *menu, *menuit;
-	menu = gtk_menu_new();
-	menuit = gtk_menu_item_new_with_mnemonic(LCONVCOLOR);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuit);
-	g_signal_connect(G_OBJECT(menuit), "activate", G_CALLBACK(change_convcol), w);
-	menuit = gtk_menu_item_new_with_mnemonic(LDIVCOLOR);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuit);
-	g_signal_connect(G_OBJECT(menuit), "activate", G_CALLBACK(change_divcol), w);
-	return menu;
 }
 
 struct winctl *buildinterface(void)
@@ -104,8 +91,8 @@ struct winctl *buildinterface(void)
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuit);
 	gtk_widget_add_accelerator(menuit, "activate", accel_group, GDK_q, 0, 0);
 	g_signal_connect_swapped(G_OBJECT(menuit), "activate", G_CALLBACK(gtk_widget_destroy), w->win);
-	// option:
-	menuit = gtk_menu_item_new_with_mnemonic(LOPTION);
+	// preference:
+	menuit = gtk_menu_item_new_with_mnemonic(LPREFMENU);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), menuit);
 	menu = gtk_menu_new();
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuit), menu);
@@ -119,15 +106,14 @@ struct winctl *buildinterface(void)
 	g_signal_connect(G_OBJECT(menuit), "activate", G_CALLBACK(menu_setcplxplane), w);
 	g_signal_connect(G_OBJECT(pmenuit), "activate", G_CALLBACK(menu_setcplxplane), w);
 	// scalexy:
-	w->mchkxyscale = gtk_check_menu_item_new_with_mnemonic(LXYSCALE);
-	w->pmchkxyscale = gtk_check_menu_item_new_with_mnemonic(LXYSCALE);
-	gtk_widget_add_accelerator(w->mchkxyscale, "activate", accel_group, GDK_s, GDK_SUPER_MASK, GTK_ACCEL_VISIBLE);
-	gtk_widget_add_accelerator(w->pmchkxyscale, "activate", accel_group, GDK_s, GDK_SUPER_MASK, GTK_ACCEL_VISIBLE);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), w->mchkxyscale);
-	gtk_menu_shell_append(GTK_MENU_SHELL(w->drawmenu), w->pmchkxyscale);
-	g_signal_connect(G_OBJECT(w->mchkxyscale), "toggled", G_CALLBACK(toggle_xyscale), w);
-	g_signal_connect(G_OBJECT(w->pmchkxyscale), "toggled", G_CALLBACK(toggle_xyscale), w);
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(w->mchkxyscale), TRUE);
+	w->mchkzoomprop = gtk_check_menu_item_new_with_mnemonic(LZOOMPROP);
+	w->pmchkzoomprop = gtk_check_menu_item_new_with_mnemonic(LZOOMPROP);
+	gtk_widget_add_accelerator(w->mchkzoomprop, "activate", accel_group, GDK_s, GDK_SUPER_MASK, GTK_ACCEL_VISIBLE);
+	gtk_widget_add_accelerator(w->pmchkzoomprop, "activate", accel_group, GDK_s, GDK_SUPER_MASK, GTK_ACCEL_VISIBLE);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), w->mchkzoomprop);
+	gtk_menu_shell_append(GTK_MENU_SHELL(w->drawmenu), w->pmchkzoomprop);
+	g_signal_connect(G_OBJECT(w->mchkzoomprop), "toggled", G_CALLBACK(toggle_zoomprop), w);
+	g_signal_connect(G_OBJECT(w->pmchkzoomprop), "toggled", G_CALLBACK(toggle_zoomprop), w);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 	gtk_menu_shell_append(GTK_MENU_SHELL(w->drawmenu), gtk_separator_menu_item_new());
 	// set color (div./conv.):
@@ -137,7 +123,6 @@ struct winctl *buildinterface(void)
 	gtk_menu_shell_append(GTK_MENU_SHELL(w->drawmenu), pmenuit);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuit), convdiv_menu(w));
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(pmenuit), convdiv_menu(w));
-	//g_signal_connect(G_OBJECT(menuit), "activate", G_CALLBACK(^), w);
 	// set color algo:
 	menuit = gtk_menu_item_new_with_mnemonic(LCOLORALGO);
 	pmenuit = gtk_menu_item_new_with_mnemonic(LCOLORALGO);
@@ -157,8 +142,6 @@ struct winctl *buildinterface(void)
 		g_object_set_data(G_OBJECT(psmenuit), "sync_obj", w->mcolalgo[i]);
 		g_signal_connect(G_OBJECT(w->mcolalgo[i]), "toggled", G_CALLBACK(change_color_algo), w);
 		g_signal_connect(G_OBJECT(psmenuit), "toggled", G_CALLBACK(change_color_algo), w);
-		if (i == 0)
-			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(w->mcolalgo[i]), TRUE);
 		gtk_menu_shell_append(GTK_MENU_SHELL(submenu), w->mcolalgo[i]);
 		gtk_menu_shell_append(GTK_MENU_SHELL(psubmenu), psmenuit);
 	}
@@ -166,26 +149,23 @@ struct winctl *buildinterface(void)
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(pmenuit), psubmenu);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuit);
 	gtk_menu_shell_append(GTK_MENU_SHELL(w->drawmenu), pmenuit);
-	//g_signal_connect(G_OBJECT(menuit), "activate", G_CALLBACK(^), w);
-	/*
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
-	 * TODO: implement of
 	// preference:
-	//menuit = gtk_menu_item_new_with_mnemonic(LPREF);
+	menuit = gtk_menu_item_new_with_mnemonic(LPREF);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuit);
-	//g_signal_connect(G_OBJECT(menuit), "activate", G_CALLBACK(^), w);
+	g_signal_connect_swapped(G_OBJECT(menuit), "activate", G_CALLBACK(preference_show), w);
 	// info menu:
 	menuit = gtk_menu_item_new_with_mnemonic(LHELP);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), menuit);
 	menu = gtk_menu_new();
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuit), menu);
-	menuit = gtk_image_menu_item_new_from_stock(GTK_STOCK_HELP, accel_group);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuit);
-	//g_signal_connect(G_OBJECT(menuit), "activate", G_CALLBACK(^), w);
+/* 	menuit = gtk_image_menu_item_new_from_stock(GTK_STOCK_HELP, accel_group);
+ * 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuit);
+ * 	g_signal_connect(G_OBJECT(menuit), "activate", G_CALLBACK(^), w);
+ */
 	menuit = gtk_image_menu_item_new_from_stock(GTK_STOCK_ABOUT, accel_group);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuit);
-	//g_signal_connect(G_OBJECT(menuit), "activate", G_CALLBACK(^), w);
-	*/
+	g_signal_connect(G_OBJECT(menuit), "activate", G_CALLBACK(about), w);
 	w->pjmenu = gtk_menu_new();
 	for (i = 0; i < 6; ++i) {
 		gint *index = (gint *)g_malloc(sizeof(gint));
@@ -209,8 +189,9 @@ struct winctl *buildinterface(void)
 	frame2 = gtk_frame_new(NULL);
 	gtk_frame_set_shadow_type(GTK_FRAME(frame2), GTK_SHADOW_IN);
 	vbox2 = gtk_vbox_new(FALSE, 0);
-	lbl = gtk_label_new(LWCAP);
-	gtk_box_pack_start(GTK_BOX(vbox2), lbl, FALSE, FALSE, 0);
+	w->lbldraw = gtk_label_new(LWCAP);
+	gtk_label_set_width_chars(GTK_LABEL(w->lbldraw), 50);
+	gtk_box_pack_start(GTK_BOX(vbox2), w->lbldraw, FALSE, FALSE, 0);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox2), 3);
 	gtk_container_add(GTK_CONTAINER(frame2), vbox2);
 	
@@ -255,7 +236,6 @@ struct winctl *buildinterface(void)
 	lbl = gtk_label_new_with_mnemonic(LITERMAX);
 	gtk_misc_set_alignment(GTK_MISC(lbl), 0.0, 1.0);
 	w->txtitermax = gtk_entry_new();
-	gtk_entry_set_text(GTK_ENTRY(w->txtitermax), DEFITERMAX);
 	gtk_entry_set_max_length(GTK_ENTRY(w->txtitermax), TEXTLEN);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(lbl), w->txtitermax);
 	gtk_table_attach(GTK_TABLE(table), lbl, 0, 2, 1, 2, GTK_EXPAND | GTK_FILL, GTK_SHRINK, 0, 0);
@@ -343,36 +323,7 @@ struct winctl *buildinterface(void)
 	
 	statejctl(w);
 
-	w->scalefactor = SCALEFACTOR;
-	w->mandelbrot = FALSE;
-	w->get_j = FALSE;
-	w->convcol.red = 0;
-	w->convcol.green = 0;
-	w->convcol.blue = 0;
-	w->divcol.red = 0xffff;
-	w->divcol.green = 0xffff;
-	w->divcol.blue = 0xffff;
-
-	w->color_func_index = 0;
-
-	w->focus_color.red = 0xffff;
-	w->focus_color.green = 0xffff;
-	w->focus_color.blue = 0xffff;
-	gtk_widget_modify_fg(w->drawing, GTK_STATE_NORMAL, &w->focus_color);
-
 	return w;
-}
-
-static void toggle_xyscale(GtkWidget *widget, struct winctl *w)
-{
-	w->xyscale = !gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget));
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(w->mchkxyscale), !w->xyscale);
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(w->pmchkxyscale), !w->xyscale);
-}
-
-static void menu_setcplxplane(GtkWidget *widget, struct winctl *w)
-{
-	setcplxplane(w->txtcplx, w->cplx, w->drawing->allocation.width, w->drawing->allocation.height);
 }
 
 void setcplxplane(GtkWidget *txtcplx[4], const gdouble value[4], gdouble width, gdouble height)
@@ -405,6 +356,61 @@ void setcplxplane(GtkWidget *txtcplx[4], const gdouble value[4], gdouble width, 
 	}
 }
 
+void restoredefaults(struct winctl *w)
+{
+	gint tmp = atoi(gtk_entry_get_text(GTK_ENTRY(w->txtdegree)));
+	if ((tmp == 2) && !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w->chkjulia))) {
+		setcplxplane(w->txtcplx, w->default_mcplxplane, w->drawing->allocation.width, w->drawing->allocation.height);
+	} else {
+		setcplxplane(w->txtcplx, w->default_cplxplane, w->drawing->allocation.width, w->drawing->allocation.height);
+	}
+}
+
+void statejctl(struct winctl *w)
+{
+	if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w->chkjulia))) {
+		gtk_widget_set_sensitive(w->lbljre, FALSE);
+		gtk_widget_set_sensitive(w->lbljim, FALSE);
+		gtk_widget_set_sensitive(w->txtjre, FALSE);
+		gtk_widget_set_sensitive(w->txtjim, FALSE);
+	} else {
+		gtk_widget_set_sensitive(w->lbljre, TRUE);
+		gtk_widget_set_sensitive(w->lbljim, TRUE);
+		gtk_widget_set_sensitive(w->txtjre, TRUE);
+		gtk_widget_set_sensitive(w->txtjim, TRUE);
+	}
+}
+
+static GtkWidget *convdiv_menu(struct winctl *w)
+{
+	GtkWidget *menu, *menuit;
+	menu = gtk_menu_new();
+	menuit = gtk_menu_item_new_with_mnemonic(LCONVCOLOR);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuit);
+	g_signal_connect(G_OBJECT(menuit), "activate", G_CALLBACK(change_convcol), w);
+	menuit = gtk_menu_item_new_with_mnemonic(LDIVCOLOR);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuit);
+	g_signal_connect(G_OBJECT(menuit), "activate", G_CALLBACK(change_divcol), w);
+	return menu;
+}
+
+static void chkj_toggled(GtkWidget *widget, struct winctl *w)
+{
+	statejctl(w);
+}
+
+static void toggle_zoomprop(GtkWidget *widget, struct winctl *w)
+{
+	w->zoomprop = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget));
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(w->mchkzoomprop), w->zoomprop);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(w->pmchkzoomprop), w->zoomprop);
+}
+
+static void menu_setcplxplane(GtkWidget *widget, struct winctl *w)
+{
+	setcplxplane(w->txtcplx, w->it_param.cplxplane, w->drawing->allocation.width, w->drawing->allocation.height);
+}
+
 void change_color_algo(GtkWidget *widget, struct winctl *w)
 {
 	GtkWidget *sync_obj;
@@ -415,17 +421,7 @@ void change_color_algo(GtkWidget *widget, struct winctl *w)
 		return;
 	}
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(sync_obj), TRUE);
-	w->color_func_index = *(gint *)g_object_get_data(G_OBJECT(widget) , "index");
-}
-
-void restoredefaults(struct winctl *w)
-{
-	gint tmp = atoi(gtk_entry_get_text(GTK_ENTRY(w->txtdegree)));
-	if ((tmp == 2) && !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w->chkjulia))) {
-		setcplxplane(w->txtcplx, MCPLXPLANE, w->drawing->allocation.width, w->drawing->allocation.height);
-	} else {
-		setcplxplane(w->txtcplx, CPLXPLANE, w->drawing->allocation.width, w->drawing->allocation.height);
-	}
+	w->it_param.color_func_index = *(gint *)g_object_get_data(G_OBJECT(widget) , "index");
 }
 
 static gboolean pjmenu(GtkWidget *widget, GdkEventButton *event, struct winctl *w)
@@ -447,26 +443,6 @@ static void insert_j(GtkWidget *widget, struct winctl *w)
 	gtk_entry_set_text(GTK_ENTRY(w->txtjim), buf);
 }
 
-void statejctl(struct winctl *w)
-{
-	if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w->chkjulia))) {
-		gtk_widget_set_sensitive(w->lbljre, FALSE);
-		gtk_widget_set_sensitive(w->lbljim, FALSE);
-		gtk_widget_set_sensitive(w->txtjre, FALSE);
-		gtk_widget_set_sensitive(w->txtjim, FALSE);
-	} else {
-		gtk_widget_set_sensitive(w->lbljre, TRUE);
-		gtk_widget_set_sensitive(w->lbljim, TRUE);
-		gtk_widget_set_sensitive(w->txtjre, TRUE);
-		gtk_widget_set_sensitive(w->txtjim, TRUE);
-	}
-}
-
-static void chkj_toggled(GtkWidget *widget, struct winctl *w)
-{
-	statejctl(w);
-}
-
 static void setcolor(GtkWidget *widget, GtkColorSelectionDialog *d)
 {
 	struct winctl *w = (struct winctl *)g_object_get_data(G_OBJECT(widget), "main_window");
@@ -486,7 +462,7 @@ static void change_color(gint type, gchar* title, struct winctl *w)
 	GtkWidget *colordialog;
 	GtkWidget *btnok;
 	GtkColorSelection *colorsel;
-	gint *t = (gint *)malloc(sizeof(gint));
+	gint *t = (gint *)g_malloc(sizeof(gint));
 	*t = type;
 	colordialog = gtk_color_selection_dialog_new(title);
 	btnok = GTK_COLOR_SELECTION_DIALOG(colordialog)->ok_button;
@@ -516,6 +492,18 @@ static void change_divcol(GtkWidget *widget, struct winctl *w)
 
 static void store_drawing(GtkWidget *widget, struct winctl *w)
 {
+	render_thread_pause(w->render_thread);
+	gtk_button_set_label(GTK_BUTTON(w->btncalc), LCALC);
 	store_drawing_show(w);
+}
+
+static void about(GtkWidget *widget, struct winctl *w)
+{
+	gtk_show_about_dialog(NULL,
+			"copyright", "Copyright (c) by Lexif Systems Inc.",
+	//		"license", "GPL",
+			"version", LVERSION,
+			"program-name", LWCAP,
+			NULL);
 }
 
