@@ -12,6 +12,8 @@
 #
 #===============================================================================
 
+include config.mk
+
 # DEBUG can be set to YES to include debugging info, or NO otherwise
 DEBUG           := YES
 
@@ -32,8 +34,9 @@ SOURCES         := main.c defs.c interface.c layout.c config.c \
 CC              := gcc
 
 # ------------  compiler flags  ------------------------------------------------
-DEBUG_CFLAGS    := -Wall -O0 -g
-RELEASE_CFLAGS  := -Wall -O2 -pipe -mtune=native -march=native
+DEBUG_CFLAGS    := -Wall -O0 -g -DPACKAGE="\"$(EXECUTABLE)\"" -DMO_DIR="\"$(MO_DIR)\""
+RELEASE_CFLAGS  := -Wall -O2 -pipe -mtune=native -march=native -DNDEBUG \
+	-DPACKAGE="\"$(EXECUTABLE)\"" -DMO_DIR="\"$(MO_DIR)\""
 
 #-------------  Directories  ---------------------------------------------------
 DEBUG_DIR       := ./debug
@@ -136,9 +139,21 @@ zip:
 
 .PHONY: all clean tarball zip depend
 
+i18nref:
+	export CFLAGS=$(INC_DIR_PKG_CONF); \
+	./bin/i18nref $(SOURCES)
+
+install:
+	@for POFILE in ./po/*.po; do  \
+		LOCALE_DIR=$(MO_DIR)/$$(basename $$POFILE .po)/LC_MESSAGES; \
+		msgfmt $$POFILE -o $$LOCALE_DIR/$(EXECUTABLE).mo; \
+	done; \
+	cp $(RELEASE_DIR)/$(EXECUTABLE) $(PREFIX)/bin
+
 #-------------  create dependencies  -------------------------------------------
 depend:
-	@gcc -E -MM $(SOURCES) > ./.depend
+	gcc -MM -E  $(SOURCES) | awk '{ printf("$(OUT_DIR)/%s\n", $$0); }' > ./.depend
 
 include .depend
+
 

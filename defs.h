@@ -4,48 +4,47 @@
 
 #include <gtk/gtk.h>
 
-#define LVERSION "0.2-rc1"
+#define LVERSION "0.3"
 
 // labels:
-#define LWCAP "Mandelbrot- / Juliamenge"
-#define LCAPM " Mandelbrotmenge [%0.2fs] "
-#define LCAPJ "Juliamenge [%0.2fs]"
-#define LCAPMRENDER "Mandelbrotmenge wird gerendert.."
-#define LCAPJRENDER "Juliamenge wird gerendert.."
-#define LCOORD "Komplexe Zahlenebene"
-#define LFKT "Funktionsdaten"
-#define LDEGREE "Mandelbrotmenge der Ordnung:"
-#define LITERMAX "I_terationstiefe"
-#define LCHKJULIA "_Julia Menge:"
-#define LJCONST "Konstante j"
-#define LJCRE "_Realteil:"
-#define LJCIM "_Imag.teil:"
-#define LGETJ "j von der _Mandelbrotmenge"
-#define LITER "Anzahl der Iterationen"
-#define LCALC " _Zeichnen "
-#define LSTOP " _Stop "
-#define LRESET " _Reset "
-#define LCLOSE " _Beenden "
-#define LTHREADPAUSE "Der Renderprozess würde gestoppt. Soll er fortgesetzt oder neugestarted werden?"
-#define LCONTDRAW " _Fortsetzen"
-#define LREDRAW "_Neustart"
-#define LCANCEL "_Abbrechen"
+#define LWCAP _("Mandelbrot- / Juliaset")
+#define LCAPM _(" Mandelbrotset [%0.2fs] ")
+#define LCAPJ _("Juliaset [%0.2fs]")
+#define LCAPMRENDER _("Rendering the Mandelbrotset..")
+#define LCAPJRENDER _("Rendering the Juliaset..")
+#define LCOORD _("Complex plane")
+#define LFKT _("Renderdata")
+#define LDEGREE _("Degree of Mandelbrotset:")
+#define LITERMAX _("I_terationdepth")
+#define LCHKJULIA _("_Juliaset:")
+#define LJCONST _("Constante j")
+#define LJCRE _("_Realpart:")
+#define LJCIM _("_Imag.part:")
+#define LGETJ _("Get j from the _Mandelbrotset")
+#define LCALC _(" _Render ")
+#define LSTOP _(" _Stop ")
+#define LRESET _(" _Reset ")
+#define LCLOSE _(" _Quit ")
+#define LTHREADPAUSE _("The renderprocess was interrupted. Continue or restart process?")
+#define LCONTDRAW _(" _Continue")
+#define LREDRAW _("_Restart")
+#define LCANCEL _("_Cancel")
 const gchar *LCPLX[4];
 #define TEXTLEN 20
 #define BUFSIZE 200
 #define NUMFORMAT "%.12f"
-#define LFILE "_Datei"
-#define LPREFMENU "_Einstellungen"
-#define LZOOMPROP "Seitenverhältnis beibehalten"
-#define LSETCPLX "Komplex _Ebene an Bildgröße anpassen"
-#define LSETCOLOR "F_arben für"
-#define LCOLORALGO "Aktueller _Farb-Algorithmus"
-#define LPREF "_Konfiguration"
-#define LHELP "?"
-#define LCONVCOLOR "_Konvergente Menge"
-#define LDIVCOLOR "_Divergente Menge"
-#define LCOLCAPCONV "Farben für die konvergente Menge"
-#define LCOLCAPDIV "Farben für die divergente Menge"
+#define LFILE _("_File")
+#define LPREFMENU _("_Option")
+#define LZOOMPROP _("Retain aspect ratio")
+#define LSETCPLX _("Adjust complex _plane to imagesize")
+#define LSETCOLOR _("Set color")
+#define LCOLORALGO _("_Color-Algorithm")
+#define LPREF _("_Configuration")
+#define LHELP _("?")
+#define LCONVCOLOR _("_Convergent set")
+#define LDIVCOLOR _("_Divergent set")
+#define LCOLCAPCONV _("Color of the convergent set")
+#define LCOLCAPDIV _("Color of the divergent set")
 const gchar *LPJMENU[6];
 const gdouble JDEFINES[12];
 #define COLORFUNC 4
@@ -54,48 +53,48 @@ const gdouble CPLXPLANE[4];
 const gdouble MCPLXPLANE[4];
 
 // save dialog:
-#define LSAVECAP "Speichern.."
-#define LSAVEPATH "Speichern unter.."
-#define LFILECHOOSER "Speichern.."
-#define LFILENAME "_Dateiname:"
-#define LRENDEROPT "Render - Optionen"
-#define LPICTOPT "Bildoptionen"
-#define LWIDTH "Breite (in Pixel):"
-#define LHEIGTH "Höhe (in Pixel):"
-#define LRESTOREVAL "Aktuelle _Werte"
-#define LSAVEBTN "_Speichern"
-#define LSAVECLOSE "S_chließen"
-#define LSSETCPLX "_Zahleneb. anpassen"
-#define LSAVELABEL "Bitte warten..\nGrafik wird gerendert..."
-#define LSAVELABELDONE "Grafik wurde gespeichert."
-#define LSAVELABELCANCEL "Rendervorgang abgebrochen."
-#define LSAVEDONE "_OK"
-#define LSAVECANCEL "Sind sie sicher, dass sie das Speicher abbrechen wollen?"
-#define LSAVEERROR "Error: Die Datei \"%s\" konnte nicht zum Schreiben geöffnet werden"
-#define LDIRERR "Das angegeben Verzeichnis existiert nicht!"
-#define LPERMERR "Sie haben nicht die notwendigen Rechte um die Datei im angegebenen Verzeichnis ablegen zu können!"
-#define LFILEERR "Sie müssen eine Dateiname angeben."
-#define LFILEEXISTS "Die Datei \"%s\" existiert bereits. Sind sie sicher, dass sie die Datei überschreiben wollen?"
+#define LSAVECAP _("Save..")
+#define LSAVEPATH _("Save as..")
+#define LFILECHOOSER _("Save..")
+#define LFILENAME _("_Filename:")
+#define LRENDEROPT _("Render - Option")
+#define LPICTOPT _("Imageoption")
+#define LWIDTH _("Width (in Pixel):")
+#define LHEIGTH _("Height (in Pixel):")
+#define LRESTOREVAL _("Reload _values")
+#define LSAVEBTN _("_Save")
+#define LSAVECLOSE _("_Close")
+#define LSSETCPLX _("_Adjust complexplane")
+#define LSAVELABEL _("Please wait..\nRendering image...")
+#define LSAVELABELDONE _("Saved Image to file.")
+#define LSAVELABELCANCEL _("Rendering was aborted by user.")
+#define LSAVEDONE _("_OK")
+#define LSAVECANCEL _("Abort rendering?")
+#define LSAVEERROR _("Error: Can't write file \"%s\".")
+#define LDIRERR _("Directory doesn't exist.")
+#define LPERMERR _("Can't save file. Permission denied.")
+#define LFILEERR _("You must enter a valid filename.")
+#define LFILEEXISTS _("The File \"%s\" already exists. Overwrite?")
 
 // preference dialog:
-#define LCPREF "Einstellungen"
-#define LPREFSTDCPLX "Komplexe Eb. (Std)"
-#define LPREFLSTDCPLX "Standardeinstellung für die Komplexe Zahlenebene:\n(Reset-Werte)"
-#define LPREFSTDMCPLX "Komplexe Eb. (Mb)"
-#define LPREFLSTDMCPLX "Standardeinstellung für die Komplexe Zahlenebene\nder Mandelbortmenge (Nur 2te Ordnung): "
-#define LPREFRESET "_Zurücksetzen"
-#define LPREFDEFAULT "_Defaultwerte"
-#define LPREFMISC "Verschiedenes"
-#define LPREFZOOMFACTOR "Zoomfaktor"
-#define LPREFLZOOM "Zoomfaktor in Prozent:"
-#define LPREFTHREADS "Threads"
-#define LPREFTHREADSCOUNT "Anzahl Render-Threads:"
-#define LPREFITER "Iterationstief"
-#define LPREFLITER "Iterationstiefe bei \"j von der Mandelbrotmenge\":"
-#define LPREFFOCUSCOLOR "Focus-Farbe"
-#define LPREFLFOCUSCOLOR "Farbe des Zoom-Vierecks:"
-#define LPREFOK "_OK"
-#define LPREFCANCEL "_Abbrechen"
+#define LCPREF _("Option")
+#define LPREFSTDCPLX _("Complex Plane (Std)")
+#define LPREFLSTDCPLX _("Complex Plane\n(Reset-Werte)")
+#define LPREFSTDMCPLX _("Complex Plane (Mb)")
+#define LPREFLSTDMCPLX _("Complex Plane of the Mandelbortset: ")
+#define LPREFRESET _("_Reset")
+#define LPREFDEFAULT _("_Default Values")
+#define LPREFMISC _("Miscellaneous")
+#define LPREFZOOMFACTOR _("Zoomfactor")
+#define LPREFLZOOM _("Zoomfactor in percent:")
+#define LPREFTHREADS _("Threads")
+#define LPREFTHREADSCOUNT _("Number of Render-Threads:")
+#define LPREFITER _("Iterationdepth")
+#define LPREFLITER _("Iterationdepth of \"Get j from the Mandelbrotset\":")
+#define LPREFFOCUSCOLOR _("Focus color")
+#define LPREFLFOCUSCOLOR _("Color of zoom-rectangle:")
+#define LPREFOK _("_OK")
+#define LPREFCANCEL _("_Cancel")
 
 // response:
 #define RESPONSE_CONTDRAW 1
@@ -108,16 +107,15 @@ const gdouble MCPLXPLANE[4];
 #define MAXTHREADS 512
 #define LOWDEGREE -100.0
 #define HIDEGREE 100.0
-#define ERRVAL "\"%s\" ist kein gültiger Wert eingeben!"
-#define ERRREMAXMIN "Der Min-Realteil muss kleiner als der Max-Realteil sein."
-#define ERRIMMAXMIN "Der Min-Imaginärteil muss kleiner als der Max-Imaginärteil sein."
-#define ERRITERMAX "Gegen sie einen gültigen Wert für maximale Anzahle der Iterationen ein. (Zw. %d und %d)"
-#define ERRDEGREE "Gegen sie einen gültigen Wert für die Ordnung der Mandelbrotmenge. (Zw. %f und %f)"
-
+#define ERRVAL _("\"%s\" is not a valid Number")
+#define ERRREMAXMIN _("The minimum realpart must be smaller than the maximum realpart.")
+#define ERRIMMAXMIN _("The minimum imaginarypart must be smaller than the maximum imaginarypart.")
+#define ERRITERMAX _("Please enter a valid number for the iterationdepth. (Between %d and %d)")
+#define ERRDEGREE _("Please enter a valid number for the degree of the Mandelbrotset. (Between %f and %f)")
 
 // config file
-#define CONFIGDIR "mandelbrot"
-#define CONFIGFILE "config.xml"
+//#define CONFIGDIR "mandelbrot"
+#define CONFIGFILE "mandelbrot.xml"
 
 #define INTERPOLATION GDK_INTERP_BILINEAR
 
