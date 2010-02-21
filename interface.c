@@ -55,21 +55,25 @@ void run_interface(gchar *file_name)
 	w->render_thread = render_thread_new((IdleFunc)redraw_idle, (ThreaddestroyFunc)render_thread_done, (gpointer)w);
 
 	//	dirname = g_path_get_dirname(file_name);
+	#ifdef CONFIGDIR
+		dirname = g_build_filename(g_get_user_config_dir(), CONFIGDIR, NULL);
+	#else
+		dirname = g_strdup(g_get_user_config_dir());
+	#endif
 
-	dirname = g_build_filename(g_get_user_config_dir(), CONFIGDIR, NULL);
 	if (!g_file_test(dirname, G_FILE_TEST_IS_DIR)) {
 		g_mkdir(dirname, 0777);
 	}
 	w->configfile = g_build_filename(dirname, CONFIGFILE, NULL);
 	g_free(dirname);
 
-//	succ_load_config = load_config(w);
+	//	succ_load_config = load_config(w);
 	succ_load_config = configure_interface(w, LOAD_CONFIG);
-	
+
 	w->succ_render = FALSE;
 	gtk_widget_show_all(w->win);
 
-	while (gtk_events_pending()) 
+	while (gtk_events_pending())
 		gtk_main_iteration();
 
 	if (!succ_load_config) {
@@ -153,10 +157,10 @@ static gboolean start_calc(struct winctl *w)
 	w->succ_render = FALSE;
 	if (w->pixbufcalc)
 		g_object_unref(w->pixbufcalc);
-	if (w->pixbufshow) 
+	if (w->pixbufshow)
 		g_object_unref(w->pixbufshow);
 
-	w->pixbufcalc = gdk_pixbuf_new(GDK_COLORSPACE_RGB, 
+	w->pixbufcalc = gdk_pixbuf_new(GDK_COLORSPACE_RGB,
 	    TRUE, 8, w->drawing->allocation.width, w->drawing->allocation.height);
 	clearpixbuf(w->pixbufcalc);
 	w->pixbufshow = g_object_ref(w->pixbufcalc);
@@ -256,7 +260,7 @@ void calc(GtkWidget *widget, struct winctl *w)
 				}
 				render_thread_resume(w->render_thread);
 				break;
-			case RESPONSE_REDRAW: 
+			case RESPONSE_REDRAW:
 				render_thread_kill(w->render_thread);
 				start_calc(w);
 				break;
@@ -309,7 +313,7 @@ static gboolean configure_event(GtkWidget *widget, GdkEventConfigure *event, str
 {
 	gint width = w->drawing->allocation.width;
 	gint height = w->drawing->allocation.height;
-	if (!w->pixbufcalc)  {
+	if (!w->pixbufcalc) {
 		// Create blank screen on startup:
 		w->pixbufcalc = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, width, height);
 		clearpixbuf(w->pixbufcalc);
@@ -329,7 +333,7 @@ static gboolean configure_event(GtkWidget *widget, GdkEventConfigure *event, str
 
 enum zoom_mode { ZOOM_IN, ZOOM_OUT };
 
-static void zoom(struct winctl *w, enum zoom_mode mode) 
+static void zoom(struct winctl *w, enum zoom_mode mode)
 {
 	gdouble b_re, b_im, dim, dre;
 	gdouble val[4];
@@ -357,7 +361,7 @@ static void zoom(struct winctl *w, enum zoom_mode mode)
 	setcplxplane(w->txtcplx, val, width, height);
 	d = gdk_display_get_default();
 	s = gdk_display_get_default_screen(d);
-	gdk_display_get_pointer(d, NULL, &pwx, &pwy, NULL); 
+	gdk_display_get_pointer(d, NULL, &pwx, &pwy, NULL);
 	gdk_display_warp_pointer(d, s, pwx - px + width / 2, pwy - py + height / 2);
 	start_calc(w);
 }
@@ -462,7 +466,7 @@ static gboolean motion_notify_event(GtkWidget *widget, GdkEventMotion *event, st
 			if (delta) {
 				d = gdk_display_get_default();
 				s = gdk_display_get_default_screen(d);
-				gdk_display_get_pointer(d, NULL, &px, &py, NULL); 
+				gdk_display_get_pointer(d, NULL, &px, &py, NULL);
 				py += sh * delta;
 				gdk_display_warp_pointer(d, s, px, py);
 				return TRUE;
@@ -498,7 +502,7 @@ static gboolean button_release_event(GtkWidget *widget, GdkEventButton *event, s
 		return TRUE;
 	}
 	if (w->pixbufshow) {
-		gdk_draw_pixbuf(widget->window, NULL, w->pixbufshow, 
+		gdk_draw_pixbuf(widget->window, NULL, w->pixbufshow,
 		    0, 0, 0, 0, -1, -1,
 		    GDK_RGB_DITHER_NORMAL, 0, 0);
 	}

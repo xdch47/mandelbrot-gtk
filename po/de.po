@@ -1,0 +1,305 @@
+msgid ""
+msgstr ""
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-02-21 15:58+0100\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Min-Realpart:"
+msgstr "Min-Realteil:"
+
+msgid "Max-Realpart:"
+msgstr "Max-Realteil:"
+
+msgid "Min-Imag.part:"
+msgstr "Min-Imag.teil:"
+
+msgid "Max-Imag.part:"
+msgstr "Max-Imag.teil"
+
+msgid "Dendrit"
+msgstr "Dendrit"
+
+msgid "San-Marco-Dragon"
+msgstr "San-Marco-Drache"
+
+msgid "Julia-Dragon"
+msgstr "Julia-Drache"
+
+msgid "Fatou-Set"
+msgstr "Fatou Staub"
+
+msgid "Douady rabbit"
+msgstr "Douady Kanichen"
+
+msgid "Misiurewicz-Point"
+msgstr "misiurewicz-Punkt"
+
+msgid "Blue constants"
+msgstr "Blau Konstanten"
+
+msgid "Convergent / Divergent Set"
+msgstr "Konvergente / Divergent Menge"
+
+msgid "Dixius-Algo_1"
+msgstr "Dixius-Algo_1"
+
+msgid "Dixius-Algo_2"
+msgstr "Dixius-Algo_2"
+
+msgid "Mandelbrot- / Juliaset"
+msgstr "Mandelbrot- / Juliamenge"
+
+#, c-format
+msgid " Mandelbrotset [%0.2fs] "
+msgstr "Mandelbrotmenge [%0.2fs]"
+
+#, c-format
+msgid "Juliaset [%0.2fs]"
+msgstr "Juliamenge [%0.2fs]"
+
+msgid "Rendering the Mandelbrotset.."
+msgstr "Mandelbrotmenge wird gerendert.."
+
+msgid "Rendering the Juliaset.."
+msgstr "Juliamenge wird gerendert.."
+
+msgid "Complex plane"
+msgstr "Komplexe Zahlenebene"
+
+msgid "Renderdata"
+msgstr "Funktionsdaten"
+
+msgid "Degree of Mandelbrotset:"
+msgstr "Mandelbrotmenge der Ordnung:"
+
+msgid "I_terationdepth"
+msgstr "I_terationstiefe"
+
+msgid "_Juliaset:"
+msgstr "_Julia Menge:"
+
+msgid "Constante j"
+msgstr "Konstante j"
+
+msgid "_Realpart:"
+msgstr "_Realteil:"
+
+msgid "_Imag.part:"
+msgstr "_Imag.teil:"
+
+msgid "Get j from the _Mandelbrotset"
+msgstr "j von der _Mandelbrotmenge"
+
+msgid " _Render "
+msgstr " _Zeichnen "
+
+msgid " _Stop "
+msgstr " _Stop "
+
+msgid " _Reset "
+msgstr " _Reset "
+
+msgid " _Quit "
+msgstr " _Beenden "
+
+msgid "The renderprocess was interrupted. Continue or restart process?"
+msgstr ""
+"Der Renderprozess wurde gestoppt. Soll er fortgesetzt oder neugestartet "
+"werden?"
+
+msgid " _Continue"
+msgstr "_Fortsetzen"
+
+msgid "_Restart"
+msgstr "_Neustart"
+
+msgid "_Cancel"
+msgstr "_Abbrechen"
+
+msgid "_File"
+msgstr "_Datei"
+
+msgid "_Option"
+msgstr "_Einstellungen"
+
+msgid "Retain aspect ratio"
+msgstr "Seitenverhältnis beibehalten"
+
+msgid "Adjust complex _plane to imagesize"
+msgstr "Komplexe _Ebene an Bildgröße anpassen"
+
+msgid "Set color"
+msgstr "F_arben für"
+
+msgid "_Color-Algorithm"
+msgstr "Aktueller _Farb-Algorithmus"
+
+msgid "_Configuration"
+msgstr "_Konfiguration"
+
+msgid "?"
+msgstr "?"
+
+msgid "_Convergent set"
+msgstr "_Konvergente Menge"
+
+msgid "_Divergent set"
+msgstr "_Divergente Menge"
+
+msgid "Color of the convergent set"
+msgstr "Farben für die konvergente Menge"
+
+msgid "Color of the divergent set"
+msgstr "Farben für die divergente Menge"
+
+msgid "Save.."
+msgstr "Speichern.."
+
+msgid "Save as.."
+msgstr "Speichern unter.."
+
+msgid "_Filename:"
+msgstr "_Dateiname:"
+
+msgid "Render - Option"
+msgstr "Render - Optionen"
+
+msgid "Imageoption"
+msgstr "Bildoptionen"
+
+msgid "Width (in Pixel):"
+msgstr "Breite (in Pixel):"
+
+msgid "Height (in Pixel):"
+msgstr "Höhe (in Pixel):"
+
+msgid "Reload _values"
+msgstr "Aktuelle _Werte"
+
+msgid "_Save"
+msgstr "_Speichern"
+
+msgid "_Close"
+msgstr "S_chließen"
+
+msgid "_Adjust complexplane"
+msgstr "_Zahleneb. anpassen"
+
+msgid ""
+"Please wait..\n"
+"Rendering image..."
+msgstr ""
+"Bitte warten..\n"
+"Grafik wird gerendert..."
+
+msgid "Saved Image to file."
+msgstr "Grafik wurde gespeichert."
+
+msgid "Rendering was aborted by user."
+msgstr "Rendervorgang abgebrochen."
+
+msgid "_OK"
+msgstr "_OK"
+
+msgid "Abort rendering?"
+msgstr "Sind sie sicher, dass sie das Speichern abbrechen wollen?"
+
+#, c-format
+msgid "Error: Can't write file \"%s\"."
+msgstr "Error: Die Datei \"%s\" konnte nicht zum Schreiben geöffnet werden."
+
+msgid "Directory doesn't exist."
+msgstr "Das angegeben Verzeichnis existiert nicht!"
+
+msgid "Can't save file. Permission denied."
+msgstr ""
+"Sie haben nicht die notwendigen Rechte um die Datei im angegebenen "
+"Verzeichnis ablegen zu können!"
+
+msgid "You must enter a valid filename."
+msgstr "Sie müssen eine Dateiname angeben."
+
+#, c-format
+msgid "The File \"%s\" already exists. Overwrite?"
+msgstr ""
+"Die Datei \"%s\" existiert bereits. Sind sie sicher, dass sie die Datei "
+"überschreiben wollen?"
+
+msgid "Option"
+msgstr "Einstellungen"
+
+msgid "Complex Plane (Std)"
+msgstr "Komplexe Eb. (Std)"
+
+msgid ""
+"Complex Plane\n"
+"(Reset-Werte)"
+msgstr ""
+"Standardeinstellung für die komplexe Zahlenebene:\n"
+"(Reset-Werte)"
+
+msgid "Complex Plane (Mb)"
+msgstr "Komplexe Eb. (Mb)"
+
+msgid "Complex Plane of the Mandelbortset: "
+msgstr ""
+"Standardeinstellung für die komplexe Zahlenebene\n"
+"der Mandelbrotmenge (Nur 2te Ordnung):"
+
+msgid "_Reset"
+msgstr "_Zurücksetzen"
+
+msgid "_Default Values"
+msgstr "_Defaultwerte"
+
+msgid "Miscellaneous"
+msgstr "Verschiedenes"
+
+msgid "Zoomfactor"
+msgstr "Zoomfaktor"
+
+msgid "Zoomfactor in percent:"
+msgstr "Zoomfaktor in Prozent:"
+
+msgid "Threads"
+msgstr "Threads"
+
+msgid "Number of Render-Threads:"
+msgstr "Anzahl Render-Threads:"
+
+msgid "Iterationdepth"
+msgstr "Iterationstiefe"
+
+msgid "Iterationdepth of \"Get j from the Mandelbrotset\":"
+msgstr "Iterationstiefe bei \"j von der Mandelbrotmenge\":"
+
+msgid "Focus color"
+msgstr "Focus Farbe"
+
+msgid "Color of zoom-rectangle:"
+msgstr "Farbe des Zoom-Vierecks:"
+
+#, c-format
+msgid "\"%s\" is not a valid Number"
+msgstr "\"%s\" ist kein gültiger Wert!"
+
+msgid "The minimum realpart must be smaller than the maximum realpart."
+msgstr "Der Min-Realteil muss kleiner als der Max-Realteil sein."
+
+msgid ""
+"The minimum imaginarypart must be smaller than the maximum imaginarypart."
+msgstr "Der Min-Imaginärteil muss kleiner als der Max-Imaginärteil sein."
+
+#, c-format
+msgid "Please enter a valid number for the iterationdepth. (Between %d and %d)"
+msgstr ""
+"Geben sie einen gültigen Wert für die maximale Anzahl der Iterationen ein. "
+"(Zw. %d und %d)"
+
+#, c-format
+msgid ""
+"Please enter a valid number for the degree of the Mandelbrotset. (Between %f "
+"and %f)"
+msgstr ""
+"Geben sie einen gültigen Wert für die Ordnung der Mandelbrotmenge ein. (Zw. %"
+"f und %f)"

@@ -1,20 +1,21 @@
 
+#include <glib/gi18n.h>
 #include "defs.h"
 
 const gchar *LCPLX[4] = {
-		"Min-Realteil:",
-		"Max-Realteil:",
-		"Min-Imag.teil:",
-		"Max-Imag.teil:"
+		N_("Min-Realpart:"),
+		N_("Max-Realpart:"),
+		N_("Min-Imag.part:"),
+		N_("Max-Imag.part:")
 		};
 
 const gchar *LPJMENU[6] = {
-	"Dendrit",
-	"San-Marco-Drache",
-	"Julia-Drachen",
-	"Fatou-Staub",
-	"Douady Kanichen",
-	"Misiurewicz-Punkt"
+	N_("Dendrit"),
+	N_("San-Marco-Dragon"),
+	N_("Julia-Dragon"),
+	N_("Fatou-Set"),
+	N_("Douady rabbit"),
+	N_("Misiurewicz-Point")
 };
 
 const gdouble JDEFINES[12] = { 
@@ -25,14 +26,13 @@ const gdouble JDEFINES[12] = {
         0,      0.666,  // fatou
         -0.127, 0.775,  // douady
         -0.562, 0.643   // misiurewic-point
-
 };
 
 const gchar *LCOLOR[COLORFUNC] = {
-	"Blaukonstanten",
-	"Konvergent / Divergente Menge",
-	"Dixius-Algo_1",
-	"Dixius-Algo_2"
+	N_("Blue constants"),
+	N_("Convergent / Divergent Set"),
+	N_("Dixius-Algo_1"),
+	N_("Dixius-Algo_2")
 };
 
 // default complex plane

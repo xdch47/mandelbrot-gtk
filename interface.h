@@ -4,6 +4,7 @@
 
 #include <gtk/gtk.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
+#include <glib/gi18n.h>
 #include "defs.h"
 #include "render.h"
 #include "draw.h"
@@ -80,10 +81,6 @@ gboolean validate_degree(GtkWidget *txtdegree, gdouble *degree, GtkWidget *win);
 void errdialog(GtkWindow *win, gchar *msg);
 
 // implemented by config.c
-//int load_config(struct winctl *w);
-//void save_config(struct winctl *w);
-
-// implemented by xmlconf.h
 enum configtype { LOAD_CONFIG, STORE_CONFIG };
 gboolean configure_interface(struct winctl *w, enum configtype type);
 

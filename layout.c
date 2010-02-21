@@ -23,7 +23,7 @@ GtkWidget *createcplxplane(GtkWidget *txtcplx[4])
 	frame = gtk_frame_new(LCOORD);
 	table = gtk_table_new(4, 2, FALSE);
 	for (i = 0; i <= 3; ++i) {
-		lbl = gtk_label_new(LCPLX[i]);
+		lbl = gtk_label_new(_(LCPLX[i]));
 		gtk_misc_set_alignment(GTK_MISC(lbl), 0.0, 0.0);
 		gtk_table_attach(GTK_TABLE(table), lbl, 0, 1, i, i + 1, GTK_SHRINK | GTK_FILL, GTK_SHRINK, 0, 0);
 		txtcplx[i] = gtk_entry_new();
@@ -131,8 +131,8 @@ struct winctl *buildinterface(void)
 	radio_group = pradio_group = NULL;
 	for (i = 0; i < COLORFUNC; ++i) {
 		gint *index = (gint *)g_malloc(sizeof(gint));
-		w->mcolalgo[i] = gtk_radio_menu_item_new_with_mnemonic(radio_group, LCOLOR[i]);
-		psmenuit = gtk_radio_menu_item_new_with_mnemonic(pradio_group, LCOLOR[i]);
+		w->mcolalgo[i] = gtk_radio_menu_item_new_with_mnemonic(radio_group, _(LCOLOR[i]));
+		psmenuit = gtk_radio_menu_item_new_with_mnemonic(pradio_group, _(LCOLOR[i]));
 		radio_group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(w->mcolalgo[i]));
 		pradio_group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(psmenuit));
 		*index = i;
@@ -170,7 +170,7 @@ struct winctl *buildinterface(void)
 	for (i = 0; i < 6; ++i) {
 		gint *index = (gint *)g_malloc(sizeof(gint));
 		*index = i;
-		menuit = gtk_menu_item_new_with_label(LPJMENU[i]);
+		menuit = gtk_menu_item_new_with_label(_(LPJMENU[i]));
 		gtk_menu_shell_append(GTK_MENU_SHELL(w->pjmenu), menuit);
 		g_object_set_data_full(G_OBJECT(menuit), "index", index, g_free);
 		g_signal_connect(G_OBJECT(menuit), "activate", G_CALLBACK(insert_j), w);

@@ -1,0 +1,283 @@
+msgid "Min-Realpart:"
+msgstr ""
+
+msgid "Max-Realpart:"
+msgstr ""
+
+msgid "Min-Imag.part:"
+msgstr ""
+
+msgid "Max-Imag.part:"
+msgstr ""
+
+msgid "Dendrit"
+msgstr ""
+
+msgid "San-Marco-Dragon"
+msgstr ""
+
+msgid "Julia-Dragon"
+msgstr ""
+
+msgid "Fatou-Set"
+msgstr ""
+
+msgid "Douady rabbit"
+msgstr ""
+
+msgid "Misiurewicz-Point"
+msgstr ""
+
+msgid "Blue constants"
+msgstr ""
+
+msgid "Convergent / Divergent Set"
+msgstr ""
+
+msgid "Dixius-Algo_1"
+msgstr ""
+
+msgid "Dixius-Algo_2"
+msgstr ""
+
+msgid "Mandelbrot- / Juliaset"
+msgstr ""
+
+#, c-format
+msgid " Mandelbrotset [%0.2fs] "
+msgstr ""
+
+#, c-format
+msgid "Juliaset [%0.2fs]"
+msgstr ""
+
+msgid "Rendering the Mandelbrotset.."
+msgstr ""
+
+msgid "Rendering the Juliaset.."
+msgstr ""
+
+msgid "Complex plane"
+msgstr ""
+
+msgid "Renderdata"
+msgstr ""
+
+msgid "Degree of Mandelbrotset:"
+msgstr ""
+
+msgid "I_terationdepth"
+msgstr ""
+
+msgid "_Juliaset:"
+msgstr ""
+
+msgid "Constante j"
+msgstr ""
+
+msgid "_Realpart:"
+msgstr ""
+
+msgid "_Imag.part:"
+msgstr ""
+
+msgid "Get j from the _Mandelbrotset"
+msgstr ""
+
+msgid " _Render "
+msgstr ""
+
+msgid " _Stop "
+msgstr ""
+
+msgid " _Reset "
+msgstr ""
+
+msgid " _Quit "
+msgstr ""
+
+msgid "The renderprocess was interrupted. Continue or restart process?"
+msgstr ""
+
+msgid " _Continue"
+msgstr ""
+
+msgid "_Restart"
+msgstr ""
+
+msgid "_Cancel"
+msgstr ""
+
+msgid "_File"
+msgstr ""
+
+msgid "_Option"
+msgstr ""
+
+msgid "Retain aspect ratio"
+msgstr ""
+
+msgid "Adjust complex _plane to imagesize"
+msgstr ""
+
+msgid "Set color"
+msgstr ""
+
+msgid "_Color-Algorithm"
+msgstr ""
+
+msgid "_Configuration"
+msgstr ""
+
+msgid "?"
+msgstr ""
+
+msgid "_Convergent set"
+msgstr ""
+
+msgid "_Divergent set"
+msgstr ""
+
+msgid "Color of the convergent set"
+msgstr ""
+
+msgid "Color of the divergent set"
+msgstr ""
+
+msgid "Save.."
+msgstr ""
+
+msgid "Save as.."
+msgstr ""
+
+msgid "_Filename:"
+msgstr ""
+
+msgid "Render - Option"
+msgstr ""
+
+msgid "Imageoption"
+msgstr ""
+
+msgid "Width (in Pixel):"
+msgstr ""
+
+msgid "Height (in Pixel):"
+msgstr ""
+
+msgid "Reload _values"
+msgstr ""
+
+msgid "_Save"
+msgstr ""
+
+msgid "_Close"
+msgstr ""
+
+msgid "_Adjust complexplane"
+msgstr ""
+
+msgid ""
+"Please wait..\n"
+"Rendering image..."
+msgstr ""
+
+msgid "Saved Image to file."
+msgstr ""
+
+msgid "Rendering was aborted by user."
+msgstr ""
+
+msgid "_OK"
+msgstr ""
+
+msgid "Abort rendering?"
+msgstr ""
+
+#, c-format
+msgid "Error: Can't write file \"%s\"."
+msgstr ""
+
+msgid "Directory doesn't exist."
+msgstr ""
+
+msgid "Can't save file. Permission denied."
+msgstr ""
+
+msgid "You must enter a valid filename."
+msgstr ""
+
+#, c-format
+msgid "The File \"%s\" already exists. Overwrite?"
+msgstr ""
+
+msgid "Option"
+msgstr ""
+
+msgid "Complex Plane (Std)"
+msgstr ""
+
+msgid ""
+"Complex Plane\n"
+"(Reset-Werte)"
+msgstr ""
+
+msgid "Complex Plane (Mb)"
+msgstr ""
+
+msgid "Complex Plane of the Mandelbortset: "
+msgstr ""
+
+msgid "_Reset"
+msgstr ""
+
+msgid "_Default Values"
+msgstr ""
+
+msgid "Miscellaneous"
+msgstr ""
+
+msgid "Zoomfactor"
+msgstr ""
+
+msgid "Zoomfactor in percent:"
+msgstr ""
+
+msgid "Threads"
+msgstr ""
+
+msgid "Number of Render-Threads:"
+msgstr ""
+
+msgid "Iterationdepth"
+msgstr ""
+
+msgid "Iterationdepth of \"Get j from the Mandelbrotset\":"
+msgstr ""
+
+msgid "Focus color"
+msgstr ""
+
+msgid "Color of zoom-rectangle:"
+msgstr ""
+
+#, c-format
+msgid "\"%s\" is not a valid Number"
+msgstr ""
+
+msgid "The minimum realpart must be smaller than the maximum realpart."
+msgstr ""
+
+msgid ""
+"The minimum imaginarypart must be smaller than the maximum imaginarypart."
+msgstr ""
+
+#, c-format
+msgid "Please enter a valid number for the iterationdepth. (Between %d and %d)"
+msgstr ""
+
+#, c-format
+msgid ""
+"Please enter a valid number for the degree of the Mandelbrotset. (Between %f "
+"and %f)"
+msgstr ""
