@@ -96,7 +96,7 @@ msgstr ""
 msgid " _Quit "
 msgstr ""
 
-msgid "The renderprocess has been interrupted. Continue or restart process?"
+msgid "The renderprocess was interrupted. Continue or restart process?"
 msgstr ""
 
 msgid " _Continue"

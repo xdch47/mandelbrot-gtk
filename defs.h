@@ -25,7 +25,7 @@
 #define LSTOP _(" _Stop ")
 #define LRESET _(" _Reset ")
 #define LCLOSE _(" _Quit ")
-#define LTHREADPAUSE _("The renderprocess has been interrupted. Continue or restart process?")
+#define LTHREADPAUSE _("The renderprocess was interrupted. Continue or restart process?")
 #define LCONTDRAW _(" _Continue")
 #define LREDRAW _("_Restart")
 #define LCANCEL _("_Cancel")

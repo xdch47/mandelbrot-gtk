@@ -1,3 +1,4 @@
 
-PREFIX=~
-MO_DIR=/usr/share/locale
+PREFIX:=/usr/local
+MO_DIR:=/usr/share/locale
+DOC_DIR:=/usr/share/doc

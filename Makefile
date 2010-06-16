@@ -15,10 +15,10 @@
 include config.mk
 
 # DEBUG can be set to YES to include debugging info, or NO otherwise
-DEBUG           := YES
+DEBUG           := NO
 
 # ------------  run executable out of this Makefile  (yes/no)  -----------------
-START           := YES
+START           := NO
 
 #------------  start application with params -----------------------------------
 PARAMS          :=
@@ -137,18 +137,25 @@ zip:
 	@lokaldir=`pwd`; lokaldir=$${lokaldir##*/}; \
 		zip -r  $$lokaldir.zip * -x $(ZIP_EXCLUDE)
 
-.PHONY: all clean tarball zip depend
+.PHONY: all clean tarball zip depend install depend
 
-i18nref:
-	export CFLAGS=$(INC_DIR_PKG_CONF); \
-	./bin/i18nref $(SOURCES)
-
-install:
+install: 
+	@[ -f $(RELEASE_DIR)/$(EXECUTABLE) ] || ( echo "Executable does not exist. You must build the project before install."; exit 1 )
 	@for POFILE in ./po/*.po; do  \
-		LOCALE_DIR=$(MO_DIR)/$$(basename $$POFILE .po)/LC_MESSAGES; \
+		LOCALE_DIR=${DESTDIR}$(MO_DIR)/$$(basename $$POFILE .po)/LC_MESSAGES; \
+		install -d $$LOCALE_DIR; \
 		msgfmt $$POFILE -o $$LOCALE_DIR/$(EXECUTABLE).mo; \
-	done; \
-	cp $(RELEASE_DIR)/$(EXECUTABLE) $(PREFIX)/bin
+	done
+	@install -D -m644 ./mandelbrot.xml ${DESTDIR}/$(DOC_DIR)/$(EXECUTABLE)/mandelbrot.xml
+	@install -D -m755 $(RELEASE_DIR)/$(EXECUTABLE) ${DESTDIR}$(PREFIX)/bin/$(EXECUTABLE)
+
+uninstall:
+	for POFILE in ./po/*.po; do  \
+		LOCALE_DIR=${DESTDIR}$(MO_DIR)/$$(basename $$POFILE .po)/LC_MESSAGES; \
+		rm -rf  $$LOCALE_DIR/$(EXECUTABLE).mo; \
+	done
+	rm -rf ${DESTDIR}$(PREFIX)/bin/$(EXECUTABLE)
+	rm -rf ${DESTDIR}$(DOC_DIR)/$(EXECUTABLE)
 
 #-------------  create dependencies  -------------------------------------------
 depend:
