@@ -122,7 +122,7 @@ $(OUT_DIR)/%.o:	%.c
 clean:
 	@rm -rf $(DEBUG_DIR) $(RELEASE_DIR)
 
-# ------------ tarball generation ----------------------------------------------
+# ------------  tarball generation  --------------------------------------------
 tarball:
 	lokaldir=`pwd`; lokaldir=$${lokaldir##*/};   \
 		rm --force $$lokaldir.tar.gz;             \
@@ -132,13 +132,13 @@ tarball:
 		--verbose                                 \
 		--file  $$lokaldir.tar.gz *
 
-# ------------ zip -------------------------------------------------------------
+# ------------  zip  -----------------------------------------------------------
 zip:
 	@lokaldir=`pwd`; lokaldir=$${lokaldir##*/}; \
 		zip -r  $$lokaldir.zip * -x $(ZIP_EXCLUDE)
 
-.PHONY: all clean tarball zip depend install depend
 
+# ------------  installl  ------------------------------------------------------
 install: 
 	@[ -f $(RELEASE_DIR)/$(EXECUTABLE) ] || ( echo "Executable does not exist. You must build the project before install."; exit 1 )
 	@for POFILE in ./po/*.po; do  \
@@ -149,6 +149,7 @@ install:
 	@install -D -m644 ./mandelbrot.xml ${DESTDIR}/$(DOC_DIR)/$(EXECUTABLE)/mandelbrot.xml
 	@install -D -m755 $(RELEASE_DIR)/$(EXECUTABLE) ${DESTDIR}$(PREFIX)/bin/$(EXECUTABLE)
 
+# ------------  uninstall  -----------------------------------------------------
 uninstall:
 	for POFILE in ./po/*.po; do  \
 		LOCALE_DIR=${DESTDIR}$(MO_DIR)/$$(basename $$POFILE .po)/LC_MESSAGES; \
@@ -157,10 +158,15 @@ uninstall:
 	rm -rf ${DESTDIR}$(PREFIX)/bin/$(EXECUTABLE)
 	rm -rf ${DESTDIR}$(DOC_DIR)/$(EXECUTABLE)
 
+# ------------  xgettext  ------------------------------------------------------
+xgettext:
+	xgettext -k_ -kN_ -LC --no-location --omit-header -o ./po/messages.pot *.c *.h
+	
+
 #-------------  create dependencies  -------------------------------------------
 depend:
 	gcc -MM -E  $(SOURCES) | awk '{ printf("$(OUT_DIR)/%s\n", $$0); }' > ./.depend
 
 include .depend
 
-
+.PHONY: all clean tarball zip depend install uninstall xgettext depend
