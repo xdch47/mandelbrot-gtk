@@ -1,11 +1,46 @@
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
+#include <libxml/xmlwriter.h>
 #include <glib.h>
 #include <string.h>
 #include "interface.h"
-#include "config.h"
 #include "defs.h"
+
+#define XML_ROOTNODE "mandelbrot_julia_set"
+#define XML_RENDERDATA "renderdata"
+#define XML_ITERMAX "itermax"
+#define XML_DEGREE "degree"
+#define XML_TYPE "type"
+#define XML_TYPE_JULIA "julia-set"
+#define XML_TYPE_MANDELBROT "mandelbrot-set"
+#define XML_RESTORE "reset"
+#define XML_COMPLEXPLANE "complexplane"
+#define XML_MIN_RE "minre"
+#define XML_MAX_RE "maxre"
+#define XML_MIN_IM "minim"
+#define XML_MAX_IM "maxim"
+#define XML_CONST_J "const_j"
+#define XML_REPART_J "repart_j"
+#define XML_IMPART_J "impart_j"
+#define XML_SIZE "size"
+#define XML_WIDTH "width"
+#define XML_HEIGHT "height"
+#define XML_PREFERENCE "preference"
+#define XML_COLOR "color"
+#define XML_COLOR_ALGO "algorithmen"
+#define XML_COLOR_DIVERGENT "divergent-color"
+#define XML_COLOR_CONVERGET "convergent-color"
+#define XML_COLOR_FOCUS "focus-color"
+#define XML_COLOR_RED "red"
+#define XML_COLOR_GREEN "green"
+#define XML_COLOR_BLUE "blue"
+#define XML_ZOOM_PROP "zoom-prop"
+#define XML_ZOOM_FACTOR "zoom-factor"
+#define XML_GET_J_ITERMAX "get_j-itermax"
+#define XML_THREADS_COUNT "threadscount"
+#define XML_DEFMCPLXPLANE "default-mandelbrot-complexplane"
+#define XML_DEFCPLXPLANE "default-complexplane"
 
 #define forall_node(node) for (; node != NULL; node = node->next)
 #define BUFSIZE_NUMTOSTR 30
@@ -58,7 +93,7 @@ static void init_config(struct winctl *w)
 	w->focus_color.green = 0xffff;
 	w->focus_color.blue = 0xffff;
 	w->get_j = FALSE;
-	w->get_jitermax = DEFITERMAX,
+	w->get_jitermax = DEFITERMAX;
 	gtk_widget_modify_fg(w->drawing, GTK_STATE_NORMAL, &w->focus_color);
 }
 
@@ -77,6 +112,131 @@ static char *ltostr(long int l, char *c)
 {
 	g_snprintf(c, BUFSIZE_NUMTOSTR, "%ld", l);
 	return c;
+}
+
+static void writexmlfile(const struct winctl *w)
+{
+	xmlTextWriter *writer;
+	xmlDoc *doc;
+	char c[BUFSIZE_NUMTOSTR];
+
+	writer = xmlNewTextWriterDoc(&doc, 0);
+	if (writer == NULL) {
+		printf("Error creating the xml-file.\b");
+		return;
+	}
+
+	xmlTextWriterStartDocument(writer, "1.0", "UTF-8", "yes");
+	xmlTextWriterStartElement(writer, BAD_CAST XML_ROOTNODE);
+	
+	#ifdef XML_COMMENTS
+	xmlTextWriterWriteComment(writer, BAD_CAST " data for rendering ");
+	#endif
+
+	xmlTextWriterStartElement(writer, BAD_CAST XML_RENDERDATA);
+	xmlTextWriterWriteAttribute(writer, BAD_CAST XML_ITERMAX, BAD_CAST ltostr(w->it_param.itermax, c));
+	xmlTextWriterWriteAttribute(writer, BAD_CAST XML_DEGREE, BAD_CAST ascii_dtostr(w->it_param.degree, c));
+	if (w->it_param.type == MANDELBROT_SET)
+		xmlTextWriterWriteAttribute(writer, BAD_CAST XML_TYPE, BAD_CAST XML_TYPE_MANDELBROT);
+	else 
+		xmlTextWriterWriteAttribute(writer, BAD_CAST XML_TYPE, BAD_CAST XML_TYPE_JULIA);
+
+	// <renderdata>
+	// <complexplane>
+	xmlTextWriterStartElement(writer, BAD_CAST XML_COMPLEXPLANE);
+	xmlTextWriterWriteElement(writer, BAD_CAST XML_MIN_RE, BAD_CAST ascii_dtostr(w->it_param.cplxplane[0], c));
+	xmlTextWriterWriteElement(writer, BAD_CAST XML_MAX_RE, BAD_CAST ascii_dtostr(w->it_param.cplxplane[1], c));
+	xmlTextWriterWriteElement(writer, BAD_CAST XML_MIN_IM, BAD_CAST ascii_dtostr(w->it_param.cplxplane[2], c));
+	xmlTextWriterWriteElement(writer, BAD_CAST XML_MAX_IM, BAD_CAST ascii_dtostr(w->it_param.cplxplane[3], c));
+	// </complexplane>
+	xmlTextWriterEndElement(writer);
+	// <const_j>
+	xmlTextWriterStartElement(writer, BAD_CAST XML_CONST_J);
+	xmlTextWriterWriteElement(writer, BAD_CAST XML_REPART_J, BAD_CAST ascii_dtostr(w->it_param.j[0], c));
+	xmlTextWriterWriteElement(writer, BAD_CAST XML_IMPART_J, BAD_CAST ascii_dtostr(w->it_param.j[1], c));
+	// </const_j>
+	xmlTextWriterEndElement(writer);
+	// </renderdata>
+	xmlTextWriterEndElement(writer);
+
+	#ifdef XML_COMMENTS
+	xmlTextWriterWriteComment(writer, BAD_CAST " windowsize ");
+	#endif
+	// <size>
+	xmlTextWriterStartElement(writer, BAD_CAST XML_SIZE);
+	xmlTextWriterWriteElement(writer, BAD_CAST XML_WIDTH, BAD_CAST ltostr(GTK_WIDGET(w->win)->allocation.width, c));
+	xmlTextWriterWriteElement(writer, BAD_CAST XML_HEIGHT, BAD_CAST ltostr(GTK_WIDGET(w->win)->allocation.height, c));
+	xmlTextWriterEndElement(writer);
+	// </size>
+
+	// <preference>
+	xmlTextWriterStartElement(writer, BAD_CAST XML_PREFERENCE);
+	// <color>
+	xmlTextWriterStartElement(writer, BAD_CAST XML_COLOR);
+	xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_ALGO, BAD_CAST ltostr(w->it_param.color_func_index, c));
+	// <convergent-color/>
+	xmlTextWriterWriteElement(writer, BAD_CAST XML_COLOR_CONVERGET, BAD_CAST NULL);
+	xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_RED, BAD_CAST ltostr(w->convcol.red, c));
+	xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_GREEN, BAD_CAST ltostr(w->convcol.green, c));
+	xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_BLUE, BAD_CAST ltostr(w->convcol.blue, c));
+	xmlTextWriterEndElement(writer);
+	// <divergent-color/>
+	xmlTextWriterWriteElement(writer, BAD_CAST XML_COLOR_DIVERGENT, BAD_CAST NULL);
+	xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_RED, BAD_CAST ltostr(w->divcol.red, c));
+	xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_GREEN, BAD_CAST ltostr(w->divcol.green, c));
+	xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_BLUE, BAD_CAST ltostr(w->divcol.blue, c));
+	xmlTextWriterEndElement(writer);
+	// <focus-color/>
+	xmlTextWriterWriteElement(writer, BAD_CAST XML_COLOR_FOCUS, BAD_CAST NULL);
+	xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_RED, BAD_CAST ltostr(w->focus_color.red, c));
+	xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_GREEN, BAD_CAST ltostr(w->focus_color.green, c));
+	xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_BLUE, BAD_CAST ltostr(w->focus_color.blue, c));
+	xmlTextWriterEndElement(writer);
+	// </color>
+	xmlTextWriterEndElement(writer);
+
+	#ifdef XML_COMMENTS
+	xmlTextWriterWriteComment(writer, BAD_CAST " zooming proportional ");
+	#endif
+	xmlTextWriterWriteElement(writer, BAD_CAST XML_ZOOM_PROP, BAD_CAST ltostr(w->zoomprop, c));
+	xmlTextWriterWriteElement(writer, BAD_CAST XML_ZOOM_FACTOR, BAD_CAST ascii_dtostr(w->zoomfactor, c));
+	xmlTextWriterWriteElement(writer, BAD_CAST XML_GET_J_ITERMAX, BAD_CAST ltostr(w->get_jitermax, c));
+
+	#ifdef XML_COMMENTS
+	xmlTextWriterWriteComment(writer, BAD_CAST " number of render threads ");
+	#endif
+	xmlTextWriterWriteElement(writer, BAD_CAST XML_THREADS_COUNT, BAD_CAST ltostr(w->it_param.threads_count, c));
+
+	#ifdef XML_COMMENTS
+	xmlTextWriterWriteComment(writer, BAD_CAST " default vaules for reset ");
+	#endif
+	// <default-complexplane>
+	xmlTextWriterStartElement(writer, BAD_CAST XML_DEFCPLXPLANE);
+	xmlTextWriterWriteElement(writer, BAD_CAST XML_MIN_RE, BAD_CAST ascii_dtostr(w->default_cplxplane[0], c));
+	xmlTextWriterWriteElement(writer, BAD_CAST XML_MAX_RE, BAD_CAST ascii_dtostr(w->default_cplxplane[1], c));
+	xmlTextWriterWriteElement(writer, BAD_CAST XML_MIN_IM, BAD_CAST ascii_dtostr(w->default_cplxplane[2], c));
+	xmlTextWriterWriteElement(writer, BAD_CAST XML_MAX_IM, BAD_CAST ascii_dtostr(w->default_cplxplane[3], c));
+	// </default-complexplane>
+	xmlTextWriterEndElement(writer);
+	// <default-mandelbrot-complexplane>
+	xmlTextWriterStartElement(writer, BAD_CAST XML_DEFMCPLXPLANE);
+	xmlTextWriterWriteElement(writer, BAD_CAST XML_MIN_RE, BAD_CAST ascii_dtostr(w->default_mcplxplane[0], c));
+	xmlTextWriterWriteElement(writer, BAD_CAST XML_MAX_RE, BAD_CAST ascii_dtostr(w->default_mcplxplane[1], c));
+	xmlTextWriterWriteElement(writer, BAD_CAST XML_MIN_IM, BAD_CAST ascii_dtostr(w->default_mcplxplane[2], c));
+	xmlTextWriterWriteElement(writer, BAD_CAST XML_MAX_IM, BAD_CAST ascii_dtostr(w->default_mcplxplane[3], c));
+	// </default-mandelbrot-complexplane>
+	xmlTextWriterEndElement(writer);
+
+	// </preference>
+	xmlTextWriterEndElement(writer);
+	// </mandelbrot_julia_set<
+	xmlTextWriterEndElement(writer);
+
+	xmlFreeTextWriter(writer);
+
+	xmlSaveFormatFile(w->configfile, doc, 1);
+
+	xmlFreeDoc(doc);
 }
 
 static double xmlNodeContenttod(xmlNode *node)
@@ -351,7 +511,7 @@ static gboolean setxmlconfig(xmlNode *node, struct winctl *w, enum configtype ty
 			// size:
 			xmlsize(node->children, GTK_WINDOW(w->win), type);
 		} else if (strcmp((char *)node->name, XML_PREFERENCE) == 0) {
-			// preferenc:
+			// preference:
 			xmlpreference(node->children, w, type);
 		}
 	}
@@ -371,19 +531,25 @@ gboolean configure_interface(struct winctl *w, enum configtype type)
 
 	LIBXML_TEST_VERSION
 
-	doc = xmlReadFile(w->configfile, NULL, 0);
-	if (doc == NULL) {
+	if (!g_file_test(w->configfile, G_FILE_TEST_EXISTS)) {
 		iterate_param_init(&w->it_param, w->it_param.threads_count);
-	}
+		writexmlfile(w);
+	} else {
+		doc = xmlReadFile(w->configfile, NULL, 0);
+		if (doc != NULL && (root_node = xmlDocGetRootElement(doc)) != NULL) {
+			/* setup the config-file */
+			retval = setxmlconfig(root_node->children, w, type);
 
-	if ((root_node = xmlDocGetRootElement(doc)) != NULL)
-		retval = setxmlconfig(root_node->children, w, type);
-
-	if (type == STORE_CONFIG) {
-		xmlSaveFormatFile(w->configfile, doc, 1);
-		xmlFreeDoc(doc);
-		xmlCleanupParser();
-		return TRUE;
+			if (type == STORE_CONFIG) {
+				xmlSaveFormatFile(w->configfile, doc, 1);
+				xmlFreeDoc(doc);
+				xmlCleanupParser();
+				return TRUE;
+			} else {
+				xmlFreeDoc(doc);
+				xmlCleanupParser();
+			}
+		}
 	}
 	
 	for (i = 0; i < 4; ++i) {
@@ -401,7 +567,5 @@ gboolean configure_interface(struct winctl *w, enum configtype type)
 	gtk_widget_modify_fg(w->drawing, GTK_STATE_NORMAL, &w->focus_color);
 
 	iterate_param_init(&w->it_param, w->it_param.threads_count);
-	xmlFreeDoc(doc);
-	xmlCleanupParser();
 	return retval;
 }

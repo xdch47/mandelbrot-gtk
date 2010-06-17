@@ -15,10 +15,10 @@
 include config.mk
 
 # DEBUG can be set to YES to include debugging info, or NO otherwise
-DEBUG           := NO
+DEBUG           := YES
 
 # ------------  run executable out of this Makefile  (yes/no)  -----------------
-START           := NO
+START           := YES
 
 #------------  start application with params -----------------------------------
 PARAMS          :=
@@ -141,13 +141,13 @@ zip:
 # ------------  installl  ------------------------------------------------------
 install: 
 	@[ -f $(RELEASE_DIR)/$(EXECUTABLE) ] || ( echo "Executable does not exist. You must build the project before install."; exit 1 )
-	@for POFILE in ./po/*.po; do  \
+	@for POFILE in ./po/*.po; do \
 		LOCALE_DIR=${DESTDIR}$(MO_DIR)/$$(basename $$POFILE .po)/LC_MESSAGES; \
 		install -d $$LOCALE_DIR; \
 		msgfmt $$POFILE -o $$LOCALE_DIR/$(EXECUTABLE).mo; \
 	done
-	@install -D -m644 ./mandelbrot.xml ${DESTDIR}/$(DOC_DIR)/$(EXECUTABLE)/mandelbrot.xml
-	@install -D -m755 $(RELEASE_DIR)/$(EXECUTABLE) ${DESTDIR}$(PREFIX)/bin/$(EXECUTABLE)
+	install -D -m644 ./mandelbrot.xml ${DESTDIR}$(DOC_DIR)/$(EXECUTABLE)/mandelbrot.xml
+	install -D -m755 $(RELEASE_DIR)/$(EXECUTABLE) ${DESTDIR}$(PREFIX)/bin/$(EXECUTABLE)
 
 # ------------  uninstall  -----------------------------------------------------
 uninstall:

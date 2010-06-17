@@ -2,7 +2,7 @@
 ./debug/defs.o: defs.c defs.h
 ./debug/interface.o: interface.c interface.h defs.h render.h draw.h
 ./debug/layout.o: layout.c interface.h defs.h render.h draw.h
-./debug/config.o: config.c interface.h defs.h render.h draw.h config.h
+./debug/config.o: config.c interface.h defs.h render.h draw.h
 ./debug/render.o: render.c render.h defs.h
 ./debug/iterate.o: iterate.c render.h iterate_template.c
 ./debug/draw.o: draw.c draw.h defs.h render.h

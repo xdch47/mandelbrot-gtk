@@ -1,6 +1,6 @@
 
+#include <math.h>
 #include "draw.h"
-#include "math.h"
 
 const guchar clbluedef[4 * 48] = {
 	  0,   0,   0, 255,
