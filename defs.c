@@ -39,13 +39,13 @@ const gchar *LCOLOR[COLORFUNC] = {
 const gdouble CPLXPLANE[4] = {
 	-1.167,
 	1.167,
-	-1.33,
-	1.33
+	-1.5,
+	1.5
 };
 
 // special default mandelbrotset(2):
 const gdouble MCPLXPLANE[4] = {
-	-2.167,
+	-2.165,
 	1.167,
 	-1.33,
 	1.33

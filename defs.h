@@ -67,6 +67,7 @@ const gdouble MCPLXPLANE[4];
 #define LSSETCPLX _("_Adjust complexplane")
 #define LSAVELABEL _("Please wait..\nRendering image...")
 #define LSAVELABELDONE _("Saved Image to file.")
+// FIXME: grammar?
 #define LSAVELABELCANCEL _("Rendering was aborted by user.")
 #define LSAVEDONE _("_OK")
 #define LSAVECANCEL _("Abort rendering?")
@@ -113,9 +114,18 @@ const gdouble MCPLXPLANE[4];
 #define ERRITERMAX _("Please enter a valid number for the iterationdepth. (Between %d and %d)")
 #define ERRDEGREE _("Please enter a valid number for the degree of the Mandelbrotset. (Between %f and %f)")
 
-// config file
+// config-file with comments:
+#define XML_COMMENTS
+
+// config-file location
 //#define CONFIGDIR "mandelbrot"
 #define CONFIGFILE "mandelbrot.xml"
+
+// default values:
+#define ZOOMFACTOR 0.65
+#define DEFITERMAX 100
+#define CALCTHREADS 4
+
 
 #define INTERPOLATION GDK_INTERP_BILINEAR
 
