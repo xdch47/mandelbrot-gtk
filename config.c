@@ -114,7 +114,7 @@ static char *ltostr(long int l, char *c)
 	return c;
 }
 
-static void writexmlfile(const struct winctl *w)
+static void writexmlfile(const char *configfile, const struct winctl *w, enum xmlsavetype type)
 {
 	xmlTextWriter *writer;
 	xmlDoc *doc;
@@ -150,24 +150,29 @@ static void writexmlfile(const struct winctl *w)
 	xmlTextWriterWriteElement(writer, BAD_CAST XML_MAX_IM, BAD_CAST ascii_dtostr(w->it_param.cplxplane[3], c));
 	// </complexplane>
 	xmlTextWriterEndElement(writer);
-	// <const_j>
-	xmlTextWriterStartElement(writer, BAD_CAST XML_CONST_J);
-	xmlTextWriterWriteElement(writer, BAD_CAST XML_REPART_J, BAD_CAST ascii_dtostr(w->it_param.j[0], c));
-	xmlTextWriterWriteElement(writer, BAD_CAST XML_IMPART_J, BAD_CAST ascii_dtostr(w->it_param.j[1], c));
-	// </const_j>
-	xmlTextWriterEndElement(writer);
+
+	if (type == SAVE_APPSETTINGS || w->it_param.type == JULIA_SET) {
+		// <const_j>
+		xmlTextWriterStartElement(writer, BAD_CAST XML_CONST_J);
+		xmlTextWriterWriteElement(writer, BAD_CAST XML_REPART_J, BAD_CAST ascii_dtostr(w->it_param.j[0], c));
+		xmlTextWriterWriteElement(writer, BAD_CAST XML_IMPART_J, BAD_CAST ascii_dtostr(w->it_param.j[1], c));
+		// </const_j>
+		xmlTextWriterEndElement(writer);
+	}
 	// </renderdata>
 	xmlTextWriterEndElement(writer);
 
-	#ifdef XML_COMMENTS
-	xmlTextWriterWriteComment(writer, BAD_CAST " windowsize ");
-	#endif
-	// <size>
-	xmlTextWriterStartElement(writer, BAD_CAST XML_SIZE);
-	xmlTextWriterWriteElement(writer, BAD_CAST XML_WIDTH, BAD_CAST ltostr(GTK_WIDGET(w->win)->allocation.width, c));
-	xmlTextWriterWriteElement(writer, BAD_CAST XML_HEIGHT, BAD_CAST ltostr(GTK_WIDGET(w->win)->allocation.height, c));
-	xmlTextWriterEndElement(writer);
-	// </size>
+	if (type == SAVE_APPSETTINGS) {
+		#ifdef XML_COMMENTS
+		xmlTextWriterWriteComment(writer, BAD_CAST " windowsize ");
+		#endif
+		// <size>
+		xmlTextWriterStartElement(writer, BAD_CAST XML_SIZE);
+		xmlTextWriterWriteElement(writer, BAD_CAST XML_WIDTH, BAD_CAST ltostr(GTK_WIDGET(w->win)->allocation.width, c));
+		xmlTextWriterWriteElement(writer, BAD_CAST XML_HEIGHT, BAD_CAST ltostr(GTK_WIDGET(w->win)->allocation.height, c));
+		xmlTextWriterEndElement(writer);
+		// </size>
+	}
 
 	// <preference>
 	xmlTextWriterStartElement(writer, BAD_CAST XML_PREFERENCE);
@@ -186,46 +191,50 @@ static void writexmlfile(const struct winctl *w)
 	xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_GREEN, BAD_CAST ltostr(w->divcol.green, c));
 	xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_BLUE, BAD_CAST ltostr(w->divcol.blue, c));
 	xmlTextWriterEndElement(writer);
-	// <focus-color/>
-	xmlTextWriterWriteElement(writer, BAD_CAST XML_COLOR_FOCUS, BAD_CAST NULL);
-	xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_RED, BAD_CAST ltostr(w->focus_color.red, c));
-	xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_GREEN, BAD_CAST ltostr(w->focus_color.green, c));
-	xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_BLUE, BAD_CAST ltostr(w->focus_color.blue, c));
-	xmlTextWriterEndElement(writer);
+	if (type == SAVE_APPSETTINGS) {
+		// <focus-color/>
+		xmlTextWriterWriteElement(writer, BAD_CAST XML_COLOR_FOCUS, BAD_CAST NULL);
+		xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_RED, BAD_CAST ltostr(w->focus_color.red, c));
+		xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_GREEN, BAD_CAST ltostr(w->focus_color.green, c));
+		xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_BLUE, BAD_CAST ltostr(w->focus_color.blue, c));
+		xmlTextWriterEndElement(writer);
+	}
 	// </color>
 	xmlTextWriterEndElement(writer);
 
-	#ifdef XML_COMMENTS
-	xmlTextWriterWriteComment(writer, BAD_CAST " zooming proportional ");
-	#endif
-	xmlTextWriterWriteElement(writer, BAD_CAST XML_ZOOM_PROP, BAD_CAST ltostr(w->zoomprop, c));
-	xmlTextWriterWriteElement(writer, BAD_CAST XML_ZOOM_FACTOR, BAD_CAST ascii_dtostr(w->zoomfactor, c));
-	xmlTextWriterWriteElement(writer, BAD_CAST XML_GET_J_ITERMAX, BAD_CAST ltostr(w->get_jitermax, c));
+	if (type == SAVE_APPSETTINGS) {
+		#ifdef XML_COMMENTS
+		xmlTextWriterWriteComment(writer, BAD_CAST " zooming proportional ");
+		#endif
+		xmlTextWriterWriteElement(writer, BAD_CAST XML_ZOOM_PROP, BAD_CAST ltostr(w->zoomprop, c));
+		xmlTextWriterWriteElement(writer, BAD_CAST XML_ZOOM_FACTOR, BAD_CAST ascii_dtostr(w->zoomfactor, c));
+		xmlTextWriterWriteElement(writer, BAD_CAST XML_GET_J_ITERMAX, BAD_CAST ltostr(w->get_jitermax, c));
 
-	#ifdef XML_COMMENTS
-	xmlTextWriterWriteComment(writer, BAD_CAST " number of render threads ");
-	#endif
-	xmlTextWriterWriteElement(writer, BAD_CAST XML_THREADS_COUNT, BAD_CAST ltostr(w->it_param.threads_count, c));
+		#ifdef XML_COMMENTS
+		xmlTextWriterWriteComment(writer, BAD_CAST " number of render threads ");
+		#endif
+		xmlTextWriterWriteElement(writer, BAD_CAST XML_THREADS_COUNT, BAD_CAST ltostr(w->it_param.threads_count, c));
 
-	#ifdef XML_COMMENTS
-	xmlTextWriterWriteComment(writer, BAD_CAST " default vaules for reset ");
-	#endif
-	// <default-complexplane>
-	xmlTextWriterStartElement(writer, BAD_CAST XML_DEFCPLXPLANE);
-	xmlTextWriterWriteElement(writer, BAD_CAST XML_MIN_RE, BAD_CAST ascii_dtostr(w->default_cplxplane[0], c));
-	xmlTextWriterWriteElement(writer, BAD_CAST XML_MAX_RE, BAD_CAST ascii_dtostr(w->default_cplxplane[1], c));
-	xmlTextWriterWriteElement(writer, BAD_CAST XML_MIN_IM, BAD_CAST ascii_dtostr(w->default_cplxplane[2], c));
-	xmlTextWriterWriteElement(writer, BAD_CAST XML_MAX_IM, BAD_CAST ascii_dtostr(w->default_cplxplane[3], c));
-	// </default-complexplane>
-	xmlTextWriterEndElement(writer);
-	// <default-mandelbrot-complexplane>
-	xmlTextWriterStartElement(writer, BAD_CAST XML_DEFMCPLXPLANE);
-	xmlTextWriterWriteElement(writer, BAD_CAST XML_MIN_RE, BAD_CAST ascii_dtostr(w->default_mcplxplane[0], c));
-	xmlTextWriterWriteElement(writer, BAD_CAST XML_MAX_RE, BAD_CAST ascii_dtostr(w->default_mcplxplane[1], c));
-	xmlTextWriterWriteElement(writer, BAD_CAST XML_MIN_IM, BAD_CAST ascii_dtostr(w->default_mcplxplane[2], c));
-	xmlTextWriterWriteElement(writer, BAD_CAST XML_MAX_IM, BAD_CAST ascii_dtostr(w->default_mcplxplane[3], c));
-	// </default-mandelbrot-complexplane>
-	xmlTextWriterEndElement(writer);
+		#ifdef XML_COMMENTS
+		xmlTextWriterWriteComment(writer, BAD_CAST " default vaules for reset ");
+		#endif
+		// <default-complexplane>
+		xmlTextWriterStartElement(writer, BAD_CAST XML_DEFCPLXPLANE);
+		xmlTextWriterWriteElement(writer, BAD_CAST XML_MIN_RE, BAD_CAST ascii_dtostr(w->default_cplxplane[0], c));
+		xmlTextWriterWriteElement(writer, BAD_CAST XML_MAX_RE, BAD_CAST ascii_dtostr(w->default_cplxplane[1], c));
+		xmlTextWriterWriteElement(writer, BAD_CAST XML_MIN_IM, BAD_CAST ascii_dtostr(w->default_cplxplane[2], c));
+		xmlTextWriterWriteElement(writer, BAD_CAST XML_MAX_IM, BAD_CAST ascii_dtostr(w->default_cplxplane[3], c));
+		// </default-complexplane>
+		xmlTextWriterEndElement(writer);
+		// <default-mandelbrot-complexplane>
+		xmlTextWriterStartElement(writer, BAD_CAST XML_DEFMCPLXPLANE);
+		xmlTextWriterWriteElement(writer, BAD_CAST XML_MIN_RE, BAD_CAST ascii_dtostr(w->default_mcplxplane[0], c));
+		xmlTextWriterWriteElement(writer, BAD_CAST XML_MAX_RE, BAD_CAST ascii_dtostr(w->default_mcplxplane[1], c));
+		xmlTextWriterWriteElement(writer, BAD_CAST XML_MIN_IM, BAD_CAST ascii_dtostr(w->default_mcplxplane[2], c));
+		xmlTextWriterWriteElement(writer, BAD_CAST XML_MAX_IM, BAD_CAST ascii_dtostr(w->default_mcplxplane[3], c));
+		// </default-mandelbrot-complexplane>
+		xmlTextWriterEndElement(writer);
+	}
 
 	// </preference>
 	xmlTextWriterEndElement(writer);
@@ -234,7 +243,7 @@ static void writexmlfile(const struct winctl *w)
 
 	xmlFreeTextWriter(writer);
 
-	xmlSaveFormatFile(w->configfile, doc, 1);
+	xmlSaveFormatFile(configfile, doc, 1);
 
 	xmlFreeDoc(doc);
 }
@@ -526,14 +535,15 @@ gboolean configure_interface(struct winctl *w, enum configtype type)
 	char c[BUFSIZE_NUMTOSTR];
 	gboolean retval = FALSE;
 
+	LIBXML_TEST_VERSION
+
 	if (type == LOAD_CONFIG)
 		init_config(w);
 
-	LIBXML_TEST_VERSION
-
 	if (!g_file_test(w->configfile, G_FILE_TEST_EXISTS)) {
-		iterate_param_init(&w->it_param, w->it_param.threads_count);
-		writexmlfile(w);
+		writexmlfile(w->configfile, w, SAVE_APPSETTINGS);
+		if (type == STORE_CONFIG) 
+			return TRUE;
 	} else {
 		doc = xmlReadFile(w->configfile, NULL, 0);
 		if (doc != NULL && (root_node = xmlDocGetRootElement(doc)) != NULL) {

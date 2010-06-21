@@ -298,11 +298,19 @@ static void ssetcplxplane(GtkWidget *widget, struct savectl *s)
 
 static void btnsave_clicked(GtkWidget *widget, struct savectl *s)
 {
+	gchar *dirname;
+	gchar *basename;
+	gchar *ext;
+	gboolean chkdir;
+	guint width, height;
+	guint i;
+	gboolean equal;
+
 	s->filename = (gchar *)g_malloc(sizeof(gchar) * strlen(gtk_entry_get_text(GTK_ENTRY(s->txtfilename))) + 5);
 	g_stpcpy(s->filename, gtk_entry_get_text(GTK_ENTRY(s->txtfilename)));
-	gchar *dirname = g_path_get_dirname(s->filename);
+	*dirname = g_path_get_dirname(s->filename);
 	// check the directory for existing and read/write permission:
-	gboolean chkdir = g_file_test(dirname, G_FILE_TEST_IS_DIR);
+	chkdir = g_file_test(dirname, G_FILE_TEST_IS_DIR);
 
 	if (!chkdir) {
 		errdialog(GTK_WINDOW(s->win), LDIRERR);
@@ -319,14 +327,14 @@ static void btnsave_clicked(GtkWidget *widget, struct savectl *s)
 	}
 #endif
 	g_free(dirname);
-	gchar *basename = g_path_get_basename(s->filename);
+	basename = g_path_get_basename(s->filename);
 	if (basename == NULL) {
 		errdialog(GTK_WINDOW(s->win), LFILEERR);
 		g_free(basename);
 		g_free(s->filename);
 	}
 
-	gchar *ext = g_strrstr(basename, ".");
+	ext = g_strrstr(basename, ".");
 	if (strcmp(ext, ".jpg") == 0) {
 		g_stpcpy(ext, ".jpeg");
 	}
@@ -348,10 +356,10 @@ static void btnsave_clicked(GtkWidget *widget, struct savectl *s)
 		gtk_widget_destroy(dialog);
 	}
 
-	guint width = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(s->sbtwidth));
-	guint height = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(s->sbtheight));
-	guint i;
-	gboolean equal = TRUE;
+	width = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(s->sbtwidth));
+	height = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(s->sbtheight));
+	i;
+	equal = TRUE;
 	
 	if (!(validate_cplx(s->txtcplx, s->it_param.cplxplane, s->win) && validate_itermax(s->txtitermax, &s->it_param.itermax, s->win))) {
 		return;

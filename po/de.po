@@ -102,10 +102,8 @@ msgstr " _Reset "
 msgid " _Quit "
 msgstr " _Beenden "
 
-#, fuzzy
 msgid "The renderprocess has been interrupted. Continue or restart process?"
-msgstr ""
-"Der Renderprozess wurde gestoppt. Soll er fortgesetzt oder neugestartet "
+msgstr "Der Renderprozess wurde gestoppt. Soll er fortgesetzt oder neugestartet "
 "werden?"
 
 msgid " _Continue"

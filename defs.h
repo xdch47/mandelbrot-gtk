@@ -126,7 +126,6 @@ const gdouble MCPLXPLANE[4];
 #define DEFITERMAX 100
 #define CALCTHREADS 4
 
-
 #define INTERPOLATION GDK_INTERP_BILINEAR
 
 #endif /* __DEF_H__ */

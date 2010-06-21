@@ -44,7 +44,6 @@ void iterate_param_init(struct iterate_param *param, guint count)
 {
 	guint i, j;
 	guint xo, yo;
-	// TODO: implement for various number of threads
 	param->threads_count = count;
 	param->xstart = (guint *)g_malloc(sizeof(guint) * count);
 	param->ystart = (guint *)g_malloc(sizeof(guint) * count);
