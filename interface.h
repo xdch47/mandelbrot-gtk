@@ -82,6 +82,7 @@ void errdialog(GtkWindow *win, gchar *msg);
 
 // implemented by config.c
 enum configtype { LOAD_CONFIG, STORE_CONFIG };
+enum xmlsavetype { SAVE_IMAGE, SAVE_APPSETTINGS };
 gboolean configure_interface(struct winctl *w, enum configtype type);
 
 // implemented by pref.c

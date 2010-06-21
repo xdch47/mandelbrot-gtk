@@ -4,7 +4,7 @@
 
 #define sqr(x) (x) * (x)
 // using dirty define/include-hacks for fast-inline templates...
-// look at iterate_template.c
+// look at iterate_template.h
 
 // mandelbrot_set function:
 #undef IT_FUNC_NAME
@@ -29,7 +29,7 @@
 			break; \
 	} 
 #undef IT_FIRST_FOR
-#include "iterate_template.c"
+#include "iterate_template.h"
 
 // mandelbrot_set function with status:
 #undef IT_FUNC_NAME
@@ -39,7 +39,7 @@
 	guint *col_count = param->row_count + id;
 #undef IT_FIRST_FOR
 #define IT_FIRST_FOR ++*col_count;
-#include "iterate_template.c"
+#include "iterate_template.h"
 
 // julia_set function:
 #undef IT_FUNC_NAME
@@ -66,7 +66,7 @@
 			break; \
 	} 
 #undef IT_FIRST_FOR
-#include "iterate_template.c"
+#include "iterate_template.h"
 
 // julia_set function with status:
 #undef IT_FUNC_NAME
@@ -78,7 +78,7 @@
 	guint *col_count = param->row_count + id;
 #undef IT_FIRST_FOR
 #define IT_FIRST_FOR ++*col_count;
-#include "iterate_template.c"
+#include "iterate_template.h"
 
 // mandelbrot_set_deg:
 #undef IT_FUNC_NAME
@@ -106,7 +106,7 @@
 		} \
 	} 
 #undef IT_FIRST_FOR
-#include "iterate_template.c"
+#include "iterate_template.h"
 #undef IT_FUNC_NAME
 #define IT_FUNC_NAME mandelbrot_set_deg_row_count
 #undef IT_VAR
@@ -115,7 +115,7 @@
 	guint *col_count = param->row_count + id;
 #undef IT_FIRST_FOR
 #define IT_FIRST_FOR ++*col_count;
-#include "iterate_template.c"
+#include "iterate_template.h"
 
 // julia_set_deg function:
 #undef IT_FUNC_NAME
@@ -145,7 +145,7 @@
 		} \
 	}
 #undef IT_FIRST_FOR
-#include "iterate_template.c"
+#include "iterate_template.h"
 
 // julia_set function with status
 #undef IT_FUNC_NAME
@@ -157,5 +157,5 @@
 	jim = param->j[1]; \
 	guint *col_count = param->row_count + id;
 #define IT_FIRST_FOR ++(*col_count);
-#include "iterate_template.c"
+#include "iterate_template.h"
 

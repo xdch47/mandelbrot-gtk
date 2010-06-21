@@ -15,10 +15,10 @@
 include config.mk
 
 # DEBUG can be set to YES to include debugging info, or NO otherwise
-DEBUG           := YES
+DEBUG           := NO
 
 # ------------  run executable out of this Makefile  (yes/no)  -----------------
-START           := YES
+START           := NO
 
 #------------  start application with params -----------------------------------
 PARAMS          :=

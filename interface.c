@@ -67,7 +67,6 @@ void run_interface(gchar *file_name)
 	w->configfile = g_build_filename(dirname, CONFIGFILE, NULL);
 	g_free(dirname);
 
-	//	succ_load_config = load_config(w);
 	succ_load_config = configure_interface(w, LOAD_CONFIG);
 
 	w->succ_render = FALSE;
@@ -197,6 +196,7 @@ static gboolean start_calc(struct winctl *w)
 
 static void render_thread_done(gboolean succ, struct winctl *w)
 {
+	gchar buf[50];
 	g_timer_stop(w->timer);
 	if (succ) {
 		gdk_threads_enter();
@@ -214,7 +214,6 @@ static void render_thread_done(gboolean succ, struct winctl *w)
 	gdk_threads_enter();
 	w->succ_render = succ;
 	gtk_button_set_label(GTK_BUTTON(w->btncalc), LCALC);
-	gchar buf[50];
 	if (w->it_param.type == MANDELBROT_SET) {
 		g_snprintf(buf, 50, LCAPM, g_timer_elapsed(w->timer, NULL));
 	} else {
@@ -268,8 +267,8 @@ void calc(GtkWidget *widget, struct winctl *w)
 				break;
 			}
 		} else {
-			g_timer_stop(w->timer);
 			gchar buf[50];
+			g_timer_stop(w->timer);
 			if (w->it_param.type == MANDELBROT_SET) {
 				g_snprintf(buf, 50, LCAPM, g_timer_elapsed(w->timer, NULL));
 			} else {

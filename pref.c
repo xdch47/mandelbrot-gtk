@@ -24,6 +24,7 @@ void preference_show(struct winctl *w)
 {
 	GtkWidget *vbox1, *vbox2, *vbox3, *hbox1, *align;
 	GtkWidget *notebook, *frame, *lbl, *btn1, *btn2;
+	gchar buf[30];
 
 	struct prefctl *p = (struct prefctl *)g_malloc(sizeof(struct prefctl));
 	p->w = w;
@@ -127,7 +128,6 @@ void preference_show(struct winctl *w)
 	gtk_window_set_position(GTK_WINDOW(p->win), GTK_WIN_POS_CENTER);
 	gtk_window_set_transient_for(GTK_WINDOW(p->win), GTK_WINDOW(w->win));
 	gtk_window_set_modal(GTK_WINDOW(p->win), TRUE);
-	gchar buf[30];
 	g_snprintf(buf, 30, "%d", w->get_jitermax);
 	gtk_entry_set_text(GTK_ENTRY(p->txtget_jiter), buf);
 	currentcplx(p);
