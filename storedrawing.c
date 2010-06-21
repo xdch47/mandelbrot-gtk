@@ -308,7 +308,7 @@ static void btnsave_clicked(GtkWidget *widget, struct savectl *s)
 
 	s->filename = (gchar *)g_malloc(sizeof(gchar) * strlen(gtk_entry_get_text(GTK_ENTRY(s->txtfilename))) + 5);
 	g_stpcpy(s->filename, gtk_entry_get_text(GTK_ENTRY(s->txtfilename)));
-	*dirname = g_path_get_dirname(s->filename);
+	dirname = g_path_get_dirname(s->filename);
 	// check the directory for existing and read/write permission:
 	chkdir = g_file_test(dirname, G_FILE_TEST_IS_DIR);
 
@@ -358,7 +358,6 @@ static void btnsave_clicked(GtkWidget *widget, struct savectl *s)
 
 	width = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(s->sbtwidth));
 	height = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(s->sbtheight));
-	i;
 	equal = TRUE;
 	
 	if (!(validate_cplx(s->txtcplx, s->it_param.cplxplane, s->win) && validate_itermax(s->txtitermax, &s->it_param.itermax, s->win))) {
