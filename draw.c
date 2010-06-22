@@ -92,12 +92,12 @@ void cldixius_1(const struct iterate_param *param, guint x, guint y, guint iter)
 	} else {
 		guchar result;
 		long double x;
-		x = sqrt((long double) iter); /// sqrt((long double) period);
+		x = sqrt((long double) iter); /* sqrt((long double) period); */
 		x = 0.5 + 0.5 * cos(x);
 		result = (guchar)(255 * x);
 		color[0] = result;
-		color[1] = 0;// result;
-		color[2] = 0;// result;
+		color[1] = 0;/* result; */
+		color[2] = 0;/* result; */
 		color[3] = 255;
 
 	}

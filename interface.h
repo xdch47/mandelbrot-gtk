@@ -10,7 +10,7 @@
 #include "draw.h"
 
 struct winctl {
-	// widgets:
+	/* widgets: */
 	GtkWidget *win;
 	GtkWidget *drawing;
 	GtkWidget *lbldraw;
@@ -33,10 +33,10 @@ struct winctl {
 	GtkWidget *mcolalgo[COLORFUNC];
 	GdkPixbuf *pixbufcalc;
 	GdkPixbuf *pixbufshow;
-	// render thread
+	/* render thread */
 	struct render_thread *render_thread;
 	struct iterate_param it_param;
-	// zooming:
+	/* zooming: */
 	gint focus_x;
 	gint focus_y;
 	GdkColor focus_color;
@@ -44,48 +44,48 @@ struct winctl {
 	gdouble zoomfactor;
 	gboolean zoomprop;
 	gint get_jitermax;
-	// config:
+	/* config: */
 	gchar *configfile;
 	double default_cplxplane[4];
 	double default_mcplxplane[4];
-	// misc:
+	/* misc: */
 	gboolean get_j;
 	gboolean succ_render;
-	// color:
+	/* color: */
 	GdkColor convcol;
 	GdkColor divcol;
-	// Timer: 
+	/* Timer:  */
 	GTimer *timer;
 };
 
-// implemented by layout.c:
+/* implemented by layout.c: */
 GtkWidget *createcplxplane(GtkWidget *txtcplx[4]);
 struct winctl *buildinterface(void);
 void setcplxplane(GtkWidget *txtcplx[4], const gdouble value[4], gdouble width, gdouble height);
 void restoredefaults(struct winctl *w);
 void statejctl(struct winctl *w);
 
-// implemented by interface.c:
+/* implemented by interface.c: */
 void run_interface(gchar *file_name);
 void calc(GtkWidget *widget, struct winctl *w);
 void reset(GtkWidget *widget, struct winctl *w);
 void alloc_colors(struct iterate_param *it_param, struct winctl *w);
 
-// implemented by storedrawing.c
+/* implemented by storedrawing.c */
 void store_drawing_show(struct winctl *w);
 
-// implemented by validate.c
+/* implemented by validate.c */
 gboolean validate_cplx(GtkWidget *txtcplx[4], gdouble cplx[4], GtkWidget *win);
 gboolean validate_itermax(GtkWidget *txtitermax, guint *itermax, GtkWidget *win);
 gboolean validate_degree(GtkWidget *txtdegree, gdouble *degree, GtkWidget *win);
 void errdialog(GtkWindow *win, gchar *msg);
 
-// implemented by config.c
+/* implemented by config.c */
 enum configtype { LOAD_CONFIG, STORE_CONFIG };
 enum xmlsavetype { SAVE_IMAGE, SAVE_APPSETTINGS };
 gboolean configure_interface(struct winctl *w, enum configtype type);
 
-// implemented by pref.c
+/* implemented by pref.c */
 void preference_show(struct winctl *w);
 
 #endif /* __INTERFACE_H__ */

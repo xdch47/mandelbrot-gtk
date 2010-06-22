@@ -38,7 +38,7 @@ static void savedialog(GtkWidget *widget, struct savectl *s);
 static void restore_pictopt(GtkWidget *widget, struct savectl *s);
 static void ssetcplxplane(GtkWidget *widget, struct savectl *s);
 
-// progress dialog:
+/* progress dialog: */
 static void create_progress_dialog(struct savectl *s)
 {
 	GtkWidget *vbox, *align;
@@ -149,7 +149,7 @@ static void save_pixbuf_to_stream(struct savectl *s)
 	g_object_unref(f);
 }
 
-// store drawing dialog:
+/* store drawing dialog: */
 void store_drawing_show(struct winctl *w)
 {
 	GtkWidget *vbox, *hbox, *vbox2, *hbox2, *table, *align;
@@ -159,7 +159,7 @@ void store_drawing_show(struct winctl *w)
 	struct savectl *s = (struct savectl *)g_malloc(sizeof(struct savectl));
 	s->w = w;
 
-	// initialize threads:
+	/* initialize threads: */
 	s->render_thread = NULL;
 	iterate_param_init(&s->it_param, s->w->it_param.threads_count);
 
@@ -191,7 +191,7 @@ void store_drawing_show(struct winctl *w)
 	frame2 = gtk_frame_new(LPICTOPT);
 	vbox2 = gtk_vbox_new(FALSE, 0);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox2), 5);
-	// width:
+	/* width: */
 	table = gtk_table_new(3, 4, FALSE);
 	gtk_table_set_col_spacing(GTK_TABLE(table), 0, 5);
 	gtk_table_set_col_spacing(GTK_TABLE(table), 1, 10);
@@ -200,12 +200,12 @@ void store_drawing_show(struct winctl *w)
 	gtk_table_attach(GTK_TABLE(table), lbl, 0, 1, 0, 1, GTK_SHRINK, GTK_SHRINK, FALSE, FALSE);
 	s->sbtwidth = gtk_spin_button_new_with_range(1.0, 5000.0, 1.0);
 	gtk_table_attach(GTK_TABLE(table), s->sbtwidth, 1, 2, 0, 1, GTK_SHRINK | GTK_FILL, GTK_SHRINK, FALSE, FALSE);
-	// height:
+	/* height: */
 	lbl = gtk_label_new(LHEIGTH);
 	gtk_table_attach(GTK_TABLE(table), lbl, 0, 1, 1, 2, GTK_SHRINK, GTK_SHRINK, 0, 0);
 	s->sbtheight = gtk_spin_button_new_with_range(1.0, 5000.0, 1.0);
 	gtk_table_attach(GTK_TABLE(table), s->sbtheight, 1, 2, 1, 2, GTK_SHRINK | GTK_FILL, GTK_SHRINK, 0, 0);
-	// itermax:	
+	/* itermax:	 */
 	lbl = gtk_label_new_with_mnemonic(LITERMAX);
 	gtk_misc_set_alignment(GTK_MISC(lbl), 0.0, 1.0);
 	s->txtitermax = gtk_entry_new();
@@ -213,7 +213,7 @@ void store_drawing_show(struct winctl *w)
 	gtk_label_set_mnemonic_widget(GTK_LABEL(lbl), s->txtitermax);
 	gtk_table_attach(GTK_TABLE(table), lbl, 2, 3, 0, 1, GTK_EXPAND | GTK_FILL, GTK_SHRINK, 0, 0);
 	gtk_table_attach(GTK_TABLE(table), s->txtitermax, 2, 3, 1, 2, GTK_EXPAND | GTK_FILL, GTK_SHRINK, 0, 0);
-	// combo-coloralgo:
+	/* combo-coloralgo: */
 	lbl = gtk_label_new_with_mnemonic(LCOLORALGO);
 	gtk_misc_set_alignment(GTK_MISC(lbl), 0.0, 1.0);
 	s->cbocolor = gtk_combo_box_new_text();
@@ -309,7 +309,7 @@ static void btnsave_clicked(GtkWidget *widget, struct savectl *s)
 	s->filename = (gchar *)g_malloc(sizeof(gchar) * strlen(gtk_entry_get_text(GTK_ENTRY(s->txtfilename))) + 5);
 	g_stpcpy(s->filename, gtk_entry_get_text(GTK_ENTRY(s->txtfilename)));
 	dirname = g_path_get_dirname(s->filename);
-	// check the directory for existing and read/write permission:
+	/* check the directory for existing and read/write permission: */
 	chkdir = g_file_test(dirname, G_FILE_TEST_IS_DIR);
 
 	if (!chkdir) {

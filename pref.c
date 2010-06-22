@@ -37,7 +37,7 @@ void preference_show(struct winctl *w)
 
 	notebook = gtk_notebook_new();
 
-	// page default complex plane:
+	/* page default complex plane: */
 	vbox2 = gtk_vbox_new(FALSE, 3);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox2), 10);
 	lbl = gtk_label_new(LPREFLSTDCPLX);
@@ -50,7 +50,7 @@ void preference_show(struct winctl *w)
 	g_signal_connect_swapped(G_OBJECT(btn2), "clicked", G_CALLBACK(defaultcplx), p);
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), vbox2, gtk_label_new(LPREFSTDCPLX));
 
-	// page mandelbrot complex plane:
+	/* page mandelbrot complex plane: */
 	vbox2 = gtk_vbox_new(FALSE, 3);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox2), 10);
 	lbl = gtk_label_new(LPREFLSTDMCPLX);
@@ -63,10 +63,10 @@ void preference_show(struct winctl *w)
 	g_signal_connect_swapped(G_OBJECT(btn2), "clicked", G_CALLBACK(defaultmcplx), p);
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), vbox2, gtk_label_new(LPREFSTDMCPLX));
 
-	// misc page:
+	/* misc page: */
 	vbox2 = gtk_vbox_new(FALSE, 0);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox2), 10);
-	// zoom:
+	/* zoom: */
 	frame = gtk_frame_new(LPREFZOOMFACTOR);
 	hbox1 = gtk_hbox_new(FALSE, 0);
 	gtk_container_set_border_width(GTK_CONTAINER(hbox1), 4);
@@ -77,7 +77,7 @@ void preference_show(struct winctl *w)
 	gtk_container_add(GTK_CONTAINER(frame), hbox1);
 	gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 0);
 
-	// threads:
+	/* threads: */
 	frame = gtk_frame_new(LPREFTHREADS);
 	hbox1 = gtk_hbox_new(FALSE, 0);
 	gtk_container_set_border_width(GTK_CONTAINER(hbox1), 4);
@@ -88,7 +88,7 @@ void preference_show(struct winctl *w)
 	gtk_container_add(GTK_CONTAINER(frame), hbox1);
 	gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 0);
 
-	// focus color:
+	/* focus color: */
 	frame = gtk_frame_new(LPREFFOCUSCOLOR);
 	hbox1 = gtk_hbox_new(FALSE, 0);
 	gtk_container_set_border_width(GTK_CONTAINER(hbox1), 4);
@@ -99,7 +99,7 @@ void preference_show(struct winctl *w)
 	gtk_container_add(GTK_CONTAINER(frame), hbox1);
 	gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 5);
 
-	// get_j itermax:
+	/* get_j itermax: */
 	frame = gtk_frame_new(LPREFITER);
 	vbox3 = gtk_vbox_new(FALSE, 0);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox3), 4);
@@ -201,6 +201,7 @@ static void btnok_clicked(GtkWidget *widget, struct prefctl *p)
 	gdouble cplx[4], mcplx[4];
 	guint jitermax;
 	guint threads_count;
+	gint i;
 	if (!validate_cplx(p->txtcplx, cplx, p->win)) {
 		return;
 	}
@@ -211,7 +212,6 @@ static void btnok_clicked(GtkWidget *widget, struct prefctl *p)
 		return;
 	}
 
-	gint i;
 	for (i = 0; i < 4; ++i) {
 		p->w->default_cplxplane[i] = cplx[i];
 		p->w->default_mcplxplane[i] = mcplx[i];

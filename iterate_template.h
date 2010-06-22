@@ -1,12 +1,12 @@
 
-// this is a template-file for iteration.c.
-// the follwing symbols should be defined before
-// including this file:
-// 	IT_FUNC_NAME --> name of the iteration fucntion
-// 	IT_INLINE_FUNC --> function which is inline
-// 	IT_VAR --> used variables + initialization
-// 	IT_FIRST_FOR --> code after first for-statement
-// the variables itre, itim hold the real-/imaginary part of the current point.
+/* this is a template-file for iteration.c. */
+/* the follwing symbols should be defined before */
+/* including this file: */
+/* 	IT_FUNC_NAME --> name of the iteration fucntion */
+/* 	IT_INLINE_FUNC --> function which is inline */
+/* 	IT_VAR --> used variables + initialization */
+/* 	IT_FIRST_FOR --> code after first for-statement */
+/* the variables itre, itim hold the real-/imaginary part of the current point. */
 
 gpointer IT_FUNC_NAME(struct iteration_data *p)
 {
@@ -19,6 +19,8 @@ gpointer IT_FUNC_NAME(struct iteration_data *p)
 	guint id;
 	const struct iterate_param *param;
 	gboolean *retval;
+
+	IT_VAR
 	
 	retval = (gboolean *)g_malloc(sizeof(gboolean));
 	*retval = TRUE;
@@ -34,7 +36,7 @@ gpointer IT_FUNC_NAME(struct iteration_data *p)
 	xo = param->xoffset;
 	itermax = param->itermax;
 
-	IT_VAR
+	IT_INIT
 
 	itim = p->b_im;
 	for (y = param->ystart[id]; y < ymax; y += yo, itim += dim) {
@@ -43,7 +45,7 @@ gpointer IT_FUNC_NAME(struct iteration_data *p)
 #endif
 		if (g_mutex_trylock(p->state_mutex)) {
 			if (*p->state) {
-				// pause thread:
+				/* pause thread: */
 				if (*p->state == PAUSE) {
 					g_cond_wait(p->resume_cond, p->state_mutex);
 				}

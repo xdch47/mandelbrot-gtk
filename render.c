@@ -49,15 +49,19 @@ void iterate_param_init(struct iterate_param *param, guint count)
 	param->ystart = (guint *)g_malloc(sizeof(guint) * count);
 	param->row_count = (guint *)g_malloc(sizeof(guint) * count);
 
-//	yo = factor(count);
-//	xo = count / yo;
+	/* 
+	 * yo = factor(count);
+	 * xo = count / yo;
+	 */
 	xo = 1;
 	yo = count;
 
 	for (i = 0; i < count; i += yo) {
 		for (j = 0; j < yo; ++j) {
-//			param->xstart[i + j] = i / yo;
-//			param->ystart[i + j] = j;
+			/*
+			 * param->xstart[i + j] = i / yo;
+			 * param->ystart[i + j] = j;
+			 */
 			param->xstart[i + j] = 0;
 			param->ystart[i + j] = i + j;
 		}
