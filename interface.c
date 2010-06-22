@@ -54,12 +54,7 @@ void run_interface(gchar *file_name)
 
 	w->render_thread = render_thread_new((IdleFunc)redraw_idle, (ThreaddestroyFunc)render_thread_done, (gpointer)w);
 
-	//	dirname = g_path_get_dirname(file_name);
-	#ifdef CONFIGDIR
-		dirname = g_build_filename(g_get_user_config_dir(), CONFIGDIR, NULL);
-	#else
-		dirname = g_strdup(g_get_user_config_dir());
-	#endif
+	dirname = CONFIGDIR;
 
 	if (!g_file_test(dirname, G_FILE_TEST_IS_DIR)) {
 		g_mkdir(dirname, 0777);
@@ -86,7 +81,6 @@ void run_interface(gchar *file_name)
 static void destroy(GtkWidget *widget, struct winctl *w)
 {
 	render_thread_kill(w->render_thread);
-	//save_config(w);
 	configure_interface(w, STORE_CONFIG);
 	render_thread_free(w->render_thread);
 	iterate_param_free(&w->it_param);
@@ -106,23 +100,24 @@ static gboolean start_calc(struct winctl *w)
 	gdouble jre, jim;
 	int errno;
 	gchar *endptr;
+	gint i;
 
-	// validate complex plane
+	/* validate complex plane */
 	if (!validate_cplx(w->txtcplx, cplxplane, w->win)) {
 		return FALSE;
 	}
-	// max. iterations:
+	/* max. iterations: */
 	if (!validate_itermax(w->txtitermax, &itermax, w->win)) {
 		return FALSE;
 	}
 	if (w->get_j) {
 		itermax = w->get_jitermax;
 	}
-	// degree of mandelbrot-/julia-set:
+	/* degree of mandelbrot-/julia-set: */
 	if (!validate_degree(w->txtdegree, &degree, w->win)) {
 		return FALSE;
 	}
-	// julia const:
+	/* julia const: */
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w->chkjulia))) {
 		jre = strtod(gtk_entry_get_text(GTK_ENTRY(w->txtjre)), &endptr);
 		if (*endptr != '\0' || errno == ERANGE ) {
@@ -169,7 +164,6 @@ static gboolean start_calc(struct winctl *w)
 	gtk_button_set_label(GTK_BUTTON(w->btncalc), LSTOP);
 
 	w->timer = g_timer_new();
-	gint i;
 	for (i = 0; i < 4; ++i) {
 		w->it_param.cplxplane[i] = cplxplane[i];
 	}
@@ -313,7 +307,7 @@ static gboolean configure_event(GtkWidget *widget, GdkEventConfigure *event, str
 	gint width = w->drawing->allocation.width;
 	gint height = w->drawing->allocation.height;
 	if (!w->pixbufcalc) {
-		// Create blank screen on startup:
+		/* Create blank screen on startup: */
 		w->pixbufcalc = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, width, height);
 		clearpixbuf(w->pixbufcalc);
 		w->pixbufshow = g_object_ref(w->pixbufcalc);

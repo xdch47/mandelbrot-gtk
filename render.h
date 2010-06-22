@@ -65,7 +65,7 @@ struct render_thread {
 };
 
 
-// implemented by render.c
+/* implemented by render.c */
 struct render_thread *render_thread_new(IdleFunc idle_func, ThreaddestroyFunc destroy, gpointer data);
 void iterate_param_init(struct iterate_param *param, guint count);
 void iterate_param_free(struct iterate_param *param);
@@ -77,7 +77,7 @@ void render_thread_kill(struct render_thread *r);
 gboolean is_render_thread_alive(struct render_thread *r);
 gboolean is_render_thread_pause(struct render_thread *r);
 
-// implemented by iterate.c
+/* implemented by iterate.c */
 gpointer mandelbrot_set(struct iteration_data *p);
 gpointer mandelbrot_set_row_count(struct iteration_data *p);
 gpointer mandelbrot_set_deg(struct iteration_data *p);

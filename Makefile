@@ -34,8 +34,8 @@ SOURCES         := main.c defs.c interface.c layout.c config.c \
 CC              := gcc
 
 # ------------  compiler flags  ------------------------------------------------
-DEBUG_CFLAGS    := -Wall -O0 -g -DPACKAGE="\"$(EXECUTABLE)\"" -DMO_DIR="\"$(MO_DIR)\""
-RELEASE_CFLAGS  := -Wall -O2 -pipe -mtune=native -march=native -DNDEBUG \
+DEBUG_CFLAGS    := -Wall -pedantic -ansi -O0 -g
+RELEASE_CFLAGS  := -Wall -pedantic -ansi -O2 -pipe -mtune=native -march=native -DNDEBUG \
 	-DPACKAGE="\"$(EXECUTABLE)\"" -DMO_DIR="\"$(MO_DIR)\""
 
 #-------------  Directories  ---------------------------------------------------

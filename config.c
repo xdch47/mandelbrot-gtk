@@ -66,7 +66,7 @@ static void init_config(struct winctl *w)
 {
 	gint i;
 
-	// init params:
+	/* init params: */
 	w->it_param.degree = 2.0;
 	w->it_param.type = MANDELBROT_SET;
 	w->it_param.j[0] = 0;
@@ -141,65 +141,65 @@ static void writexmlfile(const char *configfile, const struct winctl *w, enum xm
 	else 
 		xmlTextWriterWriteAttribute(writer, BAD_CAST XML_TYPE, BAD_CAST XML_TYPE_JULIA);
 
-	// <renderdata>
-	// <complexplane>
+	/* <renderdata> */
+	/* <complexplane> */
 	xmlTextWriterStartElement(writer, BAD_CAST XML_COMPLEXPLANE);
 	xmlTextWriterWriteElement(writer, BAD_CAST XML_MIN_RE, BAD_CAST ascii_dtostr(w->it_param.cplxplane[0], c));
 	xmlTextWriterWriteElement(writer, BAD_CAST XML_MAX_RE, BAD_CAST ascii_dtostr(w->it_param.cplxplane[1], c));
 	xmlTextWriterWriteElement(writer, BAD_CAST XML_MIN_IM, BAD_CAST ascii_dtostr(w->it_param.cplxplane[2], c));
 	xmlTextWriterWriteElement(writer, BAD_CAST XML_MAX_IM, BAD_CAST ascii_dtostr(w->it_param.cplxplane[3], c));
-	// </complexplane>
+	/* </complexplane> */
 	xmlTextWriterEndElement(writer);
 
 	if (type == SAVE_APPSETTINGS || w->it_param.type == JULIA_SET) {
-		// <const_j>
+		/* <const_j> */
 		xmlTextWriterStartElement(writer, BAD_CAST XML_CONST_J);
 		xmlTextWriterWriteElement(writer, BAD_CAST XML_REPART_J, BAD_CAST ascii_dtostr(w->it_param.j[0], c));
 		xmlTextWriterWriteElement(writer, BAD_CAST XML_IMPART_J, BAD_CAST ascii_dtostr(w->it_param.j[1], c));
-		// </const_j>
+		/* </const_j> */
 		xmlTextWriterEndElement(writer);
 	}
-	// </renderdata>
+	/* </renderdata> */
 	xmlTextWriterEndElement(writer);
 
 	if (type == SAVE_APPSETTINGS) {
 		#ifdef XML_COMMENTS
 		xmlTextWriterWriteComment(writer, BAD_CAST " windowsize ");
 		#endif
-		// <size>
+		/* <size> */
 		xmlTextWriterStartElement(writer, BAD_CAST XML_SIZE);
 		xmlTextWriterWriteElement(writer, BAD_CAST XML_WIDTH, BAD_CAST ltostr(GTK_WIDGET(w->win)->allocation.width, c));
 		xmlTextWriterWriteElement(writer, BAD_CAST XML_HEIGHT, BAD_CAST ltostr(GTK_WIDGET(w->win)->allocation.height, c));
 		xmlTextWriterEndElement(writer);
-		// </size>
+		/* </size> */
 	}
 
-	// <preference>
+	/* <preference> */
 	xmlTextWriterStartElement(writer, BAD_CAST XML_PREFERENCE);
-	// <color>
+	/* <color> */
 	xmlTextWriterStartElement(writer, BAD_CAST XML_COLOR);
 	xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_ALGO, BAD_CAST ltostr(w->it_param.color_func_index, c));
-	// <convergent-color/>
+	/* <convergent-color/> */
 	xmlTextWriterWriteElement(writer, BAD_CAST XML_COLOR_CONVERGET, BAD_CAST NULL);
 	xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_RED, BAD_CAST ltostr(w->convcol.red, c));
 	xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_GREEN, BAD_CAST ltostr(w->convcol.green, c));
 	xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_BLUE, BAD_CAST ltostr(w->convcol.blue, c));
 	xmlTextWriterEndElement(writer);
-	// <divergent-color/>
+	/* <divergent-color/> */
 	xmlTextWriterWriteElement(writer, BAD_CAST XML_COLOR_DIVERGENT, BAD_CAST NULL);
 	xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_RED, BAD_CAST ltostr(w->divcol.red, c));
 	xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_GREEN, BAD_CAST ltostr(w->divcol.green, c));
 	xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_BLUE, BAD_CAST ltostr(w->divcol.blue, c));
 	xmlTextWriterEndElement(writer);
 	if (type == SAVE_APPSETTINGS) {
-		// <focus-color/>
+		/* <focus-color/> */
 		xmlTextWriterWriteElement(writer, BAD_CAST XML_COLOR_FOCUS, BAD_CAST NULL);
 		xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_RED, BAD_CAST ltostr(w->focus_color.red, c));
 		xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_GREEN, BAD_CAST ltostr(w->focus_color.green, c));
 		xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_BLUE, BAD_CAST ltostr(w->focus_color.blue, c));
 		xmlTextWriterEndElement(writer);
 	}
-	// </color>
+	/* </color> */
 	xmlTextWriterEndElement(writer);
 
 	if (type == SAVE_APPSETTINGS) {
@@ -218,27 +218,27 @@ static void writexmlfile(const char *configfile, const struct winctl *w, enum xm
 		#ifdef XML_COMMENTS
 		xmlTextWriterWriteComment(writer, BAD_CAST " default vaules for reset ");
 		#endif
-		// <default-complexplane>
+		/* <default-complexplane> */
 		xmlTextWriterStartElement(writer, BAD_CAST XML_DEFCPLXPLANE);
 		xmlTextWriterWriteElement(writer, BAD_CAST XML_MIN_RE, BAD_CAST ascii_dtostr(w->default_cplxplane[0], c));
 		xmlTextWriterWriteElement(writer, BAD_CAST XML_MAX_RE, BAD_CAST ascii_dtostr(w->default_cplxplane[1], c));
 		xmlTextWriterWriteElement(writer, BAD_CAST XML_MIN_IM, BAD_CAST ascii_dtostr(w->default_cplxplane[2], c));
 		xmlTextWriterWriteElement(writer, BAD_CAST XML_MAX_IM, BAD_CAST ascii_dtostr(w->default_cplxplane[3], c));
-		// </default-complexplane>
+		/* </default-complexplane> */
 		xmlTextWriterEndElement(writer);
-		// <default-mandelbrot-complexplane>
+		/* <default-mandelbrot-complexplane> */
 		xmlTextWriterStartElement(writer, BAD_CAST XML_DEFMCPLXPLANE);
 		xmlTextWriterWriteElement(writer, BAD_CAST XML_MIN_RE, BAD_CAST ascii_dtostr(w->default_mcplxplane[0], c));
 		xmlTextWriterWriteElement(writer, BAD_CAST XML_MAX_RE, BAD_CAST ascii_dtostr(w->default_mcplxplane[1], c));
 		xmlTextWriterWriteElement(writer, BAD_CAST XML_MIN_IM, BAD_CAST ascii_dtostr(w->default_mcplxplane[2], c));
 		xmlTextWriterWriteElement(writer, BAD_CAST XML_MAX_IM, BAD_CAST ascii_dtostr(w->default_mcplxplane[3], c));
-		// </default-mandelbrot-complexplane>
+		/* </default-mandelbrot-complexplane> */
 		xmlTextWriterEndElement(writer);
 	}
 
-	// </preference>
+	/* </preference> */
 	xmlTextWriterEndElement(writer);
-	// </mandelbrot_julia_set<
+	/* </mandelbrot_julia_set< */
 	xmlTextWriterEndElement(writer);
 
 	xmlFreeTextWriter(writer);
@@ -337,7 +337,7 @@ static gboolean xmlrenderdata(xmlNode *node, struct iterate_param *it_param, enu
 	char c[BUFSIZE_NUMTOSTR];
 	gboolean retval = FALSE;
 
-	// itermax:
+	/* itermax: */
 	attr = (char *)xmlGetProp(node, BAD_CAST XML_ITERMAX);
 	if (attr != NULL) {
 		if (type == LOAD_CONFIG)
@@ -346,7 +346,7 @@ static gboolean xmlrenderdata(xmlNode *node, struct iterate_param *it_param, enu
 			xmlSetProp(node, BAD_CAST XML_ITERMAX, BAD_CAST ltostr(it_param->itermax, c));
 	}
 
-	// degree:
+	/* degree: */
 	attr = (char *)xmlGetProp(node, BAD_CAST XML_DEGREE);
 	if (attr != NULL) {
 		if (type == LOAD_CONFIG) {
@@ -355,7 +355,7 @@ static gboolean xmlrenderdata(xmlNode *node, struct iterate_param *it_param, enu
 			xmlSetProp(node, BAD_CAST XML_DEGREE, BAD_CAST ascii_dtostr(it_param->degree, c));
 		}
 	}
-	// type:
+	/* type: */
 	attr = (char *)xmlGetProp(node, BAD_CAST XML_TYPE);
 	if (attr != NULL) {
 		if (type == LOAD_CONFIG && strcmp(attr, XML_TYPE_JULIA) == 0) {
@@ -367,7 +367,7 @@ static gboolean xmlrenderdata(xmlNode *node, struct iterate_param *it_param, enu
 
 	cplx_node = node;
 	node = node->children;
-	// getting data:
+	/* getting data: */
 	forall_node(node) {
 		if (node->type != XML_ELEMENT_NODE)
 			continue;
@@ -514,13 +514,13 @@ static gboolean setxmlconfig(xmlNode *node, struct winctl *w, enum configtype ty
 	gboolean retval = FALSE;
 	for (; node; node = node->next) {
 		if (strcmp((char *)node->name, XML_RENDERDATA) == 0) {
-			// renderdata:
+			/* renderdata: */
 			retval = xmlrenderdata(node, &w->it_param, type);
 		} else if (strcmp((char *)node->name, XML_SIZE) == 0) {
-			// size:
+			/* size: */
 			xmlsize(node->children, GTK_WINDOW(w->win), type);
 		} else if (strcmp((char *)node->name, XML_PREFERENCE) == 0) {
-			// preference:
+			/* preference: */
 			xmlpreference(node->children, w, type);
 		}
 	}

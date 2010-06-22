@@ -8,8 +8,8 @@ gboolean validate_cplx(GtkWidget *txtcplx[4], gdouble cplx[4], GtkWidget *win)
 {
 	gint i;
 	gchar *endptr;
-	// check data for user input errors:
-	// complex plane:
+	/* check data for user input errors: */
+	/* complex plane: */
 	for (i = 0; i < 4; ++i) {
 		errno = 0;
 		cplx[i] = strtod(gtk_entry_get_text(GTK_ENTRY(txtcplx[i])), &endptr);

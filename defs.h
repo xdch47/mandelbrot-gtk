@@ -6,7 +6,23 @@
 
 #define LVERSION "0.3"
 
-// labels:
+#ifndef MO_DIR
+	#define MO_DIR "./mo"
+#endif
+#ifndef PACKAGE
+	#define PACKAGE "mandelbrot"
+#endif
+
+/* config-file location */
+#ifdef G_OS_UNIX
+	#define CONFIGDIR g_strdup(g_get_user_config_dir())
+	/* #define CONFDIR s_build_filename(g_get_user_config_dir(), CONFIGDIR, NULL) */
+#else
+  #define CONFDIR g_path_get_dirname(file_name)
+#endif
+#define CONFIGFILE "mandelbrot.xml"
+
+/* labels: */
 #define LWCAP _("Mandelbrot- / Juliaset")
 #define LCAPM _(" Mandelbrotset [%0.2fs] ")
 #define LCAPJ _("Juliaset [%0.2fs]")
@@ -29,7 +45,7 @@
 #define LCONTDRAW _(" _Continue")
 #define LREDRAW _("_Restart")
 #define LCANCEL _("_Cancel")
-const gchar *LCPLX[4];
+extern const gchar *LCPLX[4];
 #define TEXTLEN 20
 #define BUFSIZE 200
 #define NUMFORMAT "%.12f"
@@ -45,14 +61,14 @@ const gchar *LCPLX[4];
 #define LDIVCOLOR _("_Divergent set")
 #define LCOLCAPCONV _("Color of the convergent set")
 #define LCOLCAPDIV _("Color of the divergent set")
-const gchar *LPJMENU[6];
-const gdouble JDEFINES[12];
+extern const gchar *LPJMENU[6];
+extern const gdouble JDEFINES[12];
 #define COLORFUNC 4
-const gchar *LCOLOR[COLORFUNC];
-const gdouble CPLXPLANE[4];
-const gdouble MCPLXPLANE[4];
+extern const gchar *LCOLOR[COLORFUNC];
+extern const gdouble CPLXPLANE[4];
+extern const gdouble MCPLXPLANE[4];
 
-// save dialog:
+/* save dialog: */
 #define LSAVECAP _("Save..")
 #define LSAVEPATH _("Save as..")
 #define LFILECHOOSER _("Save..")
@@ -67,7 +83,7 @@ const gdouble MCPLXPLANE[4];
 #define LSSETCPLX _("_Adjust complexplane")
 #define LSAVELABEL _("Please wait..\nRendering image...")
 #define LSAVELABELDONE _("Saved Image to file.")
-// FIXME: grammar?
+/* FIXME: grammar? */
 #define LSAVELABELCANCEL _("Rendering was aborted by user.")
 #define LSAVEDONE _("_OK")
 #define LSAVECANCEL _("Abort rendering?")
@@ -77,7 +93,7 @@ const gdouble MCPLXPLANE[4];
 #define LFILEERR _("You must enter a valid filename.")
 #define LFILEEXISTS _("The File \"%s\" already exists. Overwrite?")
 
-// preference dialog:
+/* preference dialog: */
 #define LCPREF _("Option")
 #define LPREFSTDCPLX _("Complex Plane (Std)")
 #define LPREFLSTDCPLX _("Complex Plane\n(Reset-Werte)")
@@ -97,12 +113,12 @@ const gdouble MCPLXPLANE[4];
 #define LPREFOK _("_OK")
 #define LPREFCANCEL _("_Cancel")
 
-// response:
+/* response: */
 #define RESPONSE_CONTDRAW 1
 #define RESPONSE_REDRAW 2
 #define RESPONSE_CANCEL 3
 
-// errors:
+/* errors: */
 #define LOWITERMAX 10
 #define HIITERMAX 100000
 #define MAXTHREADS 512
@@ -114,14 +130,10 @@ const gdouble MCPLXPLANE[4];
 #define ERRITERMAX _("Please enter a valid number for the iterationdepth. (Between %d and %d)")
 #define ERRDEGREE _("Please enter a valid number for the degree of the Mandelbrotset. (Between %f and %f)")
 
-// config-file with comments:
+/* config-file with comments: */
 #define XML_COMMENTS
 
-// config-file location
-//#define CONFIGDIR "mandelbrot"
-#define CONFIGFILE "mandelbrot.xml"
-
-// default values:
+/* default values: */
 #define ZOOMFACTOR 0.65
 #define DEFITERMAX 100
 #define CALCTHREADS 4

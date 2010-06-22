@@ -20,12 +20,12 @@ const gchar *LPJMENU[6] = {
 
 const gdouble JDEFINES[12] = { 
 
-        0.0,    1.0,    // dendrit
-        -1.0,   0.0,    // san-marco-dragon
-        0.286,  0.0115, // jula-dragon
-        0,      0.666,  // fatou
-        -0.127, 0.775,  // douady
-        -0.562, 0.643   // misiurewic-point
+        0.0,    1.0,    /* dendrit */
+        -1.0,   0.0,    /* san-marco-dragon */
+        0.286,  0.0115, /* jula-dragon */
+        0,      0.666,  /* fatou */
+        -0.127, 0.775,  /* douady */
+        -0.562, 0.643   /* misiurewic-point */
 };
 
 const gchar *LCOLOR[COLORFUNC] = {
@@ -35,7 +35,7 @@ const gchar *LCOLOR[COLORFUNC] = {
 	N_("Dixius-Algo_2")
 };
 
-// default complex plane
+/* default complex plane */
 const gdouble CPLXPLANE[4] = {
 	-1.167,
 	1.167,
@@ -43,7 +43,7 @@ const gdouble CPLXPLANE[4] = {
 	1.5
 };
 
-// special default mandelbrotset(2):
+/* special default mandelbrotset(2): */
 const gdouble MCPLXPLANE[4] = {
 	-2.165,
 	1.167,
