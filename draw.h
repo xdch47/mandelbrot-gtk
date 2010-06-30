@@ -4,11 +4,7 @@
 
 #include <gtk/gtk.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
-#include "defs.h"
 #include "render.h"
-
-const guchar clbluedef[4 * 48];
-const ColorFunc color_func[COLORFUNC];
 
 void clearpixbuf(GdkPixbuf *pixbuf);
 void clblue(const struct iterate_param *param, guint x, guint y, guint iter);

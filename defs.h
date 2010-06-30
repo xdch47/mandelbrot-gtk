@@ -7,7 +7,8 @@
 #define LVERSION "0.3"
 
 #ifndef MO_DIR
-	#define MO_DIR "./mo"
+	/* this string is not freed in main.c (little memory leak) */
+	#define MO_DIR g_path_get_dirname(*argv)
 #endif
 #ifndef PACKAGE
 	#define PACKAGE "mandelbrot"
@@ -15,10 +16,11 @@
 
 /* config-file location */
 #ifdef G_OS_UNIX
+	/* this string is freed in interface.c */
 	#define CONFIGDIR g_strdup(g_get_user_config_dir())
-	/* #define CONFDIR s_build_filename(g_get_user_config_dir(), CONFIGDIR, NULL) */
+	/* #define CONFIGDIR s_build_filename(g_get_user_config_dir(), "subdir", NULL) */
 #else
-  #define CONFDIR g_path_get_dirname(file_name)
+  #define CONFIGDIR g_path_get_dirname(file_name)
 #endif
 #define CONFIGFILE "mandelbrot.xml"
 
@@ -138,6 +140,7 @@ extern const gdouble MCPLXPLANE[4];
 #define DEFITERMAX 100
 #define CALCTHREADS 4
 
+extern const guchar clbluedef[];
 #define INTERPOLATION GDK_INTERP_BILINEAR
 
 #endif /* __DEF_H__ */
