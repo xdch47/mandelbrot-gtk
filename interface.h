@@ -88,5 +88,8 @@ gboolean configure_interface(struct winctl *w, enum configtype type);
 /* implemented by pref.c */
 void preference_show(struct winctl *w);
 
+/* definition is at def.c */
+extern const ColorFunc color_func[];
+
 #endif /* __INTERFACE_H__ */
 
