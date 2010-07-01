@@ -17,7 +17,7 @@ __ENTRYPOINT__
 {
 	#ifdef _WIN32
 	/* MinGW and M$VC++ should support this: */
-	char *argv = __argv;
+	char **argv = __argv;
 	int argc = __argc;
 	#endif
 
