@@ -6,6 +6,7 @@
 #include <string.h>
 #include "interface.h"
 #include "defs.h"
+#include "libcolor/color.h"
 
 #define XML_ROOTNODE "mandelbrot_julia_set"
 #define XML_RENDERDATA "renderdata"
@@ -452,7 +453,7 @@ static void xmlcolor(xmlNode *node, struct winctl *w, enum configtype type)
 	attr = (char *)xmlGetProp(node, BAD_CAST XML_COLOR_ALGO);
 	if (attr != NULL) {
 		if (type == LOAD_CONFIG)
-			w->it_param.color_func_index = CLAMP(strtol(attr, NULL, 10), 0, COLORFUNC);
+			w->it_param.color_func_index = CLAMP(strtol(attr, NULL, 10), 0, getcolorfunc_count());
 		else
 			xmlSetProp(node, BAD_CAST XML_COLOR_ALGO, BAD_CAST ltostr(w->it_param.color_func_index, c));
 	}

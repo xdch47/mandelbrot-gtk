@@ -65,8 +65,6 @@ extern const gchar *LCPLX[4];
 #define LCOLCAPDIV _("Color of the divergent set")
 extern const gchar *LPJMENU[6];
 extern const gdouble JDEFINES[12];
-#define COLORFUNC 4
-extern const gchar *LCOLOR[COLORFUNC];
 extern const gdouble CPLXPLANE[4];
 extern const gdouble MCPLXPLANE[4];
 
@@ -85,7 +83,6 @@ extern const gdouble MCPLXPLANE[4];
 #define LSSETCPLX _("_Adjust complexplane")
 #define LSAVELABEL _("Please wait..\nRendering image...")
 #define LSAVELABELDONE _("Saved Image to file.")
-/* FIXME: grammar? */
 #define LSAVELABELCANCEL _("Rendering was aborted by user.")
 #define LSAVEDONE _("_OK")
 #define LSAVECANCEL _("Abort rendering?")

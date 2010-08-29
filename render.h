@@ -3,12 +3,12 @@
 #define __RENDER_H__
 
 #include <gtk/gtk.h>
+#include "libcolor/color.h"
 
 enum fraktal_type { MANDELBROT_SET, JULIA_SET };
 enum thread_state { RUN, PAUSE, KILL };
 
 struct iterate_param;
-typedef void (*ColorFunc)(const struct iterate_param *param, guint x, guint y, guint iter);
 
 struct iterate_param {
 	GThreadFunc iterate_func;

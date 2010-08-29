@@ -176,3 +176,12 @@
 #define IT_FIRST_FOR ++(*col_count);
 #include "iterate_template.h"
 
+inline static void put_pixel(guchar *pixels, guint x, guint y, guint n_channels, guint rowstride, const guchar *color)
+{
+	guint i;
+	guchar *p;
+
+	p = pixels + y * rowstride + x * n_channels;
+	for (i = 0; i < 4; ++i) 
+		*p++ = *color++;
+}

@@ -22,6 +22,7 @@ static void render_thread_done(gboolean succ, struct winctl *w);
 static void redraw_idle(struct winctl *w);
 static gboolean start_calc(struct winctl *w);
 static void redraw_drawing(struct winctl *w, gint x, gint y, gint width, gint height);
+static void clearpixbuf(GdkPixbuf *pixbuf);
 
 void run_interface(gchar *file_name)
 {
@@ -176,7 +177,7 @@ static gboolean start_calc(struct winctl *w)
 	w->it_param.n_channels = gdk_pixbuf_get_n_channels(w->pixbufcalc);
 	w->it_param.rowstride = gdk_pixbuf_get_rowstride(w->pixbufcalc);
 	alloc_colors(&w->it_param, w);
-	w->it_param.setcolor = color_func[w->it_param.color_func_index];
+	w->it_param.setcolor = getcolorfunc(w->it_param.color_func_index);
 	w->it_param.degree = degree;
 	if (w->it_param.type == MANDELBROT_SET) {
 		w->it_param.iterate_func = (degree == 2.0) ? (GThreadFunc)mandelbrot_set : (GThreadFunc)mandelbrot_set_deg;
@@ -554,22 +555,37 @@ static void redraw_drawing(struct winctl *w, gint x, gint y, gint width, gint he
 
 void alloc_colors(struct iterate_param *it_param, struct winctl *w)
 {
-	if (it_param->color_func_index != 1) {
-		it_param->color = (guchar *)g_malloc(sizeof(guchar) * 4);
-		it_param->color[0] = (guchar)(w->convcol.red >> 8);
-		it_param->color[1] = (guchar)(w->convcol.green >> 8);
-		it_param->color[2] = (guchar)(w->convcol.blue >> 8);
-		it_param->color[3] = 0xff;
-	} else {
-		it_param->color = (guchar *)g_malloc(sizeof(guchar) * 8);
-		it_param->color[0] = (guchar)(w->convcol.red >> 8);
-		it_param->color[1] = (guchar)(w->convcol.green >> 8);
-		it_param->color[2] = (guchar)(w->convcol.blue >> 8);
-		it_param->color[3] = 0xff;
-		it_param->color[4] = (guchar)(w->divcol.red >> 8);
-		it_param->color[5] = (guchar)(w->divcol.green >> 8);
-		it_param->color[6] = (guchar)(w->divcol.blue >> 8);
-		it_param->color[7] = 0xff;
+	guchar divcolor[4];
+	it_param->color = (guchar *)g_malloc(sizeof(guchar) * 4);
+	it_param->color[0] = (guchar)(w->convcol.red >> 8);
+	it_param->color[1] = (guchar)(w->convcol.green >> 8);
+	it_param->color[2] = (guchar)(w->convcol.blue >> 8);
+	it_param->color[3] = 0xff;
+	if (it_param->color_func_index == getdivconv_idx()) {
+		divcolor[0] = (guchar)(w->divcol.red >> 8);
+		divcolor[1] = (guchar)(w->divcol.green >> 8);
+		divcolor[2] = (guchar)(w->divcol.blue >> 8);
+		divcolor[3] = 0xff;
+		setdivcol(divcolor);
 	}
 }
 
+void clearpixbuf(GdkPixbuf *pixbuf)
+{
+	guint width, height, rowstride, n_channels;
+	guchar *itp, *endp;
+
+	n_channels = gdk_pixbuf_get_n_channels(pixbuf);
+	width = gdk_pixbuf_get_width(pixbuf) - 1;
+	height = gdk_pixbuf_get_height(pixbuf) - 1;
+	rowstride = gdk_pixbuf_get_rowstride(pixbuf);
+	itp = gdk_pixbuf_get_pixels(pixbuf);
+	endp = itp + height * rowstride + width * n_channels;
+
+	for (; itp < endp; ++itp) {
+		itp[0] = 0xff;
+		itp[1] = 0xff;
+		itp[2] = 0xff;
+		itp[3] = 0xff;
+	}
+}
