@@ -9,34 +9,39 @@
 #               make clean        (remove objects, executable, prerequisits )
 #               make tarball      (generate compressed archive              )
 #               make zip          (generate compressed archive              )
+#               make install      (install executable                       )
+#               make uninstall    (uninstall executable                     )
 #
 #===============================================================================
 
-include config.mk
 
 # DEBUG can be set to YES to include debugging info, or NO otherwise
 DEBUG           := NO
 
-# ------------  run executable out of this Makefile  (yes/no)  -----------------
-START           := NO
+# ------------  build a shared or static library  ------------------------------
+SHARED          := YES
 
-#------------  start application with params -----------------------------------
-PARAMS          :=
+# ------------  subinstall directory (must end with /)  ------------------------
+SUBDIR          := mandelbrot/
 
-# ------------  name of the executable  ----------------------------------------
-EXECUTABLE      := mandelbrot
+# ------------  name of the target      ----------------------------------------
+ifeq (YES, ${SHARED})
+TARGET          := libmbcolor.so.0.0
+else
+TARGET          := libmbcolor.a
+endif
+LIBRARY_NAME    := libmbcolor.so
 
 # ------------  list of all source files  --------------------------------------
-SOURCES         := main.c defs.c interface.c layout.c config.c \
-	render.c iterate.c storedrawing.c validate.c pref.c
+SOURCES         := color.c colorfunc.c
 
 # ------------  compiler  ------------------------------------------------------
 CC              := gcc
 
 # ------------  compiler flags  ------------------------------------------------
 DEBUG_CFLAGS    := -Wall -pedantic -ansi -O0 -g
-RELEASE_CFLAGS  := -Wall -pedantic -ansi -O2 -pipe -mtune=native -march=native -DNDEBUG \
-	-DPACKAGE="\"$(EXECUTABLE)\"" -DMO_DIR="\"$(MO_DIR)\""
+RELEASE_CFLAGS  := -Wall -pedantic -ansi -O2 -pipe -mtune=native -march=native \
+	-DNDEBUG
 
 #-------------  Directories  ---------------------------------------------------
 DEBUG_DIR       := ./debug
@@ -44,7 +49,7 @@ RELEASE_DIR     := ./release
 
 # ------------  linker flags  --------------------------------------------------
 DEBUG_LDFLAGS   := -g
-RELEASE_LDFLAGS :=
+RELEASE_LDFLAGS := 
 
 ifeq (YES, ${DEBUG})
 CFLAGS          := ${DEBUG_CFLAGS} 
@@ -56,17 +61,19 @@ LDFLAGS         := ${RELEASE_LDFLAGS}
 OUT_DIR         := ${RELEASE_DIR}
 endif
 
+
 # ------------  additional pkg-config includes and libraries  ------------------
-PKG_CONF_ARG    = gtk+-2.0 gthread-2.0 libxml-2.0
+# gtk-libs
+PKG_CONF_ARG    = gtk+-2.0
 
 # ------------  additional include directories  --------------------------------
 INC_DIR  = 
 
 # ------------  additional library directories  --------------------------------
-LIB_DIR  = ./libcolor
+LIB_DIR  =
 
 # ------------  additional libraries  ------------------------------------------
-LIBS     = -lm -lmbcolor
+LIBS     = -lm
 
 # ------------  archive generation ---------------------------------------------
 TARBALL_EXCLUDE = *.{o,gz,zip}
@@ -81,9 +88,9 @@ endif
 
 
 ifeq (YES, ${DEBUG})
-CMD = gdb $(OUT_DIR)/$(EXECUTABLE) $(PARAMS)
+CMD = gdb $(OUT_DIR)/$(TARGET) $(PARAMS)
 else
-CMD = $(OUT_DIR)/$(EXECUTABLE) $(PARAMS)
+CMD = $(OUT_DIR)/$(TARGET) $(PARAMS)
 endif
 
 #===============================================================================
@@ -94,21 +101,31 @@ ALL_INC_DIR     = $(addprefix -I, $(INC_DIR)) $(INC_DIR_PKG_CONF)
 ALL_LIB_DIR     = $(addprefix -L, $(LIB_DIR))
 ALL_CFLAGS      = $(CFLAGS) $(ALL_INC_DIR)
 ALL_LFLAGS      = $(LDFLAGS) $(ALL_LIB_DIR)
-BASENAMES       = $(basename $(C_SOURCES))
+BASENAMES       = $(basename $(SOURCES))
+
+ifeq (YES, ${SHARED})
+	ALL_CFLAGS += -fPIC
+	ALL_LFLAGS += -shared -fPIC -Wl,-soname,$(LIBRARY_NAME)
+endif
 
 # ------------  generate the names of the object files  ------------------------
 OBJECTS         = $(addprefix $(OUT_DIR)/, $(addsuffix .o,$(BASENAMES)))
 
 # ------------  make (and start) the executable  -------------------------------
-all: $(OUT_DIR)/$(EXECUTABLE)
+all: $(OUT_DIR)/$(TARGET)
 ifeq (YES, ${START})
 	$(CMD)
 endif
 
 # ------------  make the executable  -------------------------------------------
-$(OUT_DIR)/$(EXECUTABLE): $(OUT_DIR) $(OBJECTS)
-	$(CC) $(ALL_LFLAGS) -o $(OUT_DIR)/$(EXECUTABLE) $(OBJECTS) \
+$(OUT_DIR)/$(TARGET): $(OUT_DIR) $(OBJECTS)
+ifeq (YES, ${SHARED})
+	$(CC) $(ALL_LFLAGS) -o $(OUT_DIR)/$(TARGET) $(OBJECTS) \
 		$(ALL_LIB_DIR) $(LIBS) $(LIBS_PKG_CONF)
+	ln -sf $(OUT_DIR)/$(TARGET) ./$(LIBRARY_NAME)
+else
+	$(AR) cr $(OUT_DIR)/$(TARGET) $(OBJECTS)
+endif
 
 #-------------  Create the directories -----------------------------------------
 $(OUT_DIR):
@@ -118,13 +135,19 @@ $(OUT_DIR):
 $(OUT_DIR)/%.o:	%.c
 	$(CC)  -c $(ALL_CFLAGS) $< -o $@
 
+#-------------  create dependencies  -------------------------------------------
+depend:
+	gcc -MM -E  $(SOURCES) | awk '{ printf("$(OUT_DIR)/%s\n", $$0); }' > ./.depend
+
+include .depend
+
 # ------------  remove generated files  ----------------------------------------
 clean:
 	@rm -rf $(DEBUG_DIR) $(RELEASE_DIR)
 
 # ------------  tarball generation  --------------------------------------------
 tarball:
-	lokaldir=`pwd`; lokaldir=$${lokaldir##*/};   \
+	@lokaldir=`pwd`; lokaldir=$${lokaldir##*/};   \
 		rm --force $$lokaldir.tar.gz;             \
 		tar --exclude=$(TARBALL_EXCLUDE)          \
 		--create                                  \
@@ -137,36 +160,20 @@ zip:
 	@lokaldir=`pwd`; lokaldir=$${lokaldir##*/}; \
 		zip -r  $$lokaldir.zip * -x $(ZIP_EXCLUDE)
 
-
 # ------------  installl  ------------------------------------------------------
 install: 
-	@[ -f $(RELEASE_DIR)/$(EXECUTABLE) ] || ( echo "Executable does not exist. You must build the project before install."; exit 1 )
-	@for POFILE in ./po/*.po; do \
-		LOCALE_DIR=${DESTDIR}$(MO_DIR)/$$(basename $$POFILE .po)/LC_MESSAGES; \
-		install -d $$LOCALE_DIR; \
-		msgfmt $$POFILE -o $$LOCALE_DIR/$(EXECUTABLE).mo; \
-	done
-	install -D -m644 ./mandelbrot.xml ${DESTDIR}$(DOC_DIR)/$(EXECUTABLE)/mandelbrot.xml
-	install -D -m755 $(RELEASE_DIR)/$(EXECUTABLE) ${DESTDIR}$(PREFIX)/bin/$(EXECUTABLE)
+ifeq (YES, ${SHARED})
+	install -D -m755 $(RELEASE_DIR)/$(TARGET) ${DESTDIR}$(PREFIX)/lib/${SUBDIR}$(TARGET)
+	ln -sf ${DESTDIR}$(PREFIX)/lib/${SUBDIR}$(TARGET) \
+		${DESTDIR}$(PREFIX)/lib/${SUBDIR}$(LIBRARY_NAME)
+endif
 
 # ------------  uninstall  -----------------------------------------------------
 uninstall:
-	for POFILE in ./po/*.po; do  \
-		LOCALE_DIR=${DESTDIR}$(MO_DIR)/$$(basename $$POFILE .po)/LC_MESSAGES; \
-		rm -rf  $$LOCALE_DIR/$(EXECUTABLE).mo; \
-	done
-	rm -rf ${DESTDIR}$(PREFIX)/bin/$(EXECUTABLE)
-	rm -rf ${DESTDIR}$(DOC_DIR)/$(EXECUTABLE)
+	rm -rf ${DESTDIR}$(PREFIX)/lib/${SUBDIR}$(TARGET)
+	rm -rf ${DESTDIR}$(PREFIX)/lib/${SUBDIR}$(TARGET)
+ifdef ${SUBDIR}
+	rmdir ${DESTDIR}$(PREFIX)/lib/${SUBDIR}
+endif
 
-# ------------  xgettext  ------------------------------------------------------
-xgettext:
-	xgettext -k_ -kN_ -LC --no-location --omit-header -o ./po/messages.pot *.c *.h \
-		./libcolor/*.h ./libcolor/*.c
-
-#-------------  create dependencies  -------------------------------------------
-depend:
-	gcc -MM -E  $(SOURCES) | awk '{ printf("$(OUT_DIR)/%s\n", $$0); }' > ./.depend
-
-include .depend
-
-.PHONY: all clean tarball zip depend install uninstall xgettext depend
+.PHONY: all depend clean tarball zip install uninstall

@@ -7,7 +7,6 @@
 #include <glib/gi18n.h>
 #include "defs.h"
 #include "render.h"
-#include "draw.h"
 
 struct winctl {
 	/* widgets: */
@@ -30,7 +29,7 @@ struct winctl {
 	GtkWidget *pjmenu;
 	GtkWidget *mchkzoomprop;
 	GtkWidget *pmchkzoomprop;
-	GtkWidget *mcolalgo[COLORFUNC];
+	GtkWidget **mcolalgo;
 	GdkPixbuf *pixbufcalc;
 	GdkPixbuf *pixbufshow;
 	/* render thread */
@@ -87,9 +86,6 @@ gboolean configure_interface(struct winctl *w, enum configtype type);
 
 /* implemented by pref.c */
 void preference_show(struct winctl *w);
-
-/* definition is at def.c */
-extern const ColorFunc color_func[];
 
 #endif /* __INTERFACE_H__ */
 

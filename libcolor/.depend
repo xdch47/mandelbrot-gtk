@@ -1,0 +1,2 @@
+./debug/color.o: color.c color.h
+./debug/colorfunc.o: colorfunc.c color.h
