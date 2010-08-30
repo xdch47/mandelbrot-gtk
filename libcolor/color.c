@@ -27,12 +27,12 @@ int getcolorfunc_count()
 
 const char *getcolorfunc_name(int index)
 {
-	return colorfunc_names[index];
+	return colorfunc_names[index % COLORFUNC_COUNT];
 }
 
 ColorFunc getcolorfunc(int index)
 {
-	return colorfunc[index];
+	return colorfunc[index % COLORFUNC_COUNT];
 }
 
 int getdivconv_idx()
