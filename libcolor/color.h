@@ -14,5 +14,8 @@ int getdivconv_idx();
 void setdivcol(const guchar *color);
 const guchar *clblue(const guint iter, const guint itermax);
 const guchar *divconv(const guint iter, const guint itermax);
+const guchar *mb_color_standard_sw(const guint iter, const guint itermax);
+void initialize_func(int index);
+void finalize_func(int index);
 
 #endif /* __COLOR_H__ */

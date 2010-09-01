@@ -370,9 +370,8 @@ static void btnsave_clicked(GtkWidget *widget, struct savectl *s)
 		}
 	}
 	s->it_param.color_func_index = gtk_combo_box_get_active(GTK_COMBO_BOX(s->cbocolor));
-	s->it_param.setcolor = getcolorfunc(s->it_param.color_func_index);
 	if (s->w->succ_render && equal && gdk_pixbuf_get_width(s->w->pixbufcalc) == width && gdk_pixbuf_get_height(s->w->pixbufcalc) == height
-			&& s->w->it_param.itermax == s->it_param.itermax && s->w->it_param.setcolor == s->it_param.setcolor) {
+			&& s->w->it_param.itermax == s->it_param.itermax && s->w->it_param.color_func_index == s->it_param.color_func_index) {
 		s->pixbuf = g_object_ref(s->w->pixbufcalc);
 		gtk_widget_hide(s->win);
 		save_pixbuf_to_stream(s);

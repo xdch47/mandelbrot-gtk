@@ -3,7 +3,6 @@
 #define __RENDER_H__
 
 #include <gtk/gtk.h>
-#include "libcolor/color.h"
 
 enum fraktal_type { MANDELBROT_SET, JULIA_SET };
 enum thread_state { RUN, PAUSE, KILL };
@@ -30,7 +29,6 @@ struct iterate_param {
 	guint n_channels;
 	guint rowstride;
 	guchar *color;
-	ColorFunc setcolor;
 };
 
 struct iteration_data {

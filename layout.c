@@ -3,6 +3,7 @@
 #include <gdk/gdkkeysyms.h>
 #include <stdlib.h>
 #include "interface.h"
+#include "libcolor/color.h"
 
 static GtkWidget *convdiv_menu(struct winctl *w);
 static void chkj_toggled(GtkWidget *widget, struct winctl *w);
