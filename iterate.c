@@ -1,6 +1,7 @@
 #include <glib.h>
 #include "render.h"
 #include "math.h"
+#include "libcolor/color.h"
 
 #define sqr(x) (x) * (x)
 /* using dirty define/include-hacks for fast-inline templates... */

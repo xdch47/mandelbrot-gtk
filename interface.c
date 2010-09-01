@@ -6,6 +6,7 @@
 #include <glib/gstdio.h>
 #include <gdk/gdkkeysyms.h>
 #include "interface.h"
+#include "libcolor/color.h"
 
 #define SIGN(x) (x >= 0) ? 1 : -1;
 
@@ -177,7 +178,6 @@ static gboolean start_calc(struct winctl *w)
 	w->it_param.n_channels = gdk_pixbuf_get_n_channels(w->pixbufcalc);
 	w->it_param.rowstride = gdk_pixbuf_get_rowstride(w->pixbufcalc);
 	alloc_colors(&w->it_param, w);
-	w->it_param.setcolor = getcolorfunc(w->it_param.color_func_index);
 	w->it_param.degree = degree;
 	if (w->it_param.type == MANDELBROT_SET) {
 		w->it_param.iterate_func = (degree == 2.0) ? (GThreadFunc)mandelbrot_set : (GThreadFunc)mandelbrot_set_deg;

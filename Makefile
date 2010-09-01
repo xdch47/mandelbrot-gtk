@@ -56,6 +56,10 @@ LDFLAGS         := ${RELEASE_LDFLAGS}
 OUT_DIR         := ${RELEASE_DIR}
 endif
 
+ifneq (YES, ${SHARED})
+STATIC=-Wl,-Bstatic
+endif
+
 # ------------  additional pkg-config includes and libraries  ------------------
 PKG_CONF_ARG    = gtk+-2.0 gthread-2.0 libxml-2.0
 
@@ -66,7 +70,7 @@ INC_DIR  =
 LIB_DIR  = ./libcolor
 
 # ------------  additional libraries  ------------------------------------------
-LIBS     = -lm -lmbcolor
+LIBS     = $(STATIC) -lmbcolor -Wl,-Bdynamic -lm
 
 # ------------  archive generation ---------------------------------------------
 TARBALL_EXCLUDE = *.{o,gz,zip}
@@ -96,6 +100,12 @@ ALL_CFLAGS      = $(CFLAGS) $(ALL_INC_DIR)
 ALL_LFLAGS      = $(LDFLAGS) $(ALL_LIB_DIR)
 BASENAMES       = $(basename $(C_SOURCES))
 
+ifeq (YES, ${SHARED})
+ifdef RPATH
+ALL_LFLAGS += -Wl,-rpath,${PREFIX}/lib/${RPATH}
+endif
+endif
+
 # ------------  generate the names of the object files  ------------------------
 OBJECTS         = $(addprefix $(OUT_DIR)/, $(addsuffix .o,$(BASENAMES)))
 
@@ -107,8 +117,10 @@ endif
 
 # ------------  make the executable  -------------------------------------------
 $(OUT_DIR)/$(EXECUTABLE): $(OUT_DIR) $(OBJECTS)
-	$(CC) $(ALL_LFLAGS) -o $(OUT_DIR)/$(EXECUTABLE) $(OBJECTS) \
-		$(ALL_LIB_DIR) $(LIBS) $(LIBS_PKG_CONF)
+	+make -C ./libcolor DEBUG=${DEBUG} SHARED=${SHARED} \
+		DESTDIR=${DESTDIR} PREFIX=${PREFIX} RPATH=${RPATH}
+	$(CC) -o $(OUT_DIR)/$(EXECUTABLE) $(OBJECTS) \
+		$(ALL_LFLAGS) $(ALL_LIB_DIR) $(LIBS) $(LIBS_PKG_CONF)
 
 #-------------  Create the directories -----------------------------------------
 $(OUT_DIR):
@@ -121,6 +133,7 @@ $(OUT_DIR)/%.o:	%.c
 # ------------  remove generated files  ----------------------------------------
 clean:
 	@rm -rf $(DEBUG_DIR) $(RELEASE_DIR)
+	@+make -C ./libcolor clean
 
 # ------------  tarball generation  --------------------------------------------
 tarball:
@@ -148,6 +161,8 @@ install:
 	done
 	install -D -m644 ./mandelbrot.xml ${DESTDIR}$(DOC_DIR)/$(EXECUTABLE)/mandelbrot.xml
 	install -D -m755 $(RELEASE_DIR)/$(EXECUTABLE) ${DESTDIR}$(PREFIX)/bin/$(EXECUTABLE)
+	+make -C ./libcolor DEBUG=${DEBUG} SHARED=${SHARED} \
+		DESTDIR=${DESTDIR} PREFIX=${PREFIX} RPATH=${RPATH} install
 
 # ------------  uninstall  -----------------------------------------------------
 uninstall:
@@ -157,6 +172,8 @@ uninstall:
 	done
 	rm -rf ${DESTDIR}$(PREFIX)/bin/$(EXECUTABLE)
 	rm -rf ${DESTDIR}$(DOC_DIR)/$(EXECUTABLE)
+	+make -C ./libcolor DEBUG=${DEBUG} SHARED=${SHARED} \
+		DESTDIR=${DESTDIR} PREFIX=${PREFIX} RPATH=${RPATH} uninstall
 
 # ------------  xgettext  ------------------------------------------------------
 xgettext:

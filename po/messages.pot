@@ -28,18 +28,6 @@ msgstr ""
 msgid "Misiurewicz-Point"
 msgstr ""
 
-msgid "Blue constants"
-msgstr ""
-
-msgid "Convergent / Divergent Set"
-msgstr ""
-
-msgid "Dixius-Algo_1"
-msgstr ""
-
-msgid "Dixius-Algo_2"
-msgstr ""
-
 msgid "Mandelbrot- / Juliaset"
 msgstr ""
 
@@ -280,4 +268,10 @@ msgstr ""
 msgid ""
 "Please enter a valid number for the degree of the Mandelbrotset. (Between %f "
 "and %f)"
+msgstr ""
+
+msgid "Blue constants"
+msgstr ""
+
+msgid "Convergent / Divergent Set"
 msgstr ""

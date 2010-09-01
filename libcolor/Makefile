@@ -19,18 +19,19 @@
 DEBUG           := NO
 
 # ------------  build a shared or static library  ------------------------------
-SHARED          := YES
+SHARED          := NO
 
 # ------------  subinstall directory (must end with /)  ------------------------
-SUBDIR          := mandelbrot/
+RPATH          := mandelbrot/
 
 # ------------  name of the target      ----------------------------------------
 ifeq (YES, ${SHARED})
 TARGET          := libmbcolor.so.0.0
-else
-TARGET          := libmbcolor.a
-endif
 LIBRARY_NAME    := libmbcolor.so
+else
+TARGET          := libmbcolor.a.0.0
+LIBRARY_NAME    := libmbcolor.a
+endif
 
 # ------------  list of all source files  --------------------------------------
 SOURCES         := color.c colorfunc.c
@@ -125,6 +126,8 @@ ifeq (YES, ${SHARED})
 	ln -sf $(OUT_DIR)/$(TARGET) ./$(LIBRARY_NAME)
 else
 	$(AR) cr $(OUT_DIR)/$(TARGET) $(OBJECTS)
+	ln -sf $(OUT_DIR)/$(TARGET) ./$(LIBRARY_NAME)
+	ranlib ./$(LIBRARY_NAME)
 endif
 
 #-------------  Create the directories -----------------------------------------
@@ -144,6 +147,7 @@ include .depend
 # ------------  remove generated files  ----------------------------------------
 clean:
 	@rm -rf $(DEBUG_DIR) $(RELEASE_DIR)
+	@rm -rf ./$(LIBRARY_NAME)
 
 # ------------  tarball generation  --------------------------------------------
 tarball:
@@ -163,17 +167,19 @@ zip:
 # ------------  installl  ------------------------------------------------------
 install: 
 ifeq (YES, ${SHARED})
-	install -D -m755 $(RELEASE_DIR)/$(TARGET) ${DESTDIR}$(PREFIX)/lib/${SUBDIR}$(TARGET)
-	ln -sf ${DESTDIR}$(PREFIX)/lib/${SUBDIR}$(TARGET) \
-		${DESTDIR}$(PREFIX)/lib/${SUBDIR}$(LIBRARY_NAME)
+	install -D -m755 $(RELEASE_DIR)/$(TARGET) ${DESTDIR}$(PREFIX)/lib/${RPATH}$(TARGET)
+	ln -sf ${DESTDIR}$(PREFIX)/lib/${RPATH}$(TARGET) \
+		${DESTDIR}$(PREFIX)/lib/${RPATH}$(LIBRARY_NAME)
 endif
 
 # ------------  uninstall  -----------------------------------------------------
 uninstall:
-	rm -rf ${DESTDIR}$(PREFIX)/lib/${SUBDIR}$(TARGET)
-	rm -rf ${DESTDIR}$(PREFIX)/lib/${SUBDIR}$(TARGET)
-ifdef ${SUBDIR}
-	rmdir ${DESTDIR}$(PREFIX)/lib/${SUBDIR}
+ifeq (YES, ${SHARED})
+	rm -rf ${DESTDIR}$(PREFIX)/lib/${RPATH}$(TARGET)
+	rm -rf ${DESTDIR}$(PREFIX)/lib/${RPATH}$(LIBRARY_NAME)
+ifdef RPATH
+	rmdir ${DESTDIR}$(PREFIX)/lib/${RPATH}
+endif
 endif
 
 .PHONY: all depend clean tarball zip install uninstall

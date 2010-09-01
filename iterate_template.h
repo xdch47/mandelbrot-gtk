@@ -24,6 +24,7 @@ gpointer IT_FUNC_NAME(struct iteration_data *p)
 	guchar *pixels;
 	guint n_channels, rowstride;
 	const guchar *color;
+	ColorFunc setcolor;
 
 	IT_VAR
 	
@@ -43,7 +44,8 @@ gpointer IT_FUNC_NAME(struct iteration_data *p)
 	pixels = param->pixels;
 	n_channels = param->n_channels;
 	rowstride = param->rowstride;
-
+	initialize_func(param->color_func_index);
+	setcolor = getcolorfunc(param->color_func_index);
 	IT_INIT
 
 	itim = p->b_im;
@@ -73,13 +75,14 @@ gpointer IT_FUNC_NAME(struct iteration_data *p)
 			IT_INLINE_FUNC
 
 			if (iter < param->itermax) {
-				color = param->setcolor(iter, itermax);
+				color = setcolor(iter, itermax);
 				put_pixel(pixels, x, y, n_channels, rowstride, color);
 			} else {
 				put_pixel(pixels, x, y, n_channels, rowstride, param->color);
 			}
 		}
 	}
+	finalize_func(param->color_func_index);
 	return (gpointer)retval;
 }
 
