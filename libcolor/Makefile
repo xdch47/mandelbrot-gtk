@@ -34,7 +34,7 @@ LIBRARY_NAME    := libmbcolor.a
 endif
 
 # ------------  list of all source files  --------------------------------------
-SOURCES         := color.c colorfunc.c
+SOURCES         := color.c colorfunc.c avltree.c 
 
 # ------------  compiler  ------------------------------------------------------
 CC              := gcc
@@ -65,7 +65,7 @@ endif
 
 # ------------  additional pkg-config includes and libraries  ------------------
 # gtk-libs
-PKG_CONF_ARG    = gtk+-2.0
+PKG_CONF_ARG    = gtk+-2.0 gthread-2.0
 
 # ------------  additional include directories  --------------------------------
 INC_DIR  = 

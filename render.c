@@ -1,6 +1,7 @@
 
 #include "render.h"
 #include "defs.h"
+#include "libcolor/color.h"
 
 #define sqr(x) ((x) * (x))
 
@@ -184,6 +185,7 @@ static void render_thread(struct render_thread *r)
 	GThread **iteration_thread = (GThread **)(g_malloc(sizeof(GThread *) * threads_count));
 	gboolean succ;
 
+	initialize_func(r->param->color_func_index);
 	for (i = 0; i < threads_count; ++i) {
 		iteration_thread[i] = g_thread_create(r->param->iterate_func, (gpointer)(r->it_data + i), TRUE, NULL);
 	}
@@ -197,6 +199,7 @@ static void render_thread(struct render_thread *r)
 	}
 	g_free(r->it_data);
 	g_free(iteration_thread);
+	finalize_func(r->param->color_func_index);
 
 	remove_idle(r);
 	g_mutex_lock(r->state_mutex);
