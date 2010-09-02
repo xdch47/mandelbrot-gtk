@@ -183,6 +183,7 @@ inline static void put_pixel(guchar *pixels, guint x, guint y, guint n_channels,
 	guchar *p;
 
 	p = pixels + y * rowstride + x * n_channels;
-	for (i = 0; i < 4; ++i) 
+	for (i = 0; i < 3; ++i) 
 		*p++ = *color++;
+	*p = 0xff;
 }

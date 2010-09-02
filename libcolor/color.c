@@ -13,13 +13,16 @@ const gchar *colorfunc_names[COLORFUNC_COUNT] = {
 };
 
 /* color settings: */
+/* Be careful that position matchen the **_IDX defines. */
 const ColorFunc colorfunc[COLORFUNC_COUNT] = {
 	clblue,
-	divconv, /* Be careful that this position matches the DIVCONV_IDX define. */
-	mb_color_standard_sw,
+	divconv,
+	mb_color_standard_sw, 
 };
 
 #define DIVCONV_IDX 1
+#define MB_COLOR_STANDARD_SW 2
+
 
 int getcolorfunc_count()
 {
@@ -33,7 +36,12 @@ const char *getcolorfunc_name(int index)
 
 void initialize_func(int index)
 {
-
+	if (index == MB_COLOR_STANDARD_SW && last_func != MB_COLOR_STANDARD_SW) {
+		init_mb_color_standard_sw();
+	} else if (last_func == MB_COLOR_STANDARD_SW && index != MB_COLOR_STANDARD_SW) {
+		final_mb_color_standard_sw();
+	}
+	
 	last_func = index;
 }
 

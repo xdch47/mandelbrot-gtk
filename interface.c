@@ -555,17 +555,15 @@ static void redraw_drawing(struct winctl *w, gint x, gint y, gint width, gint he
 
 void alloc_colors(struct iterate_param *it_param, struct winctl *w)
 {
-	guchar divcolor[4];
-	it_param->color = (guchar *)g_malloc(sizeof(guchar) * 4);
+	guchar divcolor[3];
+	it_param->color = (guchar *)g_malloc(sizeof(guchar) * 3);
 	it_param->color[0] = (guchar)(w->convcol.red >> 8);
 	it_param->color[1] = (guchar)(w->convcol.green >> 8);
 	it_param->color[2] = (guchar)(w->convcol.blue >> 8);
-	it_param->color[3] = 0xff;
 	if (it_param->color_func_index == getdivconv_idx()) {
 		divcolor[0] = (guchar)(w->divcol.red >> 8);
 		divcolor[1] = (guchar)(w->divcol.green >> 8);
 		divcolor[2] = (guchar)(w->divcol.blue >> 8);
-		divcolor[3] = 0xff;
 		setdivcol(divcolor);
 	}
 }

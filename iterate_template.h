@@ -44,7 +44,6 @@ gpointer IT_FUNC_NAME(struct iteration_data *p)
 	pixels = param->pixels;
 	n_channels = param->n_channels;
 	rowstride = param->rowstride;
-	initialize_func(param->color_func_index);
 	setcolor = getcolorfunc(param->color_func_index);
 	IT_INIT
 
@@ -82,7 +81,6 @@ gpointer IT_FUNC_NAME(struct iteration_data *p)
 			}
 		}
 	}
-	finalize_func(param->color_func_index);
 	return (gpointer)retval;
 }
 
