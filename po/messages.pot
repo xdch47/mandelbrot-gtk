@@ -275,3 +275,6 @@ msgstr ""
 
 msgid "Convergent / Divergent Set"
 msgstr ""
+
+msgid "Dixius Algo Grey"
+msgstr ""

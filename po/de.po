@@ -34,18 +34,6 @@ msgstr "Douady Kanichen"
 msgid "Misiurewicz-Point"
 msgstr "misiurewicz-Punkt"
 
-msgid "Blue constants"
-msgstr "Blau Konstanten"
-
-msgid "Convergent / Divergent Set"
-msgstr "Konvergente / Divergent Menge"
-
-msgid "Dixius-Algo_1"
-msgstr "Dixius-Algo_1"
-
-msgid "Dixius-Algo_2"
-msgstr "Dixius-Algo_2"
-
 msgid "Mandelbrot- / Juliaset"
 msgstr "Mandelbrot- / Juliamenge"
 
@@ -103,7 +91,8 @@ msgid " _Quit "
 msgstr " _Beenden "
 
 msgid "The renderprocess has been interrupted. Continue or restart process?"
-msgstr "Der Renderprozess wurde gestoppt. Soll er fortgesetzt oder neugestartet "
+msgstr ""
+"Der Renderprozess wurde gestoppt. Soll er fortgesetzt oder neugestartet "
 "werden?"
 
 msgid " _Continue"
@@ -302,3 +291,12 @@ msgid ""
 msgstr ""
 "Geben sie einen gültigen Wert für die Ordnung der Mandelbrotmenge ein. (Zw. "
 "%f und %f)"
+
+msgid "Blue constants"
+msgstr "Blau Konstanten"
+
+msgid "Convergent / Divergent Set"
+msgstr "Konvergente / Divergente Menge"
+
+msgid "Dixius Algo Grey"
+msgstr "Dixius Algo Grau"
