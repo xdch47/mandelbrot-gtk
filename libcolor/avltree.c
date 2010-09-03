@@ -274,6 +274,14 @@ void *avl_delete(AVLtree tree, Node *node)
 	return data;
 }
 
+AVLtree avl_create() 
+{
+	AVLtree tree = (AVLtree)malloc(sizeof(Node *));
+	*tree = NULL;
+	return tree;
+}
+
+
 static void free_all_nodes(Node *node)
 {
 	if (node) {

@@ -18,8 +18,9 @@ void finalize_func(int index);
 const guchar *clblue(const guint iter, const guint itermax);
 const guchar *divconv(const guint iter, const guint itermax);
 const guchar *mb_color_standard_sw(const guint iter, const guint itermax);
-void init_mb_color_standard_sw();
-void final_mb_color_standard_sw();
+const guchar *clRGBS5(const guint iter, const guint itermax);
+void initialize_colormap();
+void finalize_colormap();
 
 
 #endif /* __COLOR_H__ */
