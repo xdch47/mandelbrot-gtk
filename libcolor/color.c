@@ -2,7 +2,7 @@
 #include "color.h"
 #include "colormap.h"
 
-#define COLORFUNC_COUNT 4
+#define COLORFUNC_COUNT 5
 #define N_(x) x
 
 static int last_func = -1;
@@ -12,6 +12,7 @@ const gchar *colorfunc_names[COLORFUNC_COUNT] = {
 	N_("Convergent / Divergent Set"),
 	N_("Dixius Algo Grey"),
 	N_("RBG-S5"),
+	N_("Rainbow"),
 };
 
 /* color settings: */
@@ -21,19 +22,23 @@ const ColorFunc colorfunc[COLORFUNC_COUNT] = {
 	divconv,
 	mb_color_standard_sw, 
 	clRGBS5,
+	mb_rainbow,
 };
 
 #define DIVCONV_IDX 1
 #define MB_COLOR_STANDARD_SW_IDX 2
 #define RGBS5_IDX 3
+#define RAINBOW_IDX 4
 
 int getcolorfunc_count()
 {
+	return getcolorfuncmap_count();
 	return COLORFUNC_COUNT;
 }
 
 const char *getcolorfunc_name(int index)
 {
+	return getcolorfuncmap_name(index);
 	return colorfunc_names[index % COLORFUNC_COUNT];
 }
 
@@ -50,6 +55,9 @@ void initialize_func(int index)
 		initialize_colormap();
 	} else if (leave(MB_COLOR_STANDARD_SW_IDX) || leave(RGBS5_IDX)) {
 		finalize_colormap();
+	} else if (index == RAINBOW_IDX) {
+		finalize_colormap();
+		initialize_colormap();
 	}
 	
 	last_func = index;
@@ -62,6 +70,7 @@ void finalize_func(int index)
 
 ColorFunc getcolorfunc(int index)
 {
+	return getcolorfuncmap(index);
 	return colorfunc[index % COLORFUNC_COUNT];
 }
 

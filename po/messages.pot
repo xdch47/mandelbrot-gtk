@@ -278,3 +278,6 @@ msgstr ""
 
 msgid "Dixius Algo Grey"
 msgstr ""
+
+msgid "RBG-S5"
+msgstr ""

@@ -14,7 +14,7 @@
 
 /* color value for the divergent color */
 static guchar divcol[3];
-static AVLtree colormap;
+static AVLtree colormap = NULL;
 
 static const guchar clbluedef[3 * 48] = {
 	  0,   0,   0,
@@ -158,3 +158,85 @@ static const guchar *clRGBS5_algo(const guint iter, const guint itermax)
 	return color;
 } 
 EXPORT_COLORMAP_ALGO(clRGBS5)
+
+static void GiveRainbowColor(double position,unsigned char c[])
+{
+	unsigned char nmax, t;
+	int n;
+	double m,f;
+	/* if position > 1 then we have repetition of colors
+	   it maybe useful    */
+
+	if (position>1.0){
+		if (position - (int)position == 0.0)
+			position=1.0; 
+		else position = position - (int)position; 
+	}
+
+	nmax=6; /* number of color bars */
+	m=nmax* position;
+
+	n=(int)m; 
+
+	f=m-n; 
+	t=(int)(f*255);
+
+
+
+	switch(n){
+	case 0: {
+			c[0] = 255;
+			c[1] = t;
+			c[2] = 0;
+			break;
+		};
+	case 1: {
+			c[0] = 255 - t;
+			c[1] = 255;
+			c[2] = 0;
+			break;
+		};
+	case 2: {
+			c[0] = 0;
+			c[1] = 255;
+			c[2] = t;
+			break;
+		};
+	case 3: {
+			c[0] = 0;
+			c[1] = 255 - t;
+			c[2] = 255;
+			break;
+		};
+	case 4: {
+			c[0] = t;
+			c[1] = 0;
+			c[2] = 255;
+			break;
+		};
+	case 5: {
+			c[0] = 255;
+			c[1] = 0;
+			c[2] = 255 - t;
+			break;
+		};
+	default: {
+			 c[0] = 255;
+			 c[1] = 0;
+			 c[2] = 0;
+			 break;
+		 };
+
+	}; 
+
+
+}
+const guchar *mb_rainbow_algo(const guint iter, const guint itermax)
+{
+	guchar *color = (guchar *)malloc(sizeof(guchar) * 3);
+	
+	GiveRainbowColor(iter / itermax, color);
+	return color;
+}
+
+EXPORT_COLORMAP_ALGO(mb_rainbow)
