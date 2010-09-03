@@ -30,8 +30,8 @@ const gdouble JDEFINES[12] = {
 
 /* default complex plane */
 const gdouble CPLXPLANE[4] = {
-	-1.167,
-	1.167,
+	-1.5,
+	1.5,
 	-1.5,
 	1.5
 };

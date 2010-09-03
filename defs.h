@@ -119,7 +119,7 @@ extern const gdouble MCPLXPLANE[4];
 
 /* errors: */
 #define LOWITERMAX 10
-#define HIITERMAX 100000
+#define HIITERMAX 1000000
 #define MAXTHREADS 512
 #define LOWDEGREE -100.0
 #define HIDEGREE 100.0

@@ -17,12 +17,7 @@ typedef Node **AVLtree;
 
 typedef int (*cmpfunc)(const void *, const void *);
 
-static AVLtree avl_create() 
-{
-	AVLtree tree = (AVLtree)malloc(sizeof(Node *));
-	*tree = NULL;
-	return tree;
-}
+AVLtree avl_create();
 
 void *avl_insert(AVLtree tree, void *data, cmpfunc cmp);
 Node *avl_find(AVLtree tree, void *data, cmpfunc cmp);

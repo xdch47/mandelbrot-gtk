@@ -2,23 +2,19 @@
 #include <math.h>
 #include <gtk/gtk.h>
 #include "color.h"
-#include "avltree.h"
+#include "colormap.h"
 
 #define COLOR_PERIOD_DEFAULT 40.0
 
+#define EXPORT_COLORMAP_ALGO(name)                                                \
+	const guchar *name(const guint iter, const guint itermax) \
+	{                                                                         \
+		return getColor(colormap, name ## _algo, iter, itermax);          \
+	}
+
 /* color value for the divergent color */
 static guchar divcol[3];
-static AVLtree iter_tree;
-static GMutex *read_mutex;
-static GCond *write_done_cond;
-static GCond *write_ready_cond;
-static guint reader_count;
-static guint write_request;
-
-typedef struct _ColorMap {
-	guint iter;
-	guchar color[3];
-} ColorMap;
+static AVLtree colormap;
 
 static const guchar clbluedef[3 * 48] = {
 	  0,   0,   0,
@@ -88,86 +84,77 @@ const guchar *divconv(const guint iter, const guint itermax)
 	return divcol;
 }
 
-void init_mb_color_standard_sw()
+void initialize_colormap()
 {
-	iter_tree = avl_create();
-	read_mutex = g_mutex_new();
-	write_ready_cond = g_cond_new();
-	write_done_cond = g_cond_new();
-	reader_count = 0;
-	write_request = 0;
+	colormap = avl_create();
 }
 
-void final_mb_color_standard_sw()
+void finalize_colormap()
 {
-	avl_free_data(iter_tree);
-	g_mutex_free(read_mutex);
-	g_cond_free(write_ready_cond);
-	g_cond_free(write_done_cond);
+	avl_free_data(colormap);
 }
 
-int cmpColorMap(const ColorMap *cm1, const ColorMap *cm2)
+static const guchar *mb_color_standard_sw_algo(const guint iter, const guint itermax)
 {
-	if (cm1->iter < cm2->iter) {
-		return -1;
-	} else if (cm1->iter == cm2->iter) {
-		return 0;
-	} else {
-		return 1;
-	}
-}
-
-const guchar *mb_color_standard_sw(const guint iter, const guint itermax)
-{
-	Node *color_node;
-	ColorMap cm;
+	long double x;
+	guchar *retval;
 	guchar res;
 
-	cm.iter = iter;
-	g_mutex_lock(read_mutex);
-	if (write_request) {
-		g_cond_wait(write_done_cond, read_mutex);
-	}
-	reader_count++;
-	g_mutex_unlock(read_mutex);
-
-	color_node = avl_find(iter_tree, &cm, (cmpfunc)cmpColorMap);
-
-	g_mutex_lock(read_mutex);
-	reader_count--;
-	if (reader_count == 0) {
-		g_cond_signal(write_ready_cond);
-	}
-	g_mutex_unlock(read_mutex);
-	if (color_node) {
-		return ((ColorMap *)color_node->data)->color;
-	} else {
-		ColorMap *new_entry;
-		long double x;
-
-		new_entry = (ColorMap *)malloc(sizeof(ColorMap));
-		new_entry->iter = iter;
-		x = sqrt((long double)iter) / sqrt(COLOR_PERIOD_DEFAULT);
-		x = 0.5 + 0.5 * cos(x);
-		res = (guchar)(255 * x);
-		new_entry->color[0] = res;
-		new_entry->color[1] = res;
-		new_entry->color[2] = res;
-
-		g_mutex_lock(read_mutex);
-		write_request++;
-		if (reader_count) {
-			g_cond_wait(write_ready_cond, read_mutex);
-		}
-		avl_insert(iter_tree, new_entry, (cmpfunc)cmpColorMap);
-		write_request--;
-		if (write_request) {
-			g_cond_signal(write_ready_cond);
-		} else {
-			g_cond_broadcast(write_done_cond);
-		}
-		g_mutex_unlock(read_mutex);
-
-		return new_entry->color;
-	}
+	retval = (guchar *)g_malloc(sizeof(guchar));
+	x = sqrt((long double)iter) / sqrt(COLOR_PERIOD_DEFAULT);
+	x = 0.5 + 0.5 * cos(x);
+	res = (guchar)(255 * x);
+	retval[0] = res;
+	retval[1] = res;
+	retval[2] = res;
+	return retval;
 }
+EXPORT_COLORMAP_ALGO(mb_color_standard_sw)
+
+static const guchar *clRGBS5_algo(const guint iter, const guint itermax)
+{
+	guchar cl;
+	guchar cl_case;
+	static const guint step1 = 25;
+	static const guint step2 = 50;
+	static const guint step3 = 100;
+	static const guint step4 = 200;
+	guchar *color = (guchar *)malloc(sizeof(guchar) * 3);
+	guint length;
+
+	length = 2 * step4;
+
+	if (iter < length) {
+		cl_case = iter;
+	} else {
+		cl_case = ((guint)(log(iter) / log(2))) % length;
+	}
+	if (cl_case < step1) {
+		cl = (iter * (255 / step1)) % 255;
+		color[0] = 0;
+		color[1] = 0;
+		color[2] = cl;
+	} else if (cl_case < step2) {
+		cl = (155 - (iter * (155 / (step2 - step1))) % 155) + 100;
+		color[0] = 0;
+		color[1] = cl;
+		color[2] = cl;
+	} else if (cl_case < step3) {
+		cl = ((iter * (200 / (step3 - step2))) % 200) + 55;
+		color[0] = 0;
+		color[1] = cl;
+		color[2] = 0;
+	} else if (cl_case < step4) {
+		cl = (200 - (iter * (200 / (step4 - step3))) % 200) + 55;
+		color[0] = cl;
+		color[1] = cl;
+		color[2] = 0;
+	} else {
+		cl = (iter * 10) % 100 + 155;
+		color[0] = 0xff;
+		color[1] = cl;
+		color[2] = 0;
+	}
+	return color;
+} 
+EXPORT_COLORMAP_ALGO(clRGBS5)
