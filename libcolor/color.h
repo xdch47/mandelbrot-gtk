@@ -10,6 +10,10 @@ typedef const guchar *(*ColorFunc)(const guint iter, const guint itermax);
 int getcolorfunc_count();
 const char *getcolorfunc_name(int index);
 ColorFunc getcolorfunc(int index);
+int getcolorfuncmap_count();
+const char *getcolorfuncmap_name(int index);
+ColorFunc getcolorfuncmap(int index);
+
 int getdivconv_idx();
 void setdivcol(const guchar *color);
 void initialize_func(int index);
@@ -19,6 +23,7 @@ const guchar *clblue(const guint iter, const guint itermax);
 const guchar *divconv(const guint iter, const guint itermax);
 const guchar *mb_color_standard_sw(const guint iter, const guint itermax);
 const guchar *clRGBS5(const guint iter, const guint itermax);
+const guchar *mb_rainbow(const guint iter, const guint itermax);
 void initialize_colormap();
 void finalize_colormap();
 

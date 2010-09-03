@@ -300,3 +300,6 @@ msgstr "Konvergente / Divergente Menge"
 
 msgid "Dixius Algo Grey"
 msgstr "Dixius Algo Grau"
+
+msgid "RBG-S5"
+msgstr "RGB-S5"

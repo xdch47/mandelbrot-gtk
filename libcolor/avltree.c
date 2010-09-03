@@ -295,8 +295,10 @@ static void free_all_nodes(Node *node)
 
 void avl_free(AVLtree tree)
 {
-	free_all_nodes(*tree);
-	free(tree);
+	if (tree) {
+		free_all_nodes(*tree);
+		free(tree);
+	}
 }
 
 static void free_all_nodes_data(Node *node)
@@ -314,6 +316,8 @@ static void free_all_nodes_data(Node *node)
 
 void avl_free_data(AVLtree tree)
 {
-	free_all_nodes_data(*tree);
-	free(tree);
+	if (tree) {
+		free_all_nodes_data(*tree);
+		free(tree);
+	}
 }
