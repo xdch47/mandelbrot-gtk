@@ -34,7 +34,7 @@ LIBRARY_NAME    := libmbcolor.a
 endif
 
 # ------------  list of all source files  --------------------------------------
-SOURCES         := color.c colorfunc.c colormap.c avltree.c  colorfuncmap.c
+SOURCES         := color.c colormapfunc.c lookuptable.c avltree.c
 
 # ------------  compiler  ------------------------------------------------------
 CC              := gcc

@@ -16,7 +16,7 @@ static guint factor(guint num)
 	guint i, f = 1;
 	for (i = 1; sqr(i) <= num; ++i) {
 		if (num % i == 0) {
-			f = i;
+	a		f = i;
 		}
 	}
 	return f;
@@ -199,8 +199,8 @@ static void render_thread(struct render_thread *r)
 	}
 	g_free(r->it_data);
 	g_free(iteration_thread);
-	finalize_func(r->param->color_func_index);
 
+	/* FIXME: insert here update */
 	remove_idle(r);
 	g_mutex_lock(r->state_mutex);
 	succ = succ && r->state != KILL;

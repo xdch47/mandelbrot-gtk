@@ -15,23 +15,31 @@
 #undef IT_INIT
 #define IT_INIT
 #undef IT_INLINE_FUNC
-#define IT_INLINE_FUNC \
-	zre = itre; \
-	zim = itim; \
-	for (;;) { \
-		tmpzre = sqr(zre); \
-		tmpzim = sqr(zim); \
-		if (tmpzre + tmpzim < 4.0) { \
-			zim = 2.0 * zre * zim + itim; \
-			zre = tmpzre - tmpzim + itre; \
-		} else { \
-			break; \
-		} \
-		++iter; \
-		if (iter > itermax) \
-			break; \
-	} 
+#define IT_INLINE_FUNC                                \
+        zre = itre;                                   \
+        zim = itim;                                   \
+        tmpzre = sqr(zre);                            \
+        tmpzim = sqr(zim);                            \
+        iterinfo = param->itermap + x + y * xmax;     \
+        iterinfo->sqr_abs_z = tmpzre + tmpzim;        \
+        for (;;) {                                    \
+                if (tmpzre + tmpzim < 4.0) {          \
+                        zim = 2.0 * zre * zim + itim; \
+                        zre = tmpzre - tmpzim + itre; \
+                } else {                              \
+			iterinfo->iter = iter;        \
+                        break;                        \
+                }                                     \
+                ++iter;                               \
+                if (iter > itermax) {                 \
+			iterinfo->iter = -1;          \
+                        break;                        \
+		}                                     \
+                tmpzre = sqr(zre);                    \
+                tmpzim = sqr(zim);                    \
+        }
 #undef IT_FIRST_FOR
+#define USE_UPDATE_FUNC
 #include "iterate_template.h"
 
 /* mandelbrot_set function with status: */
@@ -44,6 +52,7 @@
 #define IT_INIT col_count = param->row_count + id;
 #undef IT_FIRST_FOR
 #define IT_FIRST_FOR ++*col_count;
+#undef USE_UPDATE_FUNC
 #include "iterate_template.h"
 
 /* julia_set function: */
@@ -55,23 +64,31 @@
 #define IT_INIT jre = param->j[0]; \
 	jim = param->j[1]; 
 #undef IT_INLINE_FUNC
-#define IT_INLINE_FUNC \
-	zre = itre; \
-	zim = itim; \
-	for (;;) { \
-		tmpzre = sqr(zre); \
-		tmpzim = sqr(zim); \
-		if (tmpzre + tmpzim < 4.0) { \
-			zim = 2.0 * zre * zim + jim; \
-			zre = tmpzre - tmpzim + jre; \
-		} else { \
-			break; \
-		} \
-		++iter; \
-		if (iter > itermax) \
-			break; \
-	} 
+#define IT_INLINE_FUNC                                \
+        zre = itre;                                   \
+        zim = itim;                                   \
+        tmpzre = sqr(zre);                            \
+        tmpzim = sqr(zim);                            \
+        iterinfo = param->itermap + x + y * xmax;     \
+        iterinfo->sqr_abs_z = tmpzre + tmpzim;        \
+        for (;;) {                                    \
+                if (tmpzre + tmpzim < 4.0) {          \
+                        zim = 2.0 * zre * zim + jim;  \
+                        zre = tmpzre - tmpzim + jre;  \
+                } else {                              \
+			iterinfo->iter = iter;        \
+                        break;                        \
+                }                                     \
+                ++iter;                               \
+                if (iter > itermax) {                 \
+			iterinfo->iter = -1;          \
+                        break;                        \
+		}                                     \
+                tmpzre = sqr(zre);                    \
+                tmpzim = sqr(zim);                    \
+        }
 #undef IT_FIRST_FOR
+#define USE_UPDATE_FUNC
 #include "iterate_template.h"
 
 /* julia_set function with status: */
@@ -86,6 +103,7 @@
 	col_count = param->row_count + id;
 #undef IT_FIRST_FOR
 #define IT_FIRST_FOR ++*col_count;
+#undef USE_UPDATE_FUNC
 #include "iterate_template.h"
 
 /* mandelbrot_set_deg: */
@@ -97,26 +115,34 @@
 #undef IT_INIT
 #define IT_INIT degree = param->degree;
 #undef IT_INLINE_FUNC
-#define IT_INLINE_FUNC \
-	zre = itre; \
-	zim = itim; \
-	for (;;) { \
-		r = sqr(zre) + sqr(zim); \
-		if (r < 4.0) { \
-			r = pow(r, degree / 2.0); \
-			phi = atan2(zim, zre); \
-			zre = r * cos(degree  * phi) + itre; \
-			zim = r * sin(degree * phi) + itim; \
-		} else { \
-			break; \
-		} \
-		++iter; \
-		if (iter > itermax) { \
-			break; \
-		} \
-	} 
+#define IT_INLINE_FUNC                                      \
+        zre = itre;                                         \
+        zim = itim;                                         \
+        r = sqr(zre) + sqr(zim);                            \
+        iterinfo = param->itermap + x + y * xmax;           \
+        iterinfo->sqr_abs_z = r;                            \
+        for (;;) {                                          \
+                if (r < 4.0) {                              \
+                        r = pow(r, degree / 2.0);           \
+                        phi = atan2(zim, zre);              \
+                        zre = r * cos(degree * phi) + itre; \
+                        zim = r * sin(degree * phi) + itim; \
+                } else {                                    \
+                        iterinfo->iter = iter;              \
+                        break;                              \
+                }                                           \
+                ++iter;                                     \
+                if (iter > itermax) {                       \
+                        iterinfo->iter = -1;                \
+                        break;                              \
+                }                                           \
+                r = sqr(zre) + sqr(zim);                    \
+        }
 #undef IT_FIRST_FOR
+#define USE_UPDATE_FUNC
 #include "iterate_template.h"
+
+/* mandelbrot_set_deg function with status */
 #undef IT_FUNC_NAME
 #define IT_FUNC_NAME mandelbrot_set_deg_row_count
 #undef IT_VAR
@@ -128,6 +154,7 @@
 	col_count = param->row_count + id;
 #undef IT_FIRST_FOR
 #define IT_FIRST_FOR ++*col_count;
+#undef USE_UPDATE_FUNC
 #include "iterate_template.h"
 
 /* julia_set_deg function: */
@@ -141,28 +168,34 @@
 	jre = param->j[0]; \
 	jim = param->j[1];
 #undef IT_INLINE_FUNC
-#define IT_INLINE_FUNC \
-	zre = itre; \
-	zim = itim; \
-	for (;;) { \
-		r = sqr(zre) + sqr(zim); \
-		if (r < 4.0) { \
-			r = pow(r, degree / 2.0); \
-			phi = atan2(zim, zre); \
-			zre = r * cos(degree * phi) + jre; \
-			zim = r * sin(degree * phi) + jim; \
-		} else { \
-			break; \
-		} \
-		++iter; \
-		if (iter > itermax) { \
-			break; \
-		} \
-	}
+#define IT_INLINE_FUNC                                     \
+        zre = itre;                                        \
+        zim = itim;                                        \
+        r = sqr(zre) + sqr(zim);                           \
+        iterinfo = param->itermap + x + y * xmax;          \
+        iterinfo->sqr_abs_z = r;                           \
+        for (;;) {                                         \
+                if (r < 4.0) {                             \
+                        r = pow(r, degree / 2.0);          \
+                        phi = atan2(zim, zre);             \
+                        zre = r * cos(degree * phi) + jre; \
+                        zim = r * sin(degree * phi) + jim; \
+                } else {                                   \
+                        iterinfo->iter = iter;             \
+                        break;                             \
+                }                                          \
+                ++iter;                                    \
+                if (iter > itermax) {                      \
+                        iterinfo->iter = -1;               \
+                        break;                             \
+                }                                          \
+                r = sqr(zre) + sqr(zim);                   \
+        }
 #undef IT_FIRST_FOR
+#define USE_UPDATE_FUNC
 #include "iterate_template.h"
 
-/* julia_set function with status */
+/* julia_set_deg function with status */
 #undef IT_FUNC_NAME
 #define IT_FUNC_NAME julia_set_deg_row_count
 #undef IT_VAR
@@ -175,15 +208,6 @@
 	jim = param->j[1]; \
 	col_count = param->row_count + id;
 #define IT_FIRST_FOR ++(*col_count);
+#undef USE_UPDATE_FUNC
 #include "iterate_template.h"
 
-inline static void put_pixel(guchar *pixels, guint x, guint y, guint n_channels, guint rowstride, const guchar *color)
-{
-	guint i;
-	guchar *p;
-
-	p = pixels + y * rowstride + x * n_channels;
-	for (i = 0; i < 3; ++i) 
-		*p++ = *color++;
-	*p = 0xff;
-}

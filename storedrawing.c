@@ -217,8 +217,8 @@ void store_drawing_show(struct winctl *w)
 	lbl = gtk_label_new_with_mnemonic(LCOLORALGO);
 	gtk_misc_set_alignment(GTK_MISC(lbl), 0.0, 1.0);
 	s->cbocolor = gtk_combo_box_new_text();
-	for (i = 0; i < getcolorfunc_count(); ++i) {
-		gtk_combo_box_append_text(GTK_COMBO_BOX(s->cbocolor), getcolorfunc_name(i));
+	for (i = 0; i < getColorFunc_count(); ++i) {
+		gtk_combo_box_append_text(GTK_COMBO_BOX(s->cbocolor), getColorFunc_name(i));
 	}
 	gtk_label_set_mnemonic_widget(GTK_LABEL(lbl), s->cbocolor);
 	gtk_combo_box_set_active(GTK_COMBO_BOX(s->cbocolor), w->it_param.color_func_index);

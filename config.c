@@ -74,6 +74,7 @@ static void init_config(struct winctl *w)
 	w->it_param.j[1] = 0;
 	w->it_param.itermax = DEFITERMAX;
 	w->it_param.color_func_index = 0;
+	w->it_param.update_func = update_pixbuf;
 	w->it_param.threads_count = CALCTHREADS;
 
 	for (i = 0; i < 4; ++i) {
@@ -453,7 +454,7 @@ static void xmlcolor(xmlNode *node, struct winctl *w, enum configtype type)
 	attr = (char *)xmlGetProp(node, BAD_CAST XML_COLOR_ALGO);
 	if (attr != NULL) {
 		if (type == LOAD_CONFIG)
-			w->it_param.color_func_index = CLAMP(strtol(attr, NULL, 10), 0, getcolorfunc_count());
+			w->it_param.color_func_index = CLAMP(strtol(attr, NULL, 10), 0, getColorFunc_count());
 		else
 			xmlSetProp(node, BAD_CAST XML_COLOR_ALGO, BAD_CAST ltostr(w->it_param.color_func_index, c));
 	}
@@ -563,6 +564,7 @@ gboolean configure_interface(struct winctl *w, enum configtype type)
 		}
 	}
 	
+	w->it_param.colorfunc = getColorFunc(w->it_param.color_func_index);
 	for (i = 0; i < 4; ++i) {
 		dtostr(w->it_param.cplxplane[i], c);
 		gtk_entry_set_text(GTK_ENTRY(w->txtcplx[i]), c);
