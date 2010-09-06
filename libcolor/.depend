@@ -1,2 +1,4 @@
-./debug/color.o: color.c color.h
-./debug/colorfunc.o: colorfunc.c color.h
+./release/color.o: color.c color.h lookuptable.h avltree.h
+./release/colormapfunc.o: colormapfunc.c color.h
+./release/lookuptable.o: lookuptable.c lookuptable.h avltree.h
+./release/avltree.o: avltree.c avltree.h

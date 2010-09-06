@@ -83,9 +83,9 @@ struct winctl *buildinterface(void)
 	pmenuit = gtk_image_menu_item_new_from_stock(GTK_STOCK_SAVE, accel_group);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuit);
 	gtk_menu_shell_append(GTK_MENU_SHELL(w->drawmenu), pmenuit);
-	g_signal_connect(G_OBJECT(menuit), "activate", G_CALLBACK(store_drawing), w);
+	g_signal_connect(G_OBJECT(menuit) , "activate", G_CALLBACK(store_drawing), w);
 	g_signal_connect(G_OBJECT(pmenuit), "activate", G_CALLBACK(store_drawing), w);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu)       , gtk_separator_menu_item_new());
 	gtk_menu_shell_append(GTK_MENU_SHELL(w->drawmenu), gtk_separator_menu_item_new());
 	/* close: */
 	menuit = gtk_image_menu_item_new_from_stock(GTK_STOCK_CLOSE, accel_group);
@@ -100,11 +100,11 @@ struct winctl *buildinterface(void)
 	/* set complex plane: */
 	menuit = gtk_menu_item_new_with_mnemonic(LSETCPLX);
 	pmenuit = gtk_menu_item_new_with_mnemonic(LSETCPLX);
-	gtk_widget_add_accelerator(menuit, "activate", accel_group, GDK_r, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+	gtk_widget_add_accelerator(menuit , "activate", accel_group, GDK_r, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 	gtk_widget_add_accelerator(pmenuit, "activate", accel_group, GDK_r, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuit);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu)       , menuit);
 	gtk_menu_shell_append(GTK_MENU_SHELL(w->drawmenu), pmenuit);
-	g_signal_connect(G_OBJECT(menuit), "activate", G_CALLBACK(menu_setcplxplane), w);
+	g_signal_connect(G_OBJECT(menuit) , "activate", G_CALLBACK(menu_setcplxplane), w);
 	g_signal_connect(G_OBJECT(pmenuit), "activate", G_CALLBACK(menu_setcplxplane), w);
 	/* scalexy: */
 	w->mchkzoomprop = gtk_check_menu_item_new_with_mnemonic(LZOOMPROP);
@@ -115,43 +115,43 @@ struct winctl *buildinterface(void)
 	gtk_menu_shell_append(GTK_MENU_SHELL(w->drawmenu), w->pmchkzoomprop);
 	g_signal_connect(G_OBJECT(w->mchkzoomprop), "toggled", G_CALLBACK(toggle_zoomprop), w);
 	g_signal_connect(G_OBJECT(w->pmchkzoomprop), "toggled", G_CALLBACK(toggle_zoomprop), w);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu)       , gtk_separator_menu_item_new());
 	gtk_menu_shell_append(GTK_MENU_SHELL(w->drawmenu), gtk_separator_menu_item_new());
 	/* set color (div./conv.): */
-	menuit = gtk_menu_item_new_with_mnemonic(LSETCOLOR);
+	menuit  = gtk_menu_item_new_with_mnemonic(LSETCOLOR);
 	pmenuit = gtk_menu_item_new_with_mnemonic(LSETCOLOR);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuit);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu)       , menuit);
 	gtk_menu_shell_append(GTK_MENU_SHELL(w->drawmenu), pmenuit);
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuit), convdiv_menu(w));
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(pmenuit), convdiv_menu(w));
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuit)  , convdiv_menu(w));
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(pmenuit) , convdiv_menu(w));
 	/* set color algo: */
-	menuit = gtk_menu_item_new_with_mnemonic(LCOLORALGO);
+	menuit  = gtk_menu_item_new_with_mnemonic(LCOLORALGO);
 	pmenuit = gtk_menu_item_new_with_mnemonic(LCOLORALGO);
-	submenu = gtk_menu_new();
+	submenu  = gtk_menu_new();
 	psubmenu = gtk_menu_new();
 	radio_group = pradio_group = NULL;
-	w->mcolalgo = (GtkWidget **)g_malloc(sizeof(GtkWidget *) * getcolorfunc_count());
-	for (i = 0; i < getcolorfunc_count(); ++i) {
+	w->mcolalgo = (GtkWidget **)g_malloc(sizeof(GtkWidget *) * getColorFunc_count());
+	for (i = 0; i < getColorFunc_count(); ++i) {
 		gint *index = (gint *)g_malloc(sizeof(gint));
-		w->mcolalgo[i] = gtk_radio_menu_item_new_with_mnemonic(radio_group, _(getcolorfunc_name(i)));
-		psmenuit = gtk_radio_menu_item_new_with_mnemonic(pradio_group, _(getcolorfunc_name(i)));
-		radio_group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(w->mcolalgo[i]));
+		w->mcolalgo[i] = gtk_radio_menu_item_new_with_mnemonic(radio_group , _(getColorFunc_name(i)));
+		psmenuit       = gtk_radio_menu_item_new_with_mnemonic(pradio_group, _(getColorFunc_name(i)));
+		radio_group  = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(w->mcolalgo[i]));
 		pradio_group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(psmenuit));
 		*index = i;
-		g_object_set_data_full(G_OBJECT(w->mcolalgo[i]), "index", index, g_free);
-		g_object_set_data(G_OBJECT(psmenuit), "index", index);
+		g_object_set_data_full(G_OBJECT(w->mcolalgo[i]), "index", index  , g_free);
+		g_object_set_data     (G_OBJECT(psmenuit)      , "index", index);
 		g_object_set_data(G_OBJECT(w->mcolalgo[i]), "sync_obj", psmenuit);
-		g_object_set_data(G_OBJECT(psmenuit), "sync_obj", w->mcolalgo[i]);
+		g_object_set_data(G_OBJECT(psmenuit)      , "sync_obj", w->mcolalgo[i]);
 		g_signal_connect(G_OBJECT(w->mcolalgo[i]), "toggled", G_CALLBACK(change_color_algo), w);
-		g_signal_connect(G_OBJECT(psmenuit), "toggled", G_CALLBACK(change_color_algo), w);
-		gtk_menu_shell_append(GTK_MENU_SHELL(submenu), w->mcolalgo[i]);
+		g_signal_connect(G_OBJECT(psmenuit)      , "toggled", G_CALLBACK(change_color_algo), w);
+		gtk_menu_shell_append(GTK_MENU_SHELL(submenu) , w->mcolalgo[i]);
 		gtk_menu_shell_append(GTK_MENU_SHELL(psubmenu), psmenuit);
 	}
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuit), submenu);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuit) , submenu);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(pmenuit), psubmenu);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuit);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu)       , menuit);
 	gtk_menu_shell_append(GTK_MENU_SHELL(w->drawmenu), pmenuit);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu)       , gtk_separator_menu_item_new());
 	/* preference: */
 	menuit = gtk_menu_item_new_with_mnemonic(LPREF);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuit);
@@ -203,6 +203,7 @@ struct winctl *buildinterface(void)
 
 	gtk_box_pack_start(GTK_BOX(vbox2), align, FALSE, FALSE, 0);
 	w->drawing = gtk_drawing_area_new();
+	w->itermap = NULL;
 	w->pixbufcalc = w->pixbufshow = NULL;
 	gtk_widget_set_size_request(w->drawing, 400, -1);
 	gtk_box_pack_start(GTK_BOX(vbox2), w->drawing, TRUE, TRUE, 0);
@@ -231,7 +232,7 @@ struct winctl *buildinterface(void)
 	gtk_widget_set_size_request(w->txtdegree, 20, -1);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(lbl), w->txtdegree);
 	gtk_table_set_col_spacing(GTK_TABLE(table), 0, 5);
-	gtk_table_attach(GTK_TABLE(table), lbl, 0, 1, 0, 1, GTK_SHRINK | GTK_FILL, GTK_SHRINK, 0, 0);
+	gtk_table_attach(GTK_TABLE(table), lbl         , 0, 1, 0, 1, GTK_SHRINK | GTK_FILL, GTK_SHRINK, 0, 0);
 	gtk_table_attach(GTK_TABLE(table), w->txtdegree, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_SHRINK, 0, 0);
 
 	/* itermax: */
@@ -240,7 +241,7 @@ struct winctl *buildinterface(void)
 	w->txtitermax = gtk_entry_new();
 	gtk_entry_set_max_length(GTK_ENTRY(w->txtitermax), TEXTLEN);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(lbl), w->txtitermax);
-	gtk_table_attach(GTK_TABLE(table), lbl, 0, 2, 1, 2, GTK_EXPAND | GTK_FILL, GTK_SHRINK, 0, 0);
+	gtk_table_attach(GTK_TABLE(table), lbl          , 0, 2, 1, 2, GTK_EXPAND | GTK_FILL, GTK_SHRINK, 0, 0);
 	gtk_table_attach(GTK_TABLE(table), w->txtitermax, 0, 2, 2, 3, GTK_EXPAND | GTK_FILL, GTK_SHRINK, 0, 0);
 	gtk_table_set_row_spacing(GTK_TABLE(table), 2, 6); 
 
@@ -286,7 +287,7 @@ struct winctl *buildinterface(void)
 	gtk_widget_set_events(eventbox, GDK_BUTTON_PRESS_MASK);
 	g_signal_connect(G_OBJECT(w->txtjre), "button_press_event", G_CALLBACK(pjmenu), w);
 	g_signal_connect(G_OBJECT(w->txtjim), "button_press_event", G_CALLBACK(pjmenu), w);
-	g_signal_connect(G_OBJECT(eventbox), "button_press_event", G_CALLBACK(pjmenu), w);
+	g_signal_connect(G_OBJECT(eventbox) , "button_press_event", G_CALLBACK(pjmenu), w);
 
 	/* getj-button: */
 	w->btnj = gtk_button_new_with_mnemonic(LGETJ);
@@ -403,7 +404,7 @@ static void chkj_toggled(GtkWidget *widget, struct winctl *w)
 static void toggle_zoomprop(GtkWidget *widget, struct winctl *w)
 {
 	w->zoomprop = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget));
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(w->mchkzoomprop), w->zoomprop);
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(w->mchkzoomprop) , w->zoomprop);
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(w->pmchkzoomprop), w->zoomprop);
 }
 
@@ -423,6 +424,10 @@ void change_color_algo(GtkWidget *widget, struct winctl *w)
 	}
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(sync_obj), TRUE);
 	w->it_param.color_func_index = *(gint *)g_object_get_data(G_OBJECT(widget) , "index");
+
+	if (w->succ_render) {
+		redraw_pixbuf(w);
+	}
 }
 
 static gboolean pjmenu(GtkWidget *widget, GdkEventButton *event, struct winctl *w)
@@ -502,9 +507,8 @@ static void about(GtkWidget *widget, struct winctl *w)
 {
 	gtk_show_about_dialog(NULL,
 	    "copyright", "Copyright (c) by Lexif Systems Inc.",
-	    "license", "GPL3",
+	    "license", GPLv3,
 	    "version", LVERSION,
 	    "program-name", LWCAP,
 	    NULL);
 }
-

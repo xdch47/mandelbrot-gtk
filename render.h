@@ -2,12 +2,12 @@
 #ifndef __RENDER_H__
 #define __RENDER_H__
 
-#include <gtk/gtk.h>
+#include <glib.h>
+#include <gdk-pixbuf/gdk-pixbuf.h>
+#include "libcolor/color.h"
 
 enum fraktal_type { MANDELBROT_SET, JULIA_SET };
 enum thread_state { RUN, PAUSE, KILL };
-
-struct iterate_param;
 
 struct iterate_param {
 	GThreadFunc iterate_func;
@@ -17,7 +17,6 @@ struct iterate_param {
 	guint itermax;
 	gdouble degree;
 	gdouble j[2];
-	gint color_func_index;
 	guint *xstart;
 	guint *ystart;
 	guint xoffset;
@@ -25,10 +24,14 @@ struct iterate_param {
 	guint *row_count;
 	guint xmax;
 	guint ymax;
+	IterationInfo *itermap;
 	guchar *pixels;
 	guint n_channels;
 	guint rowstride;
+	guint color_func_index;
 	guchar *color;
+	ColorFunc colorfunc;
+	void (*update_func)(guint x, guint y, const IterationInfo *iterinfo, const struct iterate_param *p);
 };
 
 struct iteration_data {

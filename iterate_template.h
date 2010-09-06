@@ -8,8 +8,6 @@
 /* 	IT_FIRST_FOR --> code after first for-statement */
 /* the variables itre, itim hold the real-/imaginary part of the current point. */
 
-inline static void put_pixel(guchar *pixels, guint x, guint y, guint n_channels, guint rowstride, const guchar *color);
-
 gpointer IT_FUNC_NAME(struct iteration_data *p)
 {
 	guint y, yo;
@@ -21,10 +19,8 @@ gpointer IT_FUNC_NAME(struct iteration_data *p)
 	guint id;
 	const struct iterate_param *param;
 	gboolean *retval;
-	guchar *pixels;
 	guint n_channels, rowstride;
-	const guchar *color;
-	ColorFunc setcolor;
+	IterationInfo *iterinfo;
 
 	IT_VAR
 	
@@ -41,10 +37,8 @@ gpointer IT_FUNC_NAME(struct iteration_data *p)
 	yo = param->yoffset;
 	xo = param->xoffset;
 	itermax = param->itermax;
-	pixels = param->pixels;
 	n_channels = param->n_channels;
 	rowstride = param->rowstride;
-	setcolor = getcolorfunc(param->color_func_index);
 	IT_INIT
 
 	itim = p->b_im;
@@ -73,12 +67,11 @@ gpointer IT_FUNC_NAME(struct iteration_data *p)
 
 			IT_INLINE_FUNC
 
-			if (iter < param->itermax) {
-				color = setcolor(iter, itermax);
-				put_pixel(pixels, x, y, n_channels, rowstride, color);
-			} else {
-				put_pixel(pixels, x, y, n_channels, rowstride, param->color);
-			}
+			#ifdef USE_UPDATE_FUNC
+			(*param->update_func)(x, y, iterinfo, param);
+			#endif
+				
+
 		}
 	}
 	return (gpointer)retval;

@@ -1,4 +1,5 @@
 
+#include <glib.h>
 #include "color.h"
 
 #define N_(x) x
@@ -4201,1055 +4202,905 @@ static const guchar Wizzl020_map[3 * 256] = {
 	  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 
 };
 
-const guchar *clmap_altern(const guint iter, const guint itermax)
+void clmap_altern(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (altern_map + (iter % 257) * 3);
+	cpRGB(pixel, (altern_map + (iterinfo->iter % 257) * 3));
 }
 
-const guchar *clmap_blues(const guint iter, const guint itermax)
+void clmap_blues(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (blues_map + (iter % 256) * 3);
+	cpRGB(pixel, (blues_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_bud2(const guint iter, const guint itermax)
+void clmap_bud2(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (bud2_map + (iter % 256) * 3);
+	cpRGB(pixel, (bud2_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_bud3(const guint iter, const guint itermax)
+void clmap_bud3(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (bud3_map + (iter % 256) * 3);
+	cpRGB(pixel, (bud3_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_bud4(const guint iter, const guint itermax)
+void clmap_bud4(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (bud4_map + (iter % 256) * 3);
+	cpRGB(pixel, (bud4_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_bud5(const guint iter, const guint itermax)
+void clmap_bud5(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (bud5_map + (iter % 256) * 3);
+	cpRGB(pixel, (bud5_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_bud6(const guint iter, const guint itermax)
+void clmap_bud6(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (bud6_map + (iter % 256) * 3);
+	cpRGB(pixel, (bud6_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_bud7(const guint iter, const guint itermax)
+void clmap_bud7(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (bud7_map + (iter % 256) * 3);
+	cpRGB(pixel, (bud7_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Carlson1(const guint iter, const guint itermax)
+void clmap_Carlson1(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Carlson1_map + (iter % 256) * 3);
+	cpRGB(pixel, (Carlson1_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_chroma(const guint iter, const guint itermax)
+void clmap_chroma(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (chroma_map + (iter % 356) * 3);
+	cpRGB(pixel, (chroma_map + (iterinfo->iter % 356) * 3));
 }
 
-const guchar *clmap_damien1(const guint iter, const guint itermax)
+void clmap_damien1(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (damien1_map + (iter % 256) * 3);
+	cpRGB(pixel, (damien1_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_damien2(const guint iter, const guint itermax)
+void clmap_damien2(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (damien2_map + (iter % 256) * 3);
+	cpRGB(pixel, (damien2_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_damien3(const guint iter, const guint itermax)
+void clmap_damien3(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (damien3_map + (iter % 256) * 3);
+	cpRGB(pixel, (damien3_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_damien4(const guint iter, const guint itermax)
+void clmap_damien4(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (damien4_map + (iter % 256) * 3);
+	cpRGB(pixel, (damien4_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_damien5(const guint iter, const guint itermax)
+void clmap_damien5(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (damien5_map + (iter % 256) * 3);
+	cpRGB(pixel, (damien5_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_default(const guint iter, const guint itermax)
+void clmap_default(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (default_map + (iter % 256) * 3);
+	cpRGB(pixel, (default_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Digiorg1(const guint iter, const guint itermax)
+void clmap_Digiorg1(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Digiorg1_map + (iter % 256) * 3);
+	cpRGB(pixel, (Digiorg1_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Digiorg2(const guint iter, const guint itermax)
+void clmap_Digiorg2(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Digiorg2_map + (iter % 256) * 3);
+	cpRGB(pixel, (Digiorg2_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_droz10(const guint iter, const guint itermax)
+void clmap_droz10(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (droz10_map + (iter % 256) * 3);
+	cpRGB(pixel, (droz10_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_droz11(const guint iter, const guint itermax)
+void clmap_droz11(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (droz11_map + (iter % 256) * 3);
+	cpRGB(pixel, (droz11_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_droz12(const guint iter, const guint itermax)
+void clmap_droz12(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (droz12_map + (iter % 256) * 3);
+	cpRGB(pixel, (droz12_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_droz13(const guint iter, const guint itermax)
+void clmap_droz13(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (droz13_map + (iter % 256) * 3);
+	cpRGB(pixel, (droz13_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_droz14(const guint iter, const guint itermax)
+void clmap_droz14(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (droz14_map + (iter % 256) * 3);
+	cpRGB(pixel, (droz14_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_droz15(const guint iter, const guint itermax)
+void clmap_droz15(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (droz15_map + (iter % 256) * 3);
+	cpRGB(pixel, (droz15_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_droz21(const guint iter, const guint itermax)
+void clmap_droz21(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (droz21_map + (iter % 256) * 3);
+	cpRGB(pixel, (droz21_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_droz22(const guint iter, const guint itermax)
+void clmap_droz22(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (droz22_map + (iter % 256) * 3);
+	cpRGB(pixel, (droz22_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_droz23(const guint iter, const guint itermax)
+void clmap_droz23(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (droz23_map + (iter % 256) * 3);
+	cpRGB(pixel, (droz23_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_droz28(const guint iter, const guint itermax)
+void clmap_droz28(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (droz28_map + (iter % 256) * 3);
+	cpRGB(pixel, (droz28_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_droz31(const guint iter, const guint itermax)
+void clmap_droz31(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (droz31_map + (iter % 256) * 3);
+	cpRGB(pixel, (droz31_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_droz33(const guint iter, const guint itermax)
+void clmap_droz33(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (droz33_map + (iter % 256) * 3);
+	cpRGB(pixel, (droz33_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_droz34(const guint iter, const guint itermax)
+void clmap_droz34(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (droz34_map + (iter % 256) * 3);
+	cpRGB(pixel, (droz34_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_droz35(const guint iter, const guint itermax)
+void clmap_droz35(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (droz35_map + (iter % 256) * 3);
+	cpRGB(pixel, (droz35_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_droz36(const guint iter, const guint itermax)
+void clmap_droz36(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (droz36_map + (iter % 256) * 3);
+	cpRGB(pixel, (droz36_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_droz38(const guint iter, const guint itermax)
+void clmap_droz38(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (droz38_map + (iter % 256) * 3);
+	cpRGB(pixel, (droz38_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_droz39(const guint iter, const guint itermax)
+void clmap_droz39(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (droz39_map + (iter % 256) * 3);
+	cpRGB(pixel, (droz39_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_droz40(const guint iter, const guint itermax)
+void clmap_droz40(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (droz40_map + (iter % 256) * 3);
+	cpRGB(pixel, (droz40_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_droz44(const guint iter, const guint itermax)
+void clmap_droz44(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (droz44_map + (iter % 256) * 3);
+	cpRGB(pixel, (droz44_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_droz46(const guint iter, const guint itermax)
+void clmap_droz46(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (droz46_map + (iter % 256) * 3);
+	cpRGB(pixel, (droz46_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_droz49(const guint iter, const guint itermax)
+void clmap_droz49(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (droz49_map + (iter % 256) * 3);
+	cpRGB(pixel, (droz49_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_droz52(const guint iter, const guint itermax)
+void clmap_droz52(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (droz52_map + (iter % 256) * 3);
+	cpRGB(pixel, (droz52_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_droz54(const guint iter, const guint itermax)
+void clmap_droz54(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (droz54_map + (iter % 256) * 3);
+	cpRGB(pixel, (droz54_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_droz56(const guint iter, const guint itermax)
+void clmap_droz56(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (droz56_map + (iter % 256) * 3);
+	cpRGB(pixel, (droz56_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_droz60(const guint iter, const guint itermax)
+void clmap_droz60(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (droz60_map + (iter % 256) * 3);
+	cpRGB(pixel, (droz60_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_droz62(const guint iter, const guint itermax)
+void clmap_droz62(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (droz62_map + (iter % 256) * 3);
+	cpRGB(pixel, (droz62_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_droz8(const guint iter, const guint itermax)
+void clmap_droz8(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (droz8_map + (iter % 256) * 3);
+	cpRGB(pixel, (droz8_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_drozdis1(const guint iter, const guint itermax)
+void clmap_drozdis1(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (drozdis1_map + (iter % 256) * 3);
+	cpRGB(pixel, (drozdis1_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_firestrm(const guint iter, const guint itermax)
+void clmap_firestrm(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (firestrm_map + (iter % 256) * 3);
+	cpRGB(pixel, (firestrm_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_froth316(const guint iter, const guint itermax)
+void clmap_froth316(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (froth316_map + (iter % 16) * 3);
+	cpRGB(pixel, (froth316_map + (iterinfo->iter % 16) * 3));
 }
 
-const guchar *clmap_froth3(const guint iter, const guint itermax)
+void clmap_froth3(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (froth3_map + (iter % 256) * 3);
+	cpRGB(pixel, (froth3_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_froth616(const guint iter, const guint itermax)
+void clmap_froth616(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (froth616_map + (iter % 16) * 3);
+	cpRGB(pixel, (froth616_map + (iterinfo->iter % 16) * 3));
 }
 
-const guchar *clmap_froth6(const guint iter, const guint itermax)
+void clmap_froth6(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (froth6_map + (iter % 256) * 3);
+	cpRGB(pixel, (froth6_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Gallet01(const guint iter, const guint itermax)
+void clmap_Gallet01(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Gallet01_map + (iter % 256) * 3);
+	cpRGB(pixel, (Gallet01_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Gallet02(const guint iter, const guint itermax)
+void clmap_Gallet02(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Gallet02_map + (iter % 256) * 3);
+	cpRGB(pixel, (Gallet02_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Gallet03(const guint iter, const guint itermax)
+void clmap_Gallet03(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Gallet03_map + (iter % 256) * 3);
+	cpRGB(pixel, (Gallet03_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Gallet04(const guint iter, const guint itermax)
+void clmap_Gallet04(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Gallet04_map + (iter % 256) * 3);
+	cpRGB(pixel, (Gallet04_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Gallet05(const guint iter, const guint itermax)
+void clmap_Gallet05(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Gallet05_map + (iter % 256) * 3);
+	cpRGB(pixel, (Gallet05_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Gallet06(const guint iter, const guint itermax)
+void clmap_Gallet06(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Gallet06_map + (iter % 256) * 3);
+	cpRGB(pixel, (Gallet06_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Gallet07(const guint iter, const guint itermax)
+void clmap_Gallet07(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Gallet07_map + (iter % 256) * 3);
+	cpRGB(pixel, (Gallet07_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Gallet08(const guint iter, const guint itermax)
+void clmap_Gallet08(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Gallet08_map + (iter % 256) * 3);
+	cpRGB(pixel, (Gallet08_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Gallet09(const guint iter, const guint itermax)
+void clmap_Gallet09(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Gallet09_map + (iter % 256) * 3);
+	cpRGB(pixel, (Gallet09_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Gallet10(const guint iter, const guint itermax)
+void clmap_Gallet10(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Gallet10_map + (iter % 256) * 3);
+	cpRGB(pixel, (Gallet10_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Gallet11(const guint iter, const guint itermax)
+void clmap_Gallet11(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Gallet11_map + (iter % 256) * 3);
+	cpRGB(pixel, (Gallet11_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Gallet12(const guint iter, const guint itermax)
+void clmap_Gallet12(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Gallet12_map + (iter % 256) * 3);
+	cpRGB(pixel, (Gallet12_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Gallet13(const guint iter, const guint itermax)
+void clmap_Gallet13(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Gallet13_map + (iter % 256) * 3);
+	cpRGB(pixel, (Gallet13_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Gallet14(const guint iter, const guint itermax)
+void clmap_Gallet14(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Gallet14_map + (iter % 256) * 3);
+	cpRGB(pixel, (Gallet14_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Gallet15(const guint iter, const guint itermax)
+void clmap_Gallet15(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Gallet15_map + (iter % 256) * 3);
+	cpRGB(pixel, (Gallet15_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Gallet16(const guint iter, const guint itermax)
+void clmap_Gallet16(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Gallet16_map + (iter % 256) * 3);
+	cpRGB(pixel, (Gallet16_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Gallet17(const guint iter, const guint itermax)
+void clmap_Gallet17(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Gallet17_map + (iter % 256) * 3);
+	cpRGB(pixel, (Gallet17_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Gallet18(const guint iter, const guint itermax)
+void clmap_Gallet18(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Gallet18_map + (iter % 256) * 3);
+	cpRGB(pixel, (Gallet18_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_gamma1(const guint iter, const guint itermax)
+void clmap_gamma1(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (gamma1_map + (iter % 256) * 3);
+	cpRGB(pixel, (gamma1_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_gamma2(const guint iter, const guint itermax)
+void clmap_gamma2(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (gamma2_map + (iter % 256) * 3);
+	cpRGB(pixel, (gamma2_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_glasses1(const guint iter, const guint itermax)
+void clmap_glasses1(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (glasses1_map + (iter % 256) * 3);
+	cpRGB(pixel, (glasses1_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_glasses2(const guint iter, const guint itermax)
+void clmap_glasses2(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (glasses2_map + (iter % 256) * 3);
+	cpRGB(pixel, (glasses2_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_goodega(const guint iter, const guint itermax)
+void clmap_goodega(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (goodega_map + (iter % 225) * 3);
+	cpRGB(pixel, (goodega_map + (iterinfo->iter % 225) * 3));
 }
 
-const guchar *clmap_green(const guint iter, const guint itermax)
+void clmap_green(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (green_map + (iter % 257) * 3);
+	cpRGB(pixel, (green_map + (iterinfo->iter % 257) * 3));
 }
 
-const guchar *clmap_grey(const guint iter, const guint itermax)
+void clmap_grey(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (grey_map + (iter % 257) * 3);
+	cpRGB(pixel, (grey_map + (iterinfo->iter % 257) * 3));
 }
 
-const guchar *clmap_grid(const guint iter, const guint itermax)
+void clmap_grid(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (grid_map + (iter % 257) * 3);
+	cpRGB(pixel, (grid_map + (iterinfo->iter % 257) * 3));
 }
 
-const guchar *clmap_headache(const guint iter, const guint itermax)
+void clmap_headache(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (headache_map + (iter % 256) * 3);
+	cpRGB(pixel, (headache_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_landscap(const guint iter, const guint itermax)
+void clmap_landscap(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (landscap_map + (iter % 258) * 3);
+	cpRGB(pixel, (landscap_map + (iterinfo->iter % 258) * 3));
 }
 
-const guchar *clmap_Lindaa01(const guint iter, const guint itermax)
+void clmap_Lindaa01(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Lindaa01_map + (iter % 256) * 3);
+	cpRGB(pixel, (Lindaa01_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Lindaa02(const guint iter, const guint itermax)
+void clmap_Lindaa02(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Lindaa02_map + (iter % 256) * 3);
+	cpRGB(pixel, (Lindaa02_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Lindaa03(const guint iter, const guint itermax)
+void clmap_Lindaa03(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Lindaa03_map + (iter % 256) * 3);
+	cpRGB(pixel, (Lindaa03_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Lindaa04(const guint iter, const guint itermax)
+void clmap_Lindaa04(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Lindaa04_map + (iter % 256) * 3);
+	cpRGB(pixel, (Lindaa04_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Lindaa05(const guint iter, const guint itermax)
+void clmap_Lindaa05(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Lindaa05_map + (iter % 256) * 3);
+	cpRGB(pixel, (Lindaa05_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Lindaa06(const guint iter, const guint itermax)
+void clmap_Lindaa06(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Lindaa06_map + (iter % 256) * 3);
+	cpRGB(pixel, (Lindaa06_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Lindaa07(const guint iter, const guint itermax)
+void clmap_Lindaa07(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Lindaa07_map + (iter % 256) * 3);
+	cpRGB(pixel, (Lindaa07_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Lindaa08(const guint iter, const guint itermax)
+void clmap_Lindaa08(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Lindaa08_map + (iter % 256) * 3);
+	cpRGB(pixel, (Lindaa08_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Lindaa09(const guint iter, const guint itermax)
+void clmap_Lindaa09(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Lindaa09_map + (iter % 256) * 3);
+	cpRGB(pixel, (Lindaa09_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Lindaa10(const guint iter, const guint itermax)
+void clmap_Lindaa10(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Lindaa10_map + (iter % 256) * 3);
+	cpRGB(pixel, (Lindaa10_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Lindaa11(const guint iter, const guint itermax)
+void clmap_Lindaa11(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Lindaa11_map + (iter % 256) * 3);
+	cpRGB(pixel, (Lindaa11_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Lindaa12(const guint iter, const guint itermax)
+void clmap_Lindaa12(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Lindaa12_map + (iter % 256) * 3);
+	cpRGB(pixel, (Lindaa12_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Lindaa14(const guint iter, const guint itermax)
+void clmap_Lindaa14(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Lindaa14_map + (iter % 256) * 3);
+	cpRGB(pixel, (Lindaa14_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Lindaa15(const guint iter, const guint itermax)
+void clmap_Lindaa15(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Lindaa15_map + (iter % 256) * 3);
+	cpRGB(pixel, (Lindaa15_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Lindaa16(const guint iter, const guint itermax)
+void clmap_Lindaa16(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Lindaa16_map + (iter % 256) * 3);
+	cpRGB(pixel, (Lindaa16_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Lindaa17(const guint iter, const guint itermax)
+void clmap_Lindaa17(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Lindaa17_map + (iter % 256) * 3);
+	cpRGB(pixel, (Lindaa17_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_lkmtch00(const guint iter, const guint itermax)
+void clmap_lkmtch00(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (lkmtch00_map + (iter % 256) * 3);
+	cpRGB(pixel, (lkmtch00_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_lkmtch01(const guint iter, const guint itermax)
+void clmap_lkmtch01(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (lkmtch01_map + (iter % 256) * 3);
+	cpRGB(pixel, (lkmtch01_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_lkmtch02(const guint iter, const guint itermax)
+void clmap_lkmtch02(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (lkmtch02_map + (iter % 256) * 3);
+	cpRGB(pixel, (lkmtch02_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_lkmtch03(const guint iter, const guint itermax)
+void clmap_lkmtch03(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (lkmtch03_map + (iter % 256) * 3);
+	cpRGB(pixel, (lkmtch03_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_lkmtch04(const guint iter, const guint itermax)
+void clmap_lkmtch04(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (lkmtch04_map + (iter % 256) * 3);
+	cpRGB(pixel, (lkmtch04_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_lkmtch05(const guint iter, const guint itermax)
+void clmap_lkmtch05(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (lkmtch05_map + (iter % 256) * 3);
+	cpRGB(pixel, (lkmtch05_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_lkmtch06(const guint iter, const guint itermax)
+void clmap_lkmtch06(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (lkmtch06_map + (iter % 256) * 3);
+	cpRGB(pixel, (lkmtch06_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_lkmtch07(const guint iter, const guint itermax)
+void clmap_lkmtch07(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (lkmtch07_map + (iter % 256) * 3);
+	cpRGB(pixel, (lkmtch07_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_lkmtch08(const guint iter, const guint itermax)
+void clmap_lkmtch08(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (lkmtch08_map + (iter % 256) * 3);
+	cpRGB(pixel, (lkmtch08_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_lkmtch09(const guint iter, const guint itermax)
+void clmap_lkmtch09(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (lkmtch09_map + (iter % 256) * 3);
+	cpRGB(pixel, (lkmtch09_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_lkmtch10(const guint iter, const guint itermax)
+void clmap_lkmtch10(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (lkmtch10_map + (iter % 256) * 3);
+	cpRGB(pixel, (lkmtch10_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_lkmtch11(const guint iter, const guint itermax)
+void clmap_lkmtch11(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (lkmtch11_map + (iter % 256) * 3);
+	cpRGB(pixel, (lkmtch11_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_lkmtch12(const guint iter, const guint itermax)
+void clmap_lkmtch12(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (lkmtch12_map + (iter % 256) * 3);
+	cpRGB(pixel, (lkmtch12_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_lkmtch13(const guint iter, const guint itermax)
+void clmap_lkmtch13(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (lkmtch13_map + (iter % 256) * 3);
+	cpRGB(pixel, (lkmtch13_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_lkmtch14(const guint iter, const guint itermax)
+void clmap_lkmtch14(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (lkmtch14_map + (iter % 256) * 3);
+	cpRGB(pixel, (lkmtch14_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_lkmtch15(const guint iter, const guint itermax)
+void clmap_lkmtch15(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (lkmtch15_map + (iter % 256) * 3);
+	cpRGB(pixel, (lkmtch15_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_lkmtch16(const guint iter, const guint itermax)
+void clmap_lkmtch16(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (lkmtch16_map + (iter % 256) * 3);
+	cpRGB(pixel, (lkmtch16_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_lkmtch17(const guint iter, const guint itermax)
+void clmap_lkmtch17(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (lkmtch17_map + (iter % 256) * 3);
+	cpRGB(pixel, (lkmtch17_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_lkmtch18(const guint iter, const guint itermax)
+void clmap_lkmtch18(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (lkmtch18_map + (iter % 256) * 3);
+	cpRGB(pixel, (lkmtch18_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_lkmtch19(const guint iter, const guint itermax)
+void clmap_lkmtch19(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (lkmtch19_map + (iter % 256) * 3);
+	cpRGB(pixel, (lkmtch19_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_lyapunov(const guint iter, const guint itermax)
+void clmap_lyapunov(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (lyapunov_map + (iter % 256) * 3);
+	cpRGB(pixel, (lyapunov_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Morgan1(const guint iter, const guint itermax)
+void clmap_Morgan1(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Morgan1_map + (iter % 256) * 3);
+	cpRGB(pixel, (Morgan1_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Morgan2(const guint iter, const guint itermax)
+void clmap_Morgan2(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Morgan2_map + (iter % 256) * 3);
+	cpRGB(pixel, (Morgan2_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Morgan3(const guint iter, const guint itermax)
+void clmap_Morgan3(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Morgan3_map + (iter % 256) * 3);
+	cpRGB(pixel, (Morgan3_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Morgen3(const guint iter, const guint itermax)
+void clmap_Morgen3(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Morgen3_map + (iter % 256) * 3);
+	cpRGB(pixel, (Morgen3_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_neon(const guint iter, const guint itermax)
+void clmap_neon(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (neon_map + (iter % 256) * 3);
+	cpRGB(pixel, (neon_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_paintjet(const guint iter, const guint itermax)
+void clmap_paintjet(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (paintjet_map + (iter % 16) * 3);
+	cpRGB(pixel, (paintjet_map + (iterinfo->iter % 16) * 3));
 }
 
-const guchar *clmap_royal(const guint iter, const guint itermax)
+void clmap_royal(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (royal_map + (iter % 256) * 3);
+	cpRGB(pixel, (royal_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Skydye01(const guint iter, const guint itermax)
+void clmap_Skydye01(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Skydye01_map + (iter % 256) * 3);
+	cpRGB(pixel, (Skydye01_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Skydye02(const guint iter, const guint itermax)
+void clmap_Skydye02(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Skydye02_map + (iter % 256) * 3);
+	cpRGB(pixel, (Skydye02_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Skydye03(const guint iter, const guint itermax)
+void clmap_Skydye03(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Skydye03_map + (iter % 256) * 3);
+	cpRGB(pixel, (Skydye03_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Skydye04(const guint iter, const guint itermax)
+void clmap_Skydye04(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Skydye04_map + (iter % 256) * 3);
+	cpRGB(pixel, (Skydye04_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Skydye05(const guint iter, const guint itermax)
+void clmap_Skydye05(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Skydye05_map + (iter % 256) * 3);
+	cpRGB(pixel, (Skydye05_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Skydye06(const guint iter, const guint itermax)
+void clmap_Skydye06(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Skydye06_map + (iter % 256) * 3);
+	cpRGB(pixel, (Skydye06_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Skydye07(const guint iter, const guint itermax)
+void clmap_Skydye07(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Skydye07_map + (iter % 256) * 3);
+	cpRGB(pixel, (Skydye07_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Skydye08(const guint iter, const guint itermax)
+void clmap_Skydye08(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Skydye08_map + (iter % 256) * 3);
+	cpRGB(pixel, (Skydye08_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Skydye09(const guint iter, const guint itermax)
+void clmap_Skydye09(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Skydye09_map + (iter % 256) * 3);
+	cpRGB(pixel, (Skydye09_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Skydye10(const guint iter, const guint itermax)
+void clmap_Skydye10(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Skydye10_map + (iter % 256) * 3);
+	cpRGB(pixel, (Skydye10_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Skydye11(const guint iter, const guint itermax)
+void clmap_Skydye11(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Skydye11_map + (iter % 256) * 3);
+	cpRGB(pixel, (Skydye11_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Skydye12(const guint iter, const guint itermax)
+void clmap_Skydye12(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Skydye12_map + (iter % 256) * 3);
+	cpRGB(pixel, (Skydye12_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_topo(const guint iter, const guint itermax)
+void clmap_topo(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (topo_map + (iter % 256) * 3);
+	cpRGB(pixel, (topo_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_volcano(const guint iter, const guint itermax)
+void clmap_volcano(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (volcano_map + (iter % 256) * 3);
+	cpRGB(pixel, (volcano_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Wizzl011(const guint iter, const guint itermax)
+void clmap_Wizzl011(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Wizzl011_map + (iter % 256) * 3);
+	cpRGB(pixel, (Wizzl011_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Wizzl012(const guint iter, const guint itermax)
+void clmap_Wizzl012(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Wizzl012_map + (iter % 256) * 3);
+	cpRGB(pixel, (Wizzl012_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Wizzl013(const guint iter, const guint itermax)
+void clmap_Wizzl013(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Wizzl013_map + (iter % 256) * 3);
+	cpRGB(pixel, (Wizzl013_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Wizzl014(const guint iter, const guint itermax)
+void clmap_Wizzl014(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Wizzl014_map + (iter % 256) * 3);
+	cpRGB(pixel, (Wizzl014_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Wizzl015(const guint iter, const guint itermax)
+void clmap_Wizzl015(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Wizzl015_map + (iter % 256) * 3);
+	cpRGB(pixel, (Wizzl015_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Wizzl016(const guint iter, const guint itermax)
+void clmap_Wizzl016(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Wizzl016_map + (iter % 256) * 3);
+	cpRGB(pixel, (Wizzl016_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Wizzl017(const guint iter, const guint itermax)
+void clmap_Wizzl017(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Wizzl017_map + (iter % 256) * 3);
+	cpRGB(pixel, (Wizzl017_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Wizzl018(const guint iter, const guint itermax)
+void clmap_Wizzl018(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Wizzl018_map + (iter % 256) * 3);
+	cpRGB(pixel, (Wizzl018_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Wizzl019(const guint iter, const guint itermax)
+void clmap_Wizzl019(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Wizzl019_map + (iter % 256) * 3);
+	cpRGB(pixel, (Wizzl019_map + (iterinfo->iter % 256) * 3));
 }
 
-const guchar *clmap_Wizzl020(const guint iter, const guint itermax)
+void clmap_Wizzl020(const IterationInfo *iterinfo, guchar *pixel)
 {
-	return (Wizzl020_map + (iter % 256) * 3);
+	cpRGB(pixel, (Wizzl020_map + (iterinfo->iter % 256) * 3));
 }
 
 #define COLORFUNCMAP_COUNT 147
 
-const gchar *colorfuncmap_names[COLORFUNCMAP_COUNT] = {
-	N_("altern"),
-	N_("blues"),
-	N_("bud2"),
-	N_("bud3"),
-	N_("bud4"),
-	N_("bud5"),
-	N_("bud6"),
-	N_("bud7"),
-	N_("Carlson1"),
-	N_("chroma"),
-	N_("damien1"),
-	N_("damien2"),
-	N_("damien3"),
-	N_("damien4"),
-	N_("damien5"),
-	N_("default"),
-	N_("Digiorg1"),
-	N_("Digiorg2"),
-	N_("droz10"),
-	N_("droz11"),
-	N_("droz12"),
-	N_("droz13"),
-	N_("droz14"),
-	N_("droz15"),
-	N_("droz21"),
-	N_("droz22"),
-	N_("droz23"),
-	N_("droz28"),
-	N_("droz31"),
-	N_("droz33"),
-	N_("droz34"),
-	N_("droz35"),
-	N_("droz36"),
-	N_("droz38"),
-	N_("droz39"),
-	N_("droz40"),
-	N_("droz44"),
-	N_("droz46"),
-	N_("droz49"),
-	N_("droz52"),
-	N_("droz54"),
-	N_("droz56"),
-	N_("droz60"),
-	N_("droz62"),
-	N_("droz8"),
-	N_("drozdis1"),
-	N_("firestrm"),
-	N_("froth316"),
-	N_("froth3"),
-	N_("froth616"),
-	N_("froth6"),
-	N_("Gallet01"),
-	N_("Gallet02"),
-	N_("Gallet03"),
-	N_("Gallet04"),
-	N_("Gallet05"),
-	N_("Gallet06"),
-	N_("Gallet07"),
-	N_("Gallet08"),
-	N_("Gallet09"),
-	N_("Gallet10"),
-	N_("Gallet11"),
-	N_("Gallet12"),
-	N_("Gallet13"),
-	N_("Gallet14"),
-	N_("Gallet15"),
-	N_("Gallet16"),
-	N_("Gallet17"),
-	N_("Gallet18"),
-	N_("gamma1"),
-	N_("gamma2"),
-	N_("glasses1"),
-	N_("glasses2"),
-	N_("goodega"),
-	N_("green"),
-	N_("grey"),
-	N_("grid"),
-	N_("headache"),
-	N_("landscap"),
-	N_("Lindaa01"),
-	N_("Lindaa02"),
-	N_("Lindaa03"),
-	N_("Lindaa04"),
-	N_("Lindaa05"),
-	N_("Lindaa06"),
-	N_("Lindaa07"),
-	N_("Lindaa08"),
-	N_("Lindaa09"),
-	N_("Lindaa10"),
-	N_("Lindaa11"),
-	N_("Lindaa12"),
-	N_("Lindaa14"),
-	N_("Lindaa15"),
-	N_("Lindaa16"),
-	N_("Lindaa17"),
-	N_("lkmtch00"),
-	N_("lkmtch01"),
-	N_("lkmtch02"),
-	N_("lkmtch03"),
-	N_("lkmtch04"),
-	N_("lkmtch05"),
-	N_("lkmtch06"),
-	N_("lkmtch07"),
-	N_("lkmtch08"),
-	N_("lkmtch09"),
-	N_("lkmtch10"),
-	N_("lkmtch11"),
-	N_("lkmtch12"),
-	N_("lkmtch13"),
-	N_("lkmtch14"),
-	N_("lkmtch15"),
-	N_("lkmtch16"),
-	N_("lkmtch17"),
-	N_("lkmtch18"),
-	N_("lkmtch19"),
-	N_("lyapunov"),
-	N_("Morgan1"),
-	N_("Morgan2"),
-	N_("Morgan3"),
-	N_("Morgen3"),
-	N_("neon"),
-	N_("paintjet"),
-	N_("royal"),
-	N_("Skydye01"),
-	N_("Skydye02"),
-	N_("Skydye03"),
-	N_("Skydye04"),
-	N_("Skydye05"),
-	N_("Skydye06"),
-	N_("Skydye07"),
-	N_("Skydye08"),
-	N_("Skydye09"),
-	N_("Skydye10"),
-	N_("Skydye11"),
-	N_("Skydye12"),
-	N_("topo"),
-	N_("volcano"),
-	N_("Wizzl011"),
-	N_("Wizzl012"),
-	N_("Wizzl013"),
-	N_("Wizzl014"),
-	N_("Wizzl015"),
-	N_("Wizzl016"),
-	N_("Wizzl017"),
-	N_("Wizzl018"),
-	N_("Wizzl019"),
-	N_("Wizzl020"),
+const ColorFuncDescriptor CFD_MAP[COLORFUNCMAP_COUNT] = {
+	{ N_("altern"), NULL, NULL, clmap_altern },
+	{ N_("blues"), NULL, NULL, clmap_blues },
+	{ N_("bud2"), NULL, NULL, clmap_bud2 },
+	{ N_("bud3"), NULL, NULL, clmap_bud3 },
+	{ N_("bud4"), NULL, NULL, clmap_bud4 },
+	{ N_("bud5"), NULL, NULL, clmap_bud5 },
+	{ N_("bud6"), NULL, NULL, clmap_bud6 },
+	{ N_("bud7"), NULL, NULL, clmap_bud7 },
+	{ N_("Carlson1"), NULL, NULL, clmap_Carlson1 },
+	{ N_("chroma"), NULL, NULL, clmap_chroma },
+	{ N_("damien1"), NULL, NULL, clmap_damien1 },
+	{ N_("damien2"), NULL, NULL, clmap_damien2 },
+	{ N_("damien3"), NULL, NULL, clmap_damien3 },
+	{ N_("damien4"), NULL, NULL, clmap_damien4 },
+	{ N_("damien5"), NULL, NULL, clmap_damien5 },
+	{ N_("default"), NULL, NULL, clmap_default },
+	{ N_("Digiorg1"), NULL, NULL, clmap_Digiorg1 },
+	{ N_("Digiorg2"), NULL, NULL, clmap_Digiorg2 },
+	{ N_("droz10"), NULL, NULL, clmap_droz10 },
+	{ N_("droz11"), NULL, NULL, clmap_droz11 },
+	{ N_("droz12"), NULL, NULL, clmap_droz12 },
+	{ N_("droz13"), NULL, NULL, clmap_droz13 },
+	{ N_("droz14"), NULL, NULL, clmap_droz14 },
+	{ N_("droz15"), NULL, NULL, clmap_droz15 },
+	{ N_("droz21"), NULL, NULL, clmap_droz21 },
+	{ N_("droz22"), NULL, NULL, clmap_droz22 },
+	{ N_("droz23"), NULL, NULL, clmap_droz23 },
+	{ N_("droz28"), NULL, NULL, clmap_droz28 },
+	{ N_("droz31"), NULL, NULL, clmap_droz31 },
+	{ N_("droz33"), NULL, NULL, clmap_droz33 },
+	{ N_("droz34"), NULL, NULL, clmap_droz34 },
+	{ N_("droz35"), NULL, NULL, clmap_droz35 },
+	{ N_("droz36"), NULL, NULL, clmap_droz36 },
+	{ N_("droz38"), NULL, NULL, clmap_droz38 },
+	{ N_("droz39"), NULL, NULL, clmap_droz39 },
+	{ N_("droz40"), NULL, NULL, clmap_droz40 },
+	{ N_("droz44"), NULL, NULL, clmap_droz44 },
+	{ N_("droz46"), NULL, NULL, clmap_droz46 },
+	{ N_("droz49"), NULL, NULL, clmap_droz49 },
+	{ N_("droz52"), NULL, NULL, clmap_droz52 },
+	{ N_("droz54"), NULL, NULL, clmap_droz54 },
+	{ N_("droz56"), NULL, NULL, clmap_droz56 },
+	{ N_("droz60"), NULL, NULL, clmap_droz60 },
+	{ N_("droz62"), NULL, NULL, clmap_droz62 },
+	{ N_("droz8"), NULL, NULL, clmap_droz8 },
+	{ N_("drozdis1"), NULL, NULL, clmap_drozdis1 },
+	{ N_("firestrm"), NULL, NULL, clmap_firestrm },
+	{ N_("froth316"), NULL, NULL, clmap_froth316 },
+	{ N_("froth3"), NULL, NULL, clmap_froth3 },
+	{ N_("froth616"), NULL, NULL, clmap_froth616 },
+	{ N_("froth6"), NULL, NULL, clmap_froth6 },
+	{ N_("Gallet01"), NULL, NULL, clmap_Gallet01 },
+	{ N_("Gallet02"), NULL, NULL, clmap_Gallet02 },
+	{ N_("Gallet03"), NULL, NULL, clmap_Gallet03 },
+	{ N_("Gallet04"), NULL, NULL, clmap_Gallet04 },
+	{ N_("Gallet05"), NULL, NULL, clmap_Gallet05 },
+	{ N_("Gallet06"), NULL, NULL, clmap_Gallet06 },
+	{ N_("Gallet07"), NULL, NULL, clmap_Gallet07 },
+	{ N_("Gallet08"), NULL, NULL, clmap_Gallet08 },
+	{ N_("Gallet09"), NULL, NULL, clmap_Gallet09 },
+	{ N_("Gallet10"), NULL, NULL, clmap_Gallet10 },
+	{ N_("Gallet11"), NULL, NULL, clmap_Gallet11 },
+	{ N_("Gallet12"), NULL, NULL, clmap_Gallet12 },
+	{ N_("Gallet13"), NULL, NULL, clmap_Gallet13 },
+	{ N_("Gallet14"), NULL, NULL, clmap_Gallet14 },
+	{ N_("Gallet15"), NULL, NULL, clmap_Gallet15 },
+	{ N_("Gallet16"), NULL, NULL, clmap_Gallet16 },
+	{ N_("Gallet17"), NULL, NULL, clmap_Gallet17 },
+	{ N_("Gallet18"), NULL, NULL, clmap_Gallet18 },
+	{ N_("gamma1"), NULL, NULL, clmap_gamma1 },
+	{ N_("gamma2"), NULL, NULL, clmap_gamma2 },
+	{ N_("glasses1"), NULL, NULL, clmap_glasses1 },
+	{ N_("glasses2"), NULL, NULL, clmap_glasses2 },
+	{ N_("goodega"), NULL, NULL, clmap_goodega },
+	{ N_("green"), NULL, NULL, clmap_green },
+	{ N_("grey"), NULL, NULL, clmap_grey },
+	{ N_("grid"), NULL, NULL, clmap_grid },
+	{ N_("headache"), NULL, NULL, clmap_headache },
+	{ N_("landscap"), NULL, NULL, clmap_landscap },
+	{ N_("Lindaa01"), NULL, NULL, clmap_Lindaa01 },
+	{ N_("Lindaa02"), NULL, NULL, clmap_Lindaa02 },
+	{ N_("Lindaa03"), NULL, NULL, clmap_Lindaa03 },
+	{ N_("Lindaa04"), NULL, NULL, clmap_Lindaa04 },
+	{ N_("Lindaa05"), NULL, NULL, clmap_Lindaa05 },
+	{ N_("Lindaa06"), NULL, NULL, clmap_Lindaa06 },
+	{ N_("Lindaa07"), NULL, NULL, clmap_Lindaa07 },
+	{ N_("Lindaa08"), NULL, NULL, clmap_Lindaa08 },
+	{ N_("Lindaa09"), NULL, NULL, clmap_Lindaa09 },
+	{ N_("Lindaa10"), NULL, NULL, clmap_Lindaa10 },
+	{ N_("Lindaa11"), NULL, NULL, clmap_Lindaa11 },
+	{ N_("Lindaa12"), NULL, NULL, clmap_Lindaa12 },
+	{ N_("Lindaa14"), NULL, NULL, clmap_Lindaa14 },
+	{ N_("Lindaa15"), NULL, NULL, clmap_Lindaa15 },
+	{ N_("Lindaa16"), NULL, NULL, clmap_Lindaa16 },
+	{ N_("Lindaa17"), NULL, NULL, clmap_Lindaa17 },
+	{ N_("lkmtch00"), NULL, NULL, clmap_lkmtch00 },
+	{ N_("lkmtch01"), NULL, NULL, clmap_lkmtch01 },
+	{ N_("lkmtch02"), NULL, NULL, clmap_lkmtch02 },
+	{ N_("lkmtch03"), NULL, NULL, clmap_lkmtch03 },
+	{ N_("lkmtch04"), NULL, NULL, clmap_lkmtch04 },
+	{ N_("lkmtch05"), NULL, NULL, clmap_lkmtch05 },
+	{ N_("lkmtch06"), NULL, NULL, clmap_lkmtch06 },
+	{ N_("lkmtch07"), NULL, NULL, clmap_lkmtch07 },
+	{ N_("lkmtch08"), NULL, NULL, clmap_lkmtch08 },
+	{ N_("lkmtch09"), NULL, NULL, clmap_lkmtch09 },
+	{ N_("lkmtch10"), NULL, NULL, clmap_lkmtch10 },
+	{ N_("lkmtch11"), NULL, NULL, clmap_lkmtch11 },
+	{ N_("lkmtch12"), NULL, NULL, clmap_lkmtch12 },
+	{ N_("lkmtch13"), NULL, NULL, clmap_lkmtch13 },
+	{ N_("lkmtch14"), NULL, NULL, clmap_lkmtch14 },
+	{ N_("lkmtch15"), NULL, NULL, clmap_lkmtch15 },
+	{ N_("lkmtch16"), NULL, NULL, clmap_lkmtch16 },
+	{ N_("lkmtch17"), NULL, NULL, clmap_lkmtch17 },
+	{ N_("lkmtch18"), NULL, NULL, clmap_lkmtch18 },
+	{ N_("lkmtch19"), NULL, NULL, clmap_lkmtch19 },
+	{ N_("lyapunov"), NULL, NULL, clmap_lyapunov },
+	{ N_("Morgan1"), NULL, NULL, clmap_Morgan1 },
+	{ N_("Morgan2"), NULL, NULL, clmap_Morgan2 },
+	{ N_("Morgan3"), NULL, NULL, clmap_Morgan3 },
+	{ N_("Morgen3"), NULL, NULL, clmap_Morgen3 },
+	{ N_("neon"), NULL, NULL, clmap_neon },
+	{ N_("paintjet"), NULL, NULL, clmap_paintjet },
+	{ N_("royal"), NULL, NULL, clmap_royal },
+	{ N_("Skydye01"), NULL, NULL, clmap_Skydye01 },
+	{ N_("Skydye02"), NULL, NULL, clmap_Skydye02 },
+	{ N_("Skydye03"), NULL, NULL, clmap_Skydye03 },
+	{ N_("Skydye04"), NULL, NULL, clmap_Skydye04 },
+	{ N_("Skydye05"), NULL, NULL, clmap_Skydye05 },
+	{ N_("Skydye06"), NULL, NULL, clmap_Skydye06 },
+	{ N_("Skydye07"), NULL, NULL, clmap_Skydye07 },
+	{ N_("Skydye08"), NULL, NULL, clmap_Skydye08 },
+	{ N_("Skydye09"), NULL, NULL, clmap_Skydye09 },
+	{ N_("Skydye10"), NULL, NULL, clmap_Skydye10 },
+	{ N_("Skydye11"), NULL, NULL, clmap_Skydye11 },
+	{ N_("Skydye12"), NULL, NULL, clmap_Skydye12 },
+	{ N_("topo"), NULL, NULL, clmap_topo },
+	{ N_("volcano"), NULL, NULL, clmap_volcano },
+	{ N_("Wizzl011"), NULL, NULL, clmap_Wizzl011 },
+	{ N_("Wizzl012"), NULL, NULL, clmap_Wizzl012 },
+	{ N_("Wizzl013"), NULL, NULL, clmap_Wizzl013 },
+	{ N_("Wizzl014"), NULL, NULL, clmap_Wizzl014 },
+	{ N_("Wizzl015"), NULL, NULL, clmap_Wizzl015 },
+	{ N_("Wizzl016"), NULL, NULL, clmap_Wizzl016 },
+	{ N_("Wizzl017"), NULL, NULL, clmap_Wizzl017 },
+	{ N_("Wizzl018"), NULL, NULL, clmap_Wizzl018 },
+	{ N_("Wizzl019"), NULL, NULL, clmap_Wizzl019 },
+	{ N_("Wizzl020"), NULL, NULL, clmap_Wizzl020 },
 };
 
-const ColorFunc colorfuncmap[COLORFUNCMAP_COUNT] = {
-	clmap_altern,
-	clmap_blues,
-	clmap_bud2,
-	clmap_bud3,
-	clmap_bud4,
-	clmap_bud5,
-	clmap_bud6,
-	clmap_bud7,
-	clmap_Carlson1,
-	clmap_chroma,
-	clmap_damien1,
-	clmap_damien2,
-	clmap_damien3,
-	clmap_damien4,
-	clmap_damien5,
-	clmap_default,
-	clmap_Digiorg1,
-	clmap_Digiorg2,
-	clmap_droz10,
-	clmap_droz11,
-	clmap_droz12,
-	clmap_droz13,
-	clmap_droz14,
-	clmap_droz15,
-	clmap_droz21,
-	clmap_droz22,
-	clmap_droz23,
-	clmap_droz28,
-	clmap_droz31,
-	clmap_droz33,
-	clmap_droz34,
-	clmap_droz35,
-	clmap_droz36,
-	clmap_droz38,
-	clmap_droz39,
-	clmap_droz40,
-	clmap_droz44,
-	clmap_droz46,
-	clmap_droz49,
-	clmap_droz52,
-	clmap_droz54,
-	clmap_droz56,
-	clmap_droz60,
-	clmap_droz62,
-	clmap_droz8,
-	clmap_drozdis1,
-	clmap_firestrm,
-	clmap_froth316,
-	clmap_froth3,
-	clmap_froth616,
-	clmap_froth6,
-	clmap_Gallet01,
-	clmap_Gallet02,
-	clmap_Gallet03,
-	clmap_Gallet04,
-	clmap_Gallet05,
-	clmap_Gallet06,
-	clmap_Gallet07,
-	clmap_Gallet08,
-	clmap_Gallet09,
-	clmap_Gallet10,
-	clmap_Gallet11,
-	clmap_Gallet12,
-	clmap_Gallet13,
-	clmap_Gallet14,
-	clmap_Gallet15,
-	clmap_Gallet16,
-	clmap_Gallet17,
-	clmap_Gallet18,
-	clmap_gamma1,
-	clmap_gamma2,
-	clmap_glasses1,
-	clmap_glasses2,
-	clmap_goodega,
-	clmap_green,
-	clmap_grey,
-	clmap_grid,
-	clmap_headache,
-	clmap_landscap,
-	clmap_Lindaa01,
-	clmap_Lindaa02,
-	clmap_Lindaa03,
-	clmap_Lindaa04,
-	clmap_Lindaa05,
-	clmap_Lindaa06,
-	clmap_Lindaa07,
-	clmap_Lindaa08,
-	clmap_Lindaa09,
-	clmap_Lindaa10,
-	clmap_Lindaa11,
-	clmap_Lindaa12,
-	clmap_Lindaa14,
-	clmap_Lindaa15,
-	clmap_Lindaa16,
-	clmap_Lindaa17,
-	clmap_lkmtch00,
-	clmap_lkmtch01,
-	clmap_lkmtch02,
-	clmap_lkmtch03,
-	clmap_lkmtch04,
-	clmap_lkmtch05,
-	clmap_lkmtch06,
-	clmap_lkmtch07,
-	clmap_lkmtch08,
-	clmap_lkmtch09,
-	clmap_lkmtch10,
-	clmap_lkmtch11,
-	clmap_lkmtch12,
-	clmap_lkmtch13,
-	clmap_lkmtch14,
-	clmap_lkmtch15,
-	clmap_lkmtch16,
-	clmap_lkmtch17,
-	clmap_lkmtch18,
-	clmap_lkmtch19,
-	clmap_lyapunov,
-	clmap_Morgan1,
-	clmap_Morgan2,
-	clmap_Morgan3,
-	clmap_Morgen3,
-	clmap_neon,
-	clmap_paintjet,
-	clmap_royal,
-	clmap_Skydye01,
-	clmap_Skydye02,
-	clmap_Skydye03,
-	clmap_Skydye04,
-	clmap_Skydye05,
-	clmap_Skydye06,
-	clmap_Skydye07,
-	clmap_Skydye08,
-	clmap_Skydye09,
-	clmap_Skydye10,
-	clmap_Skydye11,
-	clmap_Skydye12,
-	clmap_topo,
-	clmap_volcano,
-	clmap_Wizzl011,
-	clmap_Wizzl012,
-	clmap_Wizzl013,
-	clmap_Wizzl014,
-	clmap_Wizzl015,
-	clmap_Wizzl016,
-	clmap_Wizzl017,
-	clmap_Wizzl018,
-	clmap_Wizzl019,
-	clmap_Wizzl020,
-};
-
-int getcolorfuncmap_count()
+int getColorMapFunc_count()
 {
 	return COLORFUNCMAP_COUNT;
 }
 
-const char *getcolorfuncmap_name(int index)
+const char *getColorMapFunc_name(int index)
 {
-	return colorfuncmap_names[index % COLORFUNCMAP_COUNT];
+	return CFD_MAP[index % COLORFUNCMAP_COUNT].name;
 }
 
-ColorFunc getcolorfuncmap(int index)
+ColorFunc getColorMapFunc(int index)
 {
-	return colorfuncmap[index % COLORFUNCMAP_COUNT];
+	return CFD_MAP[index % COLORFUNCMAP_COUNT].colorfunc;
 }
 

@@ -1,31 +1,36 @@
 
-
 #ifndef __COLOR_H__
 #define __COLOR_H__
 
-#include <gtk/gtk.h>
+#include <glib.h>
 
-typedef const guchar *(*ColorFunc)(const guint iter, const guint itermax);
+typedef struct _IterationInfo {
+	gint iter;
+	gdouble sqr_abs_z;
+} IterationInfo;
 
-int getcolorfunc_count();
-const char *getcolorfunc_name(int index);
-ColorFunc getcolorfunc(int index);
-int getcolorfuncmap_count();
-const char *getcolorfuncmap_name(int index);
-ColorFunc getcolorfuncmap(int index);
+typedef void (*ColorFunc)(const IterationInfo *iterinfo, guchar *pixel);
 
-int getdivconv_idx();
-void setdivcol(const guchar *color);
+typedef struct _ColorFuncDescriptor {
+	gchar *name;
+	void (*initialize_func)();
+	void (*finalize_func)();
+	ColorFunc colorfunc;
+} ColorFuncDescriptor;
+
+/* Maximum of iteration, defined in color.c */ 
+extern guint itermax;
+
+/* Functions to access the color-algorithmens */
+int getColorFunc_count();
+const char *getColorFunc_name(int index);
+ColorFunc getColorFunc(int index);
+
 void initialize_func(int index);
 void finalize_func(int index);
 
-const guchar *clblue(const guint iter, const guint itermax);
-const guchar *divconv(const guint iter, const guint itermax);
-const guchar *mb_color_standard_sw(const guint iter, const guint itermax);
-const guchar *clRGBS5(const guint iter, const guint itermax);
-const guchar *mb_rainbow(const guint iter, const guint itermax);
-void initialize_colormap();
-void finalize_colormap();
-
+void setDivergentColor(const guchar *color);
+int getDivConv_idx();
+void cpRGB(guchar *dest, const guchar *src);
 
 #endif /* __COLOR_H__ */

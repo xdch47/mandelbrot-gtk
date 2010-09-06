@@ -32,6 +32,7 @@ struct winctl {
 	GtkWidget **mcolalgo;
 	GdkPixbuf *pixbufcalc;
 	GdkPixbuf *pixbufshow;
+	IterationInfo *itermap;
 	/* render thread */
 	struct render_thread *render_thread;
 	struct iterate_param it_param;
@@ -69,6 +70,8 @@ void run_interface(gchar *file_name);
 void calc(GtkWidget *widget, struct winctl *w);
 void reset(GtkWidget *widget, struct winctl *w);
 void alloc_colors(struct iterate_param *it_param, struct winctl *w);
+void update_pixbuf(guint x, guint y, const IterationInfo *iterinfo,  const struct iterate_param *it_param);
+void redraw_pixbuf(struct winctl *w);
 
 /* implemented by storedrawing.c */
 void store_drawing_show(struct winctl *w);

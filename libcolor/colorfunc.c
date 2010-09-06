@@ -1,6 +1,6 @@
 
 #include <math.h>
-#include <gtk/gtk.h>
+#include <glib>
 #include "color.h"
 #include "colormap.h"
 
@@ -92,6 +92,7 @@ void initialize_colormap()
 void finalize_colormap()
 {
 	avl_free_data(colormap);
+	colormap = NULL;
 }
 
 static const guchar *mb_color_standard_sw_algo(const guint iter, const guint itermax)
@@ -100,7 +101,7 @@ static const guchar *mb_color_standard_sw_algo(const guint iter, const guint ite
 	guchar *retval;
 	guchar res;
 
-	retval = (guchar *)g_malloc(sizeof(guchar));
+	retval = (guchar *)malloc(sizeof(guchar));
 	x = sqrt((long double)iter) / sqrt(COLOR_PERIOD_DEFAULT);
 	x = 0.5 + 0.5 * cos(x);
 	res = (guchar)(255 * x);

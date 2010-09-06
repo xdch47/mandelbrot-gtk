@@ -11,7 +11,8 @@ my $c_file;
 my @names;
 my @count_colors;
 
-$c_file .= "\n#include \"color.h\"\n\n";
+$c_file .= "\n#include <glib.h>\n";
+$c_file .= "#include \"color.h\"\n\n";
 $c_file .= "#define N_(x) x\n\n";
 foreach my $filename (@ARGV) {
 	open(FD, "<$filename") or die $!;
@@ -34,27 +35,21 @@ foreach my $filename (@ARGV) {
 
 foreach my $name (@names) {
 	my $count = shift @count_colors;
-	$c_file .= "const guchar *clmap_${name}(const guint iter, const guint itermax)\n{\n";
-	$c_file .= "\treturn (${name}_map + (iter % $count) * 3);\n}\n\n";
+	$c_file .= "void clmap_${name}(const IterationInfo *iterinfo, guchar *pixel)\n{\n";
+	$c_file .= "\tcpRGB(pixel, (${name}_map + (iterinfo->iter % $count) * 3));\n}\n\n";
 }
 $c_file .= "#define COLORFUNCMAP_COUNT " . scalar(@names) . "\n\n";
-$c_file .= "const gchar *colorfuncmap_names[COLORFUNCMAP_COUNT] = {\n";
+$c_file .= "const ColorFuncDescriptor CFD_MAP[COLORFUNCMAP_COUNT] = {\n";
 foreach my $name (@names) {
-	$c_file .= "\tN_(\"${name}\"),\n"
+	$c_file .= "\t{ N_(\"${name}\"), NULL, NULL, clmap_${name} },\n"
 }
 $c_file .= "};\n\n";
 
-$c_file .= "const ColorFunc colorfuncmap[COLORFUNCMAP_COUNT] = {\n";
-foreach my $name (@names) {
-	$c_file .= "\tclmap_${name},\n"
-}
-$c_file .= "};\n\n";
+$c_file .= "int getColorMapFunc_count()\n{\n\treturn COLORFUNCMAP_COUNT;\n}\n\n";
 
-$c_file .= "int getcolorfuncmap_count()\n{\n\treturn COLORFUNCMAP_COUNT;\n}\n\n";
-
-$c_file .= "const char *getcolorfuncmap_name(int index)\n{\n";
-$c_file .= "\treturn colorfuncmap_names[index % COLORFUNCMAP_COUNT];\n}\n\n";
-$c_file .= "ColorFunc getcolorfuncmap(int index)\n{\n";
-$c_file .= "\treturn colorfuncmap[index % COLORFUNCMAP_COUNT];\n}\n\n";
+$c_file .= "const char *getColorMapFunc_name(int index)\n{\n";
+$c_file .= "\treturn CFD_MAP[index % COLORFUNCMAP_COUNT].name;\n}\n\n";
+$c_file .= "ColorFunc getColorMapFunc(int index)\n{\n";
+$c_file .= "\treturn CFD_MAP[index % COLORFUNCMAP_COUNT].colorfunc;\n}\n\n";
 
 print $c_file;

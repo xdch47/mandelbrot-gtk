@@ -140,5 +140,15 @@ extern const gdouble MCPLXPLANE[4];
 extern const guchar clbluedef[];
 #define INTERPOLATION GDK_INTERP_BILINEAR
 
+#define GPLv3                                                                     \
+"Mandelbrot v" LVERSION "\n"                                                      \
+"Copyright (C) 2010 Lexif Systems, Inc.\n"                                        \
+"License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>\n" \
+"This program is free software; you can redistribute it and/or modify\n"          \
+"it under the terms of the GNU General Public License as published by\n"          \
+"the Free Software Foundation; either version 3 of the License, or\n"             \
+"any later version.\n"                                                            \
+"There is NO WARRANTY, to the extent permitted by law.\n"
+
 #endif /* __DEF_H__ */
 

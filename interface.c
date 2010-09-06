@@ -64,9 +64,9 @@ void run_interface(gchar *file_name)
 	w->configfile = g_build_filename(dirname, CONFIGFILE, NULL);
 	g_free(dirname);
 
+	w->succ_render = FALSE;
 	succ_load_config = configure_interface(w, LOAD_CONFIG);
 
-	w->succ_render = FALSE;
 	gtk_widget_show_all(w->win);
 
 	while (gtk_events_pending())
@@ -103,6 +103,7 @@ static gboolean start_calc(struct winctl *w)
 	int errno;
 	gchar *endptr;
 	gint i;
+	gint width, height;
 
 	/* validate complex plane */
 	if (!validate_cplx(w->txtcplx, cplxplane, w->win)) {
@@ -155,9 +156,14 @@ static gboolean start_calc(struct winctl *w)
 		g_object_unref(w->pixbufcalc);
 	if (w->pixbufshow)
 		g_object_unref(w->pixbufshow);
+	if (w->itermap)
+		g_free(w->itermap);
 
-	w->pixbufcalc = gdk_pixbuf_new(GDK_COLORSPACE_RGB,
-	    TRUE, 8, w->drawing->allocation.width, w->drawing->allocation.height);
+	width = w->drawing->allocation.width;
+	height = w->drawing->allocation.height;
+	w->itermap = (IterationInfo *)g_malloc(sizeof(IterationInfo) * width * height);
+	w->pixbufcalc = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, width, height);
+	
 	clearpixbuf(w->pixbufcalc);
 	w->pixbufshow = g_object_ref(w->pixbufcalc);
 	gdk_window_invalidate_rect(w->drawing->window, NULL, FALSE);
@@ -169,14 +175,19 @@ static gboolean start_calc(struct winctl *w)
 	for (i = 0; i < 4; ++i) {
 		w->it_param.cplxplane[i] = cplxplane[i];
 	}
-	w->it_param.xmax = gdk_pixbuf_get_width(w->pixbufcalc);
-	w->it_param.ymax = gdk_pixbuf_get_height(w->pixbufcalc);
+	w->it_param.itermap = w->itermap;
+	w->it_param.xmax = width;
+	w->it_param.ymax = height;
 	w->it_param.j[0] = jre;
 	w->it_param.j[1] = jim;
 	w->it_param.itermax = itermax;
 	w->it_param.pixels = gdk_pixbuf_get_pixels(w->pixbufcalc);
 	w->it_param.n_channels = gdk_pixbuf_get_n_channels(w->pixbufcalc);
 	w->it_param.rowstride = gdk_pixbuf_get_rowstride(w->pixbufcalc);
+	w->it_param.colorfunc = getColorFunc(w->it_param.color_func_index);
+	/* FIXME:
+	g_free(w->it_param.color);
+	*/
 	alloc_colors(&w->it_param, w);
 	w->it_param.degree = degree;
 	if (w->it_param.type == MANDELBROT_SET) {
@@ -216,7 +227,6 @@ static void render_thread_done(gboolean succ, struct winctl *w)
 	}
 	gtk_label_set_text(GTK_LABEL(w->lbldraw), buf);
 	gdk_threads_leave();
-	g_free(w->it_param.color);
 	g_timer_destroy(w->timer);
 }
 
@@ -313,7 +323,6 @@ static gboolean configure_event(GtkWidget *widget, GdkEventConfigure *event, str
 		clearpixbuf(w->pixbufcalc);
 		w->pixbufshow = g_object_ref(w->pixbufcalc);
 	} else {
-		g_assert(w->pixbufshow != NULL);
 		g_object_unref(w->pixbufshow);
 
 		if (width == gdk_pixbuf_get_width(w->pixbufcalc) && height == gdk_pixbuf_get_height(w->pixbufcalc)) {
@@ -539,7 +548,6 @@ static void redraw_idle(struct winctl *w)
 	width = w->drawing->allocation.width;
 	height = w->drawing->allocation.height;
 	if (width != gdk_pixbuf_get_width(w->pixbufcalc) || height != gdk_pixbuf_get_height(w->pixbufcalc)) {
-		g_assert(w->pixbufshow != NULL);
 		g_object_unref(w->pixbufshow);
 		w->pixbufshow = gdk_pixbuf_scale_simple(w->pixbufcalc, width, height, INTERPOLATION);
 	}
@@ -549,7 +557,6 @@ static void redraw_idle(struct winctl *w)
 
 static void redraw_drawing(struct winctl *w, gint x, gint y, gint width, gint height)
 {
-	g_assert(w->pixbufshow != NULL);
 	gdk_draw_pixbuf(w->drawing->window, NULL, w->pixbufshow, x, y, x, y, width, height, GDK_RGB_DITHER_NORMAL, 0, 0);
 }
 
@@ -560,12 +567,12 @@ void alloc_colors(struct iterate_param *it_param, struct winctl *w)
 	it_param->color[0] = (guchar)(w->convcol.red >> 8);
 	it_param->color[1] = (guchar)(w->convcol.green >> 8);
 	it_param->color[2] = (guchar)(w->convcol.blue >> 8);
-	if (it_param->color_func_index == getdivconv_idx()) {
+	/*FIXME: */
+	/*if (it_param->color_func_index == getDivConv_idx()) {*/
 		divcolor[0] = (guchar)(w->divcol.red >> 8);
 		divcolor[1] = (guchar)(w->divcol.green >> 8);
 		divcolor[2] = (guchar)(w->divcol.blue >> 8);
-		setdivcol(divcolor);
-	}
+		setDivergentColor(divcolor);
 }
 
 void clearpixbuf(GdkPixbuf *pixbuf)
@@ -580,10 +587,59 @@ void clearpixbuf(GdkPixbuf *pixbuf)
 	itp = gdk_pixbuf_get_pixels(pixbuf);
 	endp = itp + height * rowstride + width * n_channels;
 
-	for (; itp < endp; ++itp) {
+	for (; itp < endp; itp += 4) {
 		itp[0] = 0xff;
 		itp[1] = 0xff;
 		itp[2] = 0xff;
 		itp[3] = 0xff;
 	}
+}
+
+void update_pixbuf(guint x, guint y, const IterationInfo *iterinfo, const struct iterate_param *it_param)
+{
+	guchar *p;
+
+	p = it_param->pixels + y * it_param->rowstride + x * it_param->n_channels;
+	if (iterinfo->iter != -1) {
+		it_param->colorfunc(iterinfo, p);
+	} else {
+		p[0] = it_param->color[0];
+		p[1] = it_param->color[1];
+		p[2] = it_param->color[2];
+	}
+
+}
+
+void redraw_pixbuf(struct winctl *w)
+{
+	GdkPixbuf *pixbuf;
+	IterationInfo *itermap;
+	ColorFunc colorfunc;
+	guint width, height, rowstride, n_channels;
+	guchar *itp, *endp;
+
+	itermap = w->itermap;
+	pixbuf = w->pixbufcalc;
+	initialize_func(w->it_param.color_func_index);
+	colorfunc = getColorFunc(w->it_param.color_func_index);
+	n_channels = gdk_pixbuf_get_n_channels(pixbuf);
+	width = gdk_pixbuf_get_width(pixbuf) - 1;
+	height = gdk_pixbuf_get_height(pixbuf) - 1;
+	rowstride = gdk_pixbuf_get_rowstride(pixbuf);
+	itp = gdk_pixbuf_get_pixels(pixbuf);
+	endp = itp + height * rowstride + width * n_channels;
+
+	for (; itp < endp; itp += 4) {
+		if (itermap->iter != -1) {
+			colorfunc(itermap++, itp);
+		} else {
+			itp[0] = w->it_param.color[0];
+			itp[1] = w->it_param.color[1];
+			itp[2] = w->it_param.color[2];
+			itermap++;
+		}
+	}
+	
+	configure_event(NULL, NULL, w);
+	redraw_drawing(w, 0, 0, -1, -1);
 }
