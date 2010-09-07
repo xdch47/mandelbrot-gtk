@@ -1,83 +1,39 @@
 
-#include <glib.h>
 #include "lookuptable.h"
 
-
-static guint reader_count = 0;
-static guint write_request = 0;
-static GMutex *rw_mutex;
-static GCond *write_done_cond;
-static GCond *write_ready_cond;
-
-void initialize_lookuptable_mutexes() {
-	rw_mutex = g_mutex_new();
-	write_done_cond = g_cond_new();
-	write_ready_cond = g_cond_new();
-}
-
-void finalize_lookuptable_mutexes() {
-	g_mutex_free(rw_mutex);
-	g_cond_free(write_done_cond);
-	g_cond_free(write_ready_cond);
-}
-
-LookUpDescriptor *ltb_new(cmpfunc cmp)
+static int cmpLookUpItem(LookUpItem *it1, LookUpItem *it2)
 {
-	LookUpDescriptor *desc = (LookUpDescriptor *)malloc(sizeof(LookUpDescriptor));
-	desc->tree = avl_create();
-	desc->cmp = cmp;
-	return desc;
+	if (it1->key < it2->key) 
+		return -1;
+	else if (it1->key == it2->key)
+		return 0;
+	else
+		return 1;
 }
 
-void ltb_free(LookUpDescriptor *desc)
+void *lookup(AVLtree desc, gint key, LookUpFunc func)
 {
-	avl_free_data(desc->tree);
-	free(desc);
-}
-
-LookUpItem *ltb_lookup(LookUpDescriptor *desc, LookUpItem *key, LookUpFunc func)
-{
+	static GStaticRWLock rwlock = G_STATIC_RW_LOCK_INIT;
 	Node *node;
-	/* Shared mutex between "readers" and "writers". */
+	LookUpItem lookupitem;
 
-	g_mutex_lock(rw_mutex);
-	if (write_request) {
-		g_cond_wait(write_done_cond, rw_mutex);
-	}
-	reader_count++;
-	g_mutex_unlock(rw_mutex);
+	lookupitem.key = key;
+	g_static_rw_lock_reader_lock(&rwlock);
+	node = avl_find(desc, &lookupitem, (cmpfunc)cmpLookUpItem);
+	g_static_rw_lock_reader_unlock(&rwlock);
 
-	node = avl_find(desc->tree, &key, desc->cmp);
-
-	g_mutex_lock(rw_mutex);
-	reader_count--;
-	if (reader_count == 0) {
-		g_cond_signal(write_ready_cond);
-	}
-	g_mutex_unlock(rw_mutex);
 	if (node) {
-		return (LookUpItem *)node->data;
+		return ((LookUpItem *)node->data)->value;
 	} else {
 		LookUpItem *new_entry;
 		new_entry = (LookUpItem *)malloc(sizeof(LookUpItem));
-		new_entry->key = key->key;
-		new_entry->value = (*func)(key->key);
+		new_entry->key = key;
+		new_entry->value = (*func)(key);
 
-		g_mutex_lock(rw_mutex);
-		write_request++;
-		if (reader_count) {
-			g_cond_wait(write_ready_cond, rw_mutex);
-		}
-		avl_insert(desc->tree, new_entry, desc->cmp);
-		write_request--;
-		if (write_request) {
-			g_cond_signal(write_ready_cond);
-		} else {
-			g_cond_broadcast(write_done_cond);
-		}
-		g_mutex_unlock(rw_mutex);
+		g_static_rw_lock_writer_lock(&rwlock);
+		avl_insert(desc, new_entry, (cmpfunc)cmpLookUpItem);
+		g_static_rw_lock_writer_unlock(&rwlock);
 
-		return new_entry;
+		return new_entry->value;
 	}
 }
-

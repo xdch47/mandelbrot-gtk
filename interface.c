@@ -97,7 +97,7 @@ static void destroy(GtkWidget *widget, struct winctl *w)
 static gboolean start_calc(struct winctl *w)
 {
 	gdouble degree;
-	guint itermax;
+	gint itermax;
 	gdouble cplxplane[4];
 	gdouble jre, jim;
 	int errno;
@@ -342,7 +342,7 @@ static void zoom(struct winctl *w, enum zoom_mode mode)
 	gdouble val[4];
 	gint px, py;
 	gint pwx, pwy;
-	double width, height;
+	gint width, height;
 	gdouble sf;
 	GdkDisplay *d;
 	GdkScreen *s;
@@ -350,13 +350,13 @@ static void zoom(struct winctl *w, enum zoom_mode mode)
 
 	sf = (mode == ZOOM_IN) ? w->zoomfactor: 1.0 / w->zoomfactor;
 
-	width = (gdouble)w->drawing->allocation.width;
-	height = (gdouble)w->drawing->allocation.height;
+	width = w->drawing->allocation.width;
+	height = w->drawing->allocation.height;
 	gtk_widget_get_pointer(w->drawing, &px, &py);
-	dre = (w->it_param.cplxplane[1] - w->it_param.cplxplane[0]) / width;
-	dim = (w->it_param.cplxplane[3] - w->it_param.cplxplane[2]) / height;
-	b_re = w->it_param.cplxplane[0] + dre * (px - sf * width / 2);
-	b_im = w->it_param.cplxplane[3] - dim * (py - sf * height / 2);
+	dre = (w->it_param.cplxplane[1] - w->it_param.cplxplane[0]) / (gdouble)width;
+	dim = (w->it_param.cplxplane[3] - w->it_param.cplxplane[2]) / (gdouble)height;
+	b_re = w->it_param.cplxplane[0] + dre * (px - sf * (gdouble)width / 2);
+	b_im = w->it_param.cplxplane[3] - dim * (py - sf * (gdouble)height / 2);
 	val[0] = b_re;
 	val[1] = b_re + sf * dre * width;
 	val[2] = b_im;
@@ -464,7 +464,7 @@ static gboolean motion_notify_event(GtkWidget *widget, GdkEventMotion *event, st
 		gdk_cursor_unref(c);
 		if (w->zoomprop) {
 			delta = height;
-			height = (double)width * w->drawing->allocation.height / w->drawing->allocation.width;
+			height = width * w->drawing->allocation.height / w->drawing->allocation.width;
 			delta -= height;
 			if (delta) {
 				d = gdk_display_get_default();
@@ -493,7 +493,7 @@ static gboolean button_release_event(GtkWidget *widget, GdkEventButton *event, s
 {
 	gchar buf[30];
 	gdouble b_re, b_im, dim, dre;
-	double width, height;
+	gint width, height;
 	gdouble val[4];
 
 	gdk_window_set_cursor(GDK_WINDOW(w->win->window), NULL);
@@ -514,10 +514,10 @@ static gboolean button_release_event(GtkWidget *widget, GdkEventButton *event, s
 		return TRUE;
 	}
 
-	width = (gdouble)w->drawing->allocation.width;
-	height = (gdouble)w->drawing->allocation.height;
-	dre = (w->it_param.cplxplane[1] - w->it_param.cplxplane[0]) / width;
-	dim = (w->it_param.cplxplane[3] - w->it_param.cplxplane[2]) / height;
+	width = w->drawing->allocation.width;
+	height = w->drawing->allocation.height;
+	dre = (w->it_param.cplxplane[1] - w->it_param.cplxplane[0]) / (gdouble)width;
+	dim = (w->it_param.cplxplane[3] - w->it_param.cplxplane[2]) / (gdouble)height;
 	b_re = w->it_param.cplxplane[0] + w->focus_area.x * dre;
 	b_im = w->it_param.cplxplane[3] - w->focus_area.y * dim;
 
@@ -577,7 +577,7 @@ void alloc_colors(struct iterate_param *it_param, struct winctl *w)
 
 void clearpixbuf(GdkPixbuf *pixbuf)
 {
-	guint width, height, rowstride, n_channels;
+	gint width, height, rowstride, n_channels;
 	guchar *itp, *endp;
 
 	n_channels = gdk_pixbuf_get_n_channels(pixbuf);
@@ -595,7 +595,7 @@ void clearpixbuf(GdkPixbuf *pixbuf)
 	}
 }
 
-void update_pixbuf(guint x, guint y, const IterationInfo *iterinfo, const struct iterate_param *it_param)
+void update_pixbuf(gint x, gint y, const IterationInfo *iterinfo, const struct iterate_param *it_param)
 {
 	guchar *p;
 
@@ -615,7 +615,7 @@ void redraw_pixbuf(struct winctl *w)
 	GdkPixbuf *pixbuf;
 	IterationInfo *itermap;
 	ColorFunc colorfunc;
-	guint width, height, rowstride, n_channels;
+	gint width, height, rowstride, n_channels;
 	guchar *itp, *endp;
 
 	itermap = w->itermap;

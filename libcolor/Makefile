@@ -41,7 +41,7 @@ CC              := gcc
 
 # ------------  compiler flags  ------------------------------------------------
 DEBUG_CFLAGS    := -Wall -pedantic -ansi -O0 -g
-RELEASE_CFLAGS  := -Wall -pedantic -ansi -O2 -pipe -mtune=native -march=native \
+RELEASE_CFLAGS  := -Wall -pedantic -ansi -O4 -pipe -mtune=native -march=native \
 	-DNDEBUG
 
 #-------------  Directories  ---------------------------------------------------

@@ -7,7 +7,7 @@
 #define COLOR_PERIOD_DEFAULT 40.0
 
 #define EXPORT_COLORMAP_ALGO(name)                                                \
-	const guchar *name(const guint iter, const guint itermax) \
+	const guchar *name(const gint iter, const gint itermax) \
 	{                                                                         \
 		return getColor(colormap, name ## _algo, iter, itermax);          \
 	}
@@ -67,7 +67,7 @@ static const guchar clbluedef[3 * 48] = {
 	  0,   0,  31,
 };
 
-const guchar *clblue(const guint iter, const guint itermax)
+const guchar *clblue(const gint iter, const gint itermax)
 {
 	return (clbluedef + (iter % 48) * 3);
 }
@@ -79,7 +79,7 @@ void setdivcol(const guchar *color)
 	divcol[2] = color[2];
 }
 
-const guchar *divconv(const guint iter, const guint itermax)
+const guchar *divconv(const gint iter, const gint itermax)
 {
 	return divcol;
 }
@@ -95,7 +95,7 @@ void finalize_colormap()
 	colormap = NULL;
 }
 
-static const guchar *mb_color_standard_sw_algo(const guint iter, const guint itermax)
+static const guchar *mb_color_standard_sw_algo(const gint iter, const gint itermax)
 {
 	long double x;
 	guchar *retval;
@@ -112,23 +112,23 @@ static const guchar *mb_color_standard_sw_algo(const guint iter, const guint ite
 }
 EXPORT_COLORMAP_ALGO(mb_color_standard_sw)
 
-static const guchar *clRGBS5_algo(const guint iter, const guint itermax)
+static const guchar *clRGBS5_algo(const gint iter, const gint itermax)
 {
 	guchar cl;
 	guchar cl_case;
-	static const guint step1 = 25;
-	static const guint step2 = 50;
-	static const guint step3 = 100;
-	static const guint step4 = 200;
+	static const gint step1 = 25;
+	static const gint step2 = 50;
+	static const gint step3 = 100;
+	static const gint step4 = 200;
 	guchar *color = (guchar *)malloc(sizeof(guchar) * 3);
-	guint length;
+	gint length;
 
 	length = 2 * step4;
 
 	if (iter < length) {
 		cl_case = iter;
 	} else {
-		cl_case = ((guint)(log(iter) / log(2))) % length;
+		cl_case = ((gint)(log(iter) / log(2))) % length;
 	}
 	if (cl_case < step1) {
 		cl = (iter * (255 / step1)) % 255;
@@ -232,7 +232,7 @@ static void GiveRainbowColor(double position,unsigned char c[])
 
 
 }
-const guchar *mb_rainbow_algo(const guint iter, const guint itermax)
+const guchar *mb_rainbow_algo(const gint iter, const gint itermax)
 {
 	guchar *color = (guchar *)malloc(sizeof(guchar) * 3);
 	

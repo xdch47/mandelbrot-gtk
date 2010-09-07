@@ -47,7 +47,7 @@
 #define IT_FUNC_NAME mandelbrot_set_row_count
 #undef IT_VAR
 #define IT_VAR register gdouble zre, zim, tmpzre, tmpzim; \
-	guint *col_count;
+	gint *col_count;
 #undef IT_INIT
 #define IT_INIT col_count = param->row_count + id;
 #undef IT_FIRST_FOR
@@ -96,7 +96,7 @@
 #define IT_FUNC_NAME julia_set_row_count
 #undef IT_VAR
 #define IT_VAR register gdouble zre, zim, tmpzre, tmpzim, jre, jim; \
-	guint *col_count;
+	gint *col_count;
 #undef IT_INIT
 #define IT_INIT jre = param->j[0]; \
 	jim = param->j[1]; \
@@ -148,7 +148,7 @@
 #undef IT_VAR
 #define IT_VAR register gdouble zre, zim, r, phi; \
 	register gdouble degree; \
-	guint *col_count;
+	gint *col_count;
 #undef IT_INIT
 #define IT_INIT degree = param->degree; \
 	col_count = param->row_count + id;
@@ -201,7 +201,7 @@
 #undef IT_VAR
 #define IT_VAR register gdouble zre, zim, jre, jim, r, phi; \
 	register gdouble degree; \
-	guint *col_count;
+	gint *col_count;
 #undef IT_INIT 
 #define IT_INIT degree = param->degree; \
 	jre = param->j[0]; \

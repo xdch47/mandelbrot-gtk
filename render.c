@@ -11,9 +11,9 @@ static void remove_idle(struct render_thread *r);
 static gboolean idle_wrapper(struct render_thread *r);
 
 /*
-static guint factor(guint num)
+static gint factor(gint num)
 {
-	guint i, f = 1;
+	gint i, f = 1;
 	for (i = 1; sqr(i) <= num; ++i) {
 		if (num % i == 0) {
 	a		f = i;
@@ -41,14 +41,14 @@ struct render_thread *render_thread_new(IdleFunc idle_func, ThreaddestroyFunc de
 	return r;
 }
 
-void iterate_param_init(struct iterate_param *param, guint count)
+void iterate_param_init(struct iterate_param *param, gint count)
 {
-	guint i, j;
-	guint xo, yo;
+	gint i, j;
+	gint xo, yo;
 	param->threads_count = count;
-	param->xstart = (guint *)g_malloc(sizeof(guint) * count);
-	param->ystart = (guint *)g_malloc(sizeof(guint) * count);
-	param->row_count = (guint *)g_malloc(sizeof(guint) * count);
+	param->xstart = (gint *)g_malloc(sizeof(gint) * count);
+	param->ystart = (gint *)g_malloc(sizeof(gint) * count);
+	param->row_count = (gint *)g_malloc(sizeof(gint) * count);
 
 	/* 
 	 * yo = factor(count);
@@ -90,7 +90,7 @@ void render_thread_free(struct render_thread *r)
 
 gboolean start_render_thread(struct render_thread *r, const struct iterate_param *param)
 {
-	guint i;
+	gint i;
 	struct iteration_data *it;
 	g_mutex_lock(r->control_mutex);
 	r->it_data = (struct iteration_data *)g_malloc(sizeof(struct iteration_data) * param->threads_count);
@@ -181,7 +181,7 @@ gboolean is_render_thread_pause(struct render_thread *r)
 
 static void render_thread(struct render_thread *r)
 {
-	guint i, threads_count = r->param->threads_count;
+	gint i, threads_count = r->param->threads_count;
 	GThread **iteration_thread = (GThread **)(g_malloc(sizeof(GThread *) * threads_count));
 	gboolean succ;
 

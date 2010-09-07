@@ -20,7 +20,7 @@ static void about(GtkWidget *widget, struct winctl *w);
 GtkWidget *createcplxplane(GtkWidget *txtcplx[4])
 {
 	GtkWidget *frame, *table, *lbl;
-	gint i;
+	guint i;
 	frame = gtk_frame_new(LCOORD);
 	table = gtk_table_new(4, 2, FALSE);
 	for (i = 0; i <= 3; ++i) {
@@ -328,12 +328,12 @@ struct winctl *buildinterface(void)
 	return w;
 }
 
-void setcplxplane(GtkWidget *txtcplx[4], const gdouble value[4], gdouble width, gdouble height)
+void setcplxplane(GtkWidget *txtcplx[4], const gdouble value[4], gint width, gint height)
 {
 	gdouble dre, dim;
 	gchar buf[30];
-	dre = (value[1] - value[0]) / width;
-	dim = (value[3] - value[2]) / height;
+	dre = (value[1] - value[0]) / (gdouble)width;
+	dim = (value[3] - value[2]) / (gdouble)height;
 
 	if (dre > dim) {
 		gdouble m = value[2] + (value[3] - value[2]) / 2;

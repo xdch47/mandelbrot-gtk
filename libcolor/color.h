@@ -19,7 +19,7 @@ typedef struct _ColorFuncDescriptor {
 } ColorFuncDescriptor;
 
 /* Maximum of iteration, defined in color.c */ 
-extern guint itermax;
+extern gint itermax;
 
 /* Functions to access the color-algorithmens */
 int getColorFunc_count();
