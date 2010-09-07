@@ -199,8 +199,8 @@ static void prefdestroy(GtkWidget *widget, struct prefctl *p)
 static void btnok_clicked(GtkWidget *widget, struct prefctl *p)
 {
 	gdouble cplx[4], mcplx[4];
-	guint jitermax;
-	guint threads_count;
+	gint jitermax;
+	gint threads_count;
 	gint i;
 	if (!validate_cplx(p->txtcplx, cplx, p->win)) {
 		return;

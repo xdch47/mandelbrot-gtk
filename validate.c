@@ -34,7 +34,7 @@ gboolean validate_cplx(GtkWidget *txtcplx[4], gdouble cplx[4], GtkWidget *win)
 	return TRUE;
 }
 
-gboolean validate_itermax(GtkWidget *txtitermax, guint *itermax, GtkWidget *win)
+gboolean validate_itermax(GtkWidget *txtitermax, gint *itermax, GtkWidget *win)
 {
 	gchar *endptr;
 	*itermax = strtol(gtk_entry_get_text(GTK_ENTRY(txtitermax)), &endptr, 10);

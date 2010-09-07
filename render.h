@@ -14,24 +14,24 @@ struct iterate_param {
 	gint threads_count;
 	gdouble cplxplane[4];
 	enum fraktal_type type;
-	guint itermax;
+	gint itermax;
 	gdouble degree;
 	gdouble j[2];
-	guint *xstart;
-	guint *ystart;
-	guint xoffset;
-	guint yoffset;
-	guint *row_count;
-	guint xmax;
-	guint ymax;
+	gint *xstart;
+	gint *ystart;
+	gint xoffset;
+	gint yoffset;
+	gint *row_count;
+	gint xmax;
+	gint ymax;
 	IterationInfo *itermap;
 	guchar *pixels;
-	guint n_channels;
-	guint rowstride;
-	guint color_func_index;
+	gint n_channels;
+	gint rowstride;
+	gint color_func_index;
 	guchar *color;
 	ColorFunc colorfunc;
-	void (*update_func)(guint x, guint y, const IterationInfo *iterinfo, const struct iterate_param *p);
+	void (*update_func)(gint x, gint y, const IterationInfo *iterinfo, const struct iterate_param *p);
 };
 
 struct iteration_data {
@@ -39,7 +39,7 @@ struct iteration_data {
 	GCond *resume_cond;
 	volatile enum thread_state *state;
 	const struct iterate_param *param;
-	guint number;
+	gint number;
 	gdouble b_re; 
 	gdouble b_im;
 	gdouble dre;
@@ -68,7 +68,7 @@ struct render_thread {
 
 /* implemented by render.c */
 struct render_thread *render_thread_new(IdleFunc idle_func, ThreaddestroyFunc destroy, gpointer data);
-void iterate_param_init(struct iterate_param *param, guint count);
+void iterate_param_init(struct iterate_param *param, gint count);
 void iterate_param_free(struct iterate_param *param);
 void render_thread_free(struct render_thread *r);
 gboolean start_render_thread(struct render_thread *r, const struct iterate_param *param);
@@ -84,6 +84,7 @@ gpointer mandelbrot_set_row_count(struct iteration_data *p);
 gpointer mandelbrot_set_deg(struct iteration_data *p);
 gpointer mandelbrot_set_deg_row_count(struct iteration_data *p);
 gpointer julia_set(struct iteration_data *p);
+
 gpointer julia_set_row_count(struct iteration_data *p);
 gpointer julia_set_deg(struct iteration_data *p);
 gpointer julia_set_deg_row_count(struct iteration_data *p);

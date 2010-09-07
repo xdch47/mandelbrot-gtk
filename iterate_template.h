@@ -10,16 +10,16 @@
 
 gpointer IT_FUNC_NAME(struct iteration_data *p)
 {
-	guint y, yo;
+	gint y, yo;
 	gdouble dim, b_re;
-	register guint x, xo, iter;
+	register gint x, xo, iter;
 	register gdouble itre, dre, itim;
-	guint xstart, xmax, ymax;
-	guint itermax;
-	guint id;
+	gint xstart, xmax, ymax;
+	gint itermax;
+	gint id;
 	const struct iterate_param *param;
 	gboolean *retval;
-	guint n_channels, rowstride;
+	gint n_channels, rowstride;
 	IterationInfo *iterinfo;
 
 	IT_VAR

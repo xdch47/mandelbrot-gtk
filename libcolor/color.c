@@ -1,20 +1,19 @@
 
 #include "color.h"
 #include <math.h>
+#include <stdint.h>
 #include "lookuptable.h"
 
 #define N_(x) x
 
 static int last_func = -1;
-guint itermax;
-static LookUpDescriptor *color_ltb = NULL;
+gint itermax;
+static AVLtree color_lookuptable = NULL;
 
 #define EXPORT_LOOKUP_ALGO(name)                                                       \
         void name(const IterationInfo *iterinfo, guchar *pixel)                         \
         {                                                                              \
-		LookUpItem item; \
-		item.key = (void *)iterinfo; \
-                cpRGB(pixel, (guchar *)(ltb_lookup(color_ltb, &item, (void *(*)(void *))name ## _algo))->value); \
+                cpRGB(pixel, (guchar *)lookup(color_lookuptable, iterinfo->iter, (void *(*)(const gint))name ## _algo)); \
         }
 
 /* color value for the divergent color */
@@ -71,16 +70,6 @@ static const guchar clbluedef[3 * 48] = {
 	  0,   0,  31,
 };
 
-static int cmpIterMax(LookUpItem *it1, LookUpItem *it2)
-{
-	if (((IterationInfo *)it1->key)->iter < ((IterationInfo *)it2->key)->iter)
-		return -1;
-	else if (((IterationInfo *)it1->key)->iter == ((IterationInfo *)it2->key)->iter)
-		return 0;
-	else
-		return 1;
-}
-
 void clblue(const IterationInfo *iterinfo, guchar *pixel)
 {
 	cpRGB(pixel, (clbluedef + (iterinfo->iter % 48) * 3));
@@ -98,16 +87,16 @@ void divconv(const IterationInfo *iterinfo, guchar *pixel)
 
 void initialize_lookuptable()
 {
-	color_ltb = ltb_new((cmpfunc)cmpIterMax);
+	color_lookuptable = avl_create();
 }
 
 void finalize_lookuptable()
 {
-	ltb_free(color_ltb);
-	color_ltb = NULL;
+	avl_free_data(color_lookuptable);
+	color_lookuptable = NULL;
 }
 
-static const guchar *mb_color_standard_sw_algo(const IterationInfo *iterinfo)
+static const guchar *mb_color_standard_sw_algo(const gint iter)
 {
 	#define COLOR_PERIOD_DEFAULT 40.0
 	long double x;
@@ -115,7 +104,7 @@ static const guchar *mb_color_standard_sw_algo(const IterationInfo *iterinfo)
 	guchar res;
 
 	retval = (guchar *)malloc(sizeof(guchar));
-	x = sqrt((long double)iterinfo->iter) / sqrt(COLOR_PERIOD_DEFAULT);
+	x = sqrt((long double)iter) / sqrt(COLOR_PERIOD_DEFAULT);
 	x = 0.5 + 0.5 * cos(x);
 	res = (guchar)(255 * x);
 	retval[0] = res;
@@ -125,24 +114,23 @@ static const guchar *mb_color_standard_sw_algo(const IterationInfo *iterinfo)
 }
 EXPORT_LOOKUP_ALGO(mb_color_standard_sw)
 
-static const guchar *clRGBS5_algo(const IterationInfo *iterinfo)
+static const guchar *clRGBS5_algo(const gint iter)
 {
 	guchar cl;
 	guchar cl_case;
-	static const guint step1 = 25;
-	static const guint step2 = 50;
-	static const guint step3 = 100;
-	static const guint step4 = 200;
+	static const gint step1 = 25;
+	static const gint step2 = 50;
+	static const gint step3 = 100;
+	static const gint step4 = 200;
 	guchar *color = (guchar *)malloc(sizeof(guchar) * 3);
-	guint length;
-	guint iter = iterinfo->iter;
+	gint length;
 
 	length = 2 * step4;
 
 	if (iter < length) {
 		cl_case = iter;
 	} else {
-		cl_case = ((guint)(log(iter) / log(2))) % length;
+		cl_case = ((gint)(log(iter) / log(2))) % length;
 	}
 	if (cl_case < step1) {
 		cl = (iter * (255 / step1)) % 255;
@@ -210,14 +198,7 @@ void initialize_func(int index)
 	if (index >= COLORFUNC_COUNT) 
 		index = index - COLORFUNC_COUNT;
 
-	if (last_func == -1) {
-		initialize_lookuptable_mutexes();
-
-		if (CFD[index % COLORFUNC_COUNT].initialize_func) {
-			(*CFD[index % COLORFUNC_COUNT].initialize_func)();
-		}
-	}
-	else if (last_func != index) {
+	 if (last_func != index) {
 		if (CFD[last_func % COLORFUNC_COUNT].finalize_func) {
 			(*CFD[last_func % COLORFUNC_COUNT].finalize_func)();
 		}

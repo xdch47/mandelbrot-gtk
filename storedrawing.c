@@ -95,7 +95,7 @@ static gboolean progresswin_close(GtkWidget *widget, GdkEvent *event, struct sav
 
 static void set_progress(struct savectl *s)
 {
-	guint row_count, i;
+	gint row_count, i;
 	gdouble p;
 	gchar buf[20];
 
@@ -302,8 +302,8 @@ static void btnsave_clicked(GtkWidget *widget, struct savectl *s)
 	gchar *basename;
 	gchar *ext;
 	gboolean chkdir;
-	guint width, height;
-	guint i;
+	gint width, height;
+	gint i;
 	gboolean equal;
 
 	s->filename = (gchar *)g_malloc(sizeof(gchar) * strlen(gtk_entry_get_text(GTK_ENTRY(s->txtfilename))) + 5);
