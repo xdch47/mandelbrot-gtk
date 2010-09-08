@@ -7,7 +7,6 @@
 #define LVERSION "0.3"
 
 #ifndef MO_DIR
-	/* this string is not freed in main.c (little memory leak) */
 	#define MO_DIR g_path_get_dirname(*argv)
 #endif
 #ifndef PACKAGE
