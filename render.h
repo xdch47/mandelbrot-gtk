@@ -29,7 +29,7 @@ struct iterate_param {
 	gint n_channels;
 	gint rowstride;
 	gint color_func_index;
-	guchar *color;
+	guchar color[3];
 	ColorFunc colorfunc;
 	void (*update_func)(gint x, gint y, const IterationInfo *iterinfo, const struct iterate_param *p);
 };

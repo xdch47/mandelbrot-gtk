@@ -127,7 +127,7 @@ ifeq (YES, ${SHARED})
 else
 	$(AR) cr $(OUT_DIR)/$(TARGET) $(OBJECTS)
 	ln -sf $(OUT_DIR)/$(TARGET) ./$(LIBRARY_NAME)
-	ranlib ./$(LIBRARY_NAME)
+	#ranlib ./$(LIBRARY_NAME)
 endif
 
 #-------------  Create the directories -----------------------------------------

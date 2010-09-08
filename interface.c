@@ -65,7 +65,8 @@ void run_interface(gchar *file_name)
 	g_free(dirname);
 
 	w->succ_render = FALSE;
-	succ_load_config = configure_interface(w, LOAD_CONFIG);
+	w->redraw = FALSE;
+	succ_load_config = configure_interface(w, w->configfile, LOAD_CONFIG);
 
 	gtk_widget_show_all(w->win);
 
@@ -83,7 +84,7 @@ void run_interface(gchar *file_name)
 static void destroy(GtkWidget *widget, struct winctl *w)
 {
 	render_thread_kill(w->render_thread);
-	configure_interface(w, STORE_CONFIG);
+	configure_interface(w, w->configfile, STORE_CONFIG);
 	render_thread_free(w->render_thread);
 	iterate_param_free(&w->it_param);
 
@@ -98,12 +99,13 @@ static gboolean start_calc(struct winctl *w)
 {
 	gdouble degree;
 	gint itermax;
-	gdouble cplxplane[4];
 	gdouble jre, jim;
 	int errno;
 	gchar *endptr;
 	gint i;
 	gint width, height;
+	gdouble cplxplane[4];
+	guchar divcolor[3];
 
 	/* validate complex plane */
 	if (!validate_cplx(w->txtcplx, cplxplane, w->win)) {
@@ -185,10 +187,14 @@ static gboolean start_calc(struct winctl *w)
 	w->it_param.n_channels = gdk_pixbuf_get_n_channels(w->pixbufcalc);
 	w->it_param.rowstride = gdk_pixbuf_get_rowstride(w->pixbufcalc);
 	w->it_param.colorfunc = getColorFunc(w->it_param.color_func_index);
-	/* FIXME:
-	g_free(w->it_param.color);
-	*/
-	alloc_colors(&w->it_param, w);
+
+	w->it_param.color[0] = (guchar)(w->convcol.red >> 8);
+	w->it_param.color[1] = (guchar)(w->convcol.green >> 8);
+	w->it_param.color[2] = (guchar)(w->convcol.blue >> 8);
+	divcolor[0] = (guchar)(w->divcol.red >> 8);
+	divcolor[1] = (guchar)(w->divcol.green >> 8);
+	divcolor[2] = (guchar)(w->divcol.blue >> 8);
+	setDivergentColor(divcolor);
 	w->it_param.degree = degree;
 	if (w->it_param.type == MANDELBROT_SET) {
 		w->it_param.iterate_func = (degree == 2.0) ? (GThreadFunc)mandelbrot_set : (GThreadFunc)mandelbrot_set_deg;
@@ -214,6 +220,10 @@ static void render_thread_done(gboolean succ, struct winctl *w)
 		gtk_window_set_resizable(GTK_WINDOW(w->win), TRUE);
 		gtk_widget_set_size_request(w->win, -1, -1);
 		gdk_window_invalidate_rect(w->drawing->window, NULL, FALSE);
+		if (w->redraw) {
+			redraw_pixbuf(w);
+			w->redraw = FALSE;
+		}
 		gdk_threads_leave();
 	}
 
@@ -560,21 +570,6 @@ static void redraw_drawing(struct winctl *w, gint x, gint y, gint width, gint he
 	gdk_draw_pixbuf(w->drawing->window, NULL, w->pixbufshow, x, y, x, y, width, height, GDK_RGB_DITHER_NORMAL, 0, 0);
 }
 
-void alloc_colors(struct iterate_param *it_param, struct winctl *w)
-{
-	guchar divcolor[3];
-	it_param->color = (guchar *)g_malloc(sizeof(guchar) * 3);
-	it_param->color[0] = (guchar)(w->convcol.red >> 8);
-	it_param->color[1] = (guchar)(w->convcol.green >> 8);
-	it_param->color[2] = (guchar)(w->convcol.blue >> 8);
-	/*FIXME: */
-	/*if (it_param->color_func_index == getDivConv_idx()) {*/
-		divcolor[0] = (guchar)(w->divcol.red >> 8);
-		divcolor[1] = (guchar)(w->divcol.green >> 8);
-		divcolor[2] = (guchar)(w->divcol.blue >> 8);
-		setDivergentColor(divcolor);
-}
-
 void clearpixbuf(GdkPixbuf *pixbuf)
 {
 	gint width, height, rowstride, n_channels;
@@ -617,6 +612,7 @@ void redraw_pixbuf(struct winctl *w)
 	ColorFunc colorfunc;
 	gint width, height, rowstride, n_channels;
 	guchar *itp, *endp;
+	guchar divcolor[3];
 
 	itermap = w->itermap;
 	pixbuf = w->pixbufcalc;
@@ -628,6 +624,14 @@ void redraw_pixbuf(struct winctl *w)
 	rowstride = gdk_pixbuf_get_rowstride(pixbuf);
 	itp = gdk_pixbuf_get_pixels(pixbuf);
 	endp = itp + height * rowstride + width * n_channels;
+
+	w->it_param.color[0] = (guchar)(w->convcol.red >> 8);
+	w->it_param.color[1] = (guchar)(w->convcol.green >> 8);
+	w->it_param.color[2] = (guchar)(w->convcol.blue >> 8);
+	divcolor[0] = (guchar)(w->divcol.red >> 8);
+	divcolor[1] = (guchar)(w->divcol.green >> 8);
+	divcolor[2] = (guchar)(w->divcol.blue >> 8);
+	setDivergentColor(divcolor);
 
 	for (; itp < endp; itp += 4) {
 		if (itermap->iter != -1) {

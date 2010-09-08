@@ -15,6 +15,8 @@ static void change_color_algo(GtkWidget *widget, struct winctl *w);
 static void change_convcol(GtkWidget *widget, struct winctl *w);
 static void change_divcol(GtkWidget *widget, struct winctl *w);
 static void store_drawing(GtkWidget *widget, struct winctl *w);
+static void open_xmlfile(GtkWidget *widget, struct winctl *w);
+static void save_xmlfile(GtkWidget *widget, struct winctl *w);
 static void about(GtkWidget *widget, struct winctl *w);
 
 GtkWidget *createcplxplane(GtkWidget *txtcplx[4])
@@ -78,6 +80,13 @@ struct winctl *buildinterface(void)
 	gtk_widget_add_accelerator(menuit, "activate", accel_group, GDK_F2, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 	g_signal_connect(G_OBJECT(menuit), "activate", G_CALLBACK(reset), w);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+	/* xml: */
+	menuit = gtk_image_menu_item_new_from_stock(GTK_STOCK_OPEN, accel_group);
+	g_signal_connect(G_OBJECT(menuit), "activate", G_CALLBACK(open_xmlfile), w);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuit);
+	menuit = gtk_menu_item_new_with_mnemonic(LSAVEXML);
+	g_signal_connect(G_OBJECT(menuit), "activate", G_CALLBACK(save_xmlfile), w);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuit);
 	/* save: */
 	menuit = gtk_image_menu_item_new_from_stock(GTK_STOCK_SAVE, accel_group);
 	pmenuit = gtk_image_menu_item_new_from_stock(GTK_STOCK_SAVE, accel_group);
@@ -427,6 +436,8 @@ void change_color_algo(GtkWidget *widget, struct winctl *w)
 
 	if (w->succ_render) {
 		redraw_pixbuf(w);
+	} else {
+		w->redraw = TRUE;
 	}
 }
 
@@ -461,9 +472,14 @@ static void setcolor(GtkWidget *widget, GtkColorSelectionDialog *d)
 		gtk_color_selection_get_current_color(GTK_COLOR_SELECTION(d->colorsel), &w->divcol);
 	}
 	gtk_widget_destroy(GTK_WIDGET(d));
+	if (w->succ_render) {
+		redraw_pixbuf(w);
+	} else {
+		w->redraw = TRUE;
+	}
 }
 
-static void change_color(gint type, gchar* title, struct winctl *w)
+static void change_color(gint type, const gchar* title, struct winctl *w)
 {
 	GtkWidget *colordialog;
 	GtkWidget *btnok;
@@ -501,6 +517,74 @@ static void store_drawing(GtkWidget *widget, struct winctl *w)
 	render_thread_pause(w->render_thread);
 	gtk_button_set_label(GTK_BUTTON(w->btncalc), LCALC);
 	store_drawing_show(w);
+}
+
+static void open_xmlfile(GtkWidget *widget, struct winctl *w)
+{
+	GtkWidget *filechooser = gtk_file_chooser_dialog_new(LSAVECAP, GTK_WINDOW(w->win), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_OK, GTK_RESPONSE_OK,
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
+	GtkFileFilter *filefilter = gtk_file_filter_new();
+	gtk_file_filter_set_name(GTK_FILE_FILTER(filefilter), LFILTERXMLNAME);
+	gtk_file_filter_add_mime_type(GTK_FILE_FILTER(filefilter), "text/xml");
+	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(filechooser), filefilter);
+	if (gtk_dialog_run(GTK_DIALOG(filechooser)) == GTK_RESPONSE_OK) {
+		w->succ_render = FALSE;
+		configure_interface(w, gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filechooser)), LOAD_RENDER_CONFIG);
+	}
+	gtk_widget_destroy(filechooser);
+	
+	render_thread_kill(w->render_thread);
+	calc(w->btncalc, w);
+}
+
+static void save_xmlfile(GtkWidget *widget, struct winctl *w)
+{
+	gchar *filename;
+	gchar *dirname;
+	gboolean chkdir;
+	GtkWidget *filechooser = gtk_file_chooser_dialog_new(LSAVECAP, GTK_WINDOW(w->win), GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_OK, GTK_RESPONSE_OK,
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
+	GtkFileFilter *filefilter = gtk_file_filter_new();
+	gtk_file_filter_set_name(GTK_FILE_FILTER(filefilter), LFILTERXMLNAME);
+	gtk_file_filter_add_mime_type(GTK_FILE_FILTER(filefilter), "text/xml");
+	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(filechooser), filefilter);
+	if (gtk_dialog_run(GTK_DIALOG(filechooser)) == GTK_RESPONSE_OK) {
+		filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filechooser));
+		dirname = g_path_get_dirname(filename);
+		/* check the directory for existing and read/write permission: */
+		chkdir = g_file_test(dirname, G_FILE_TEST_IS_DIR);
+
+		if (!chkdir) {
+			errdialog(GTK_WINDOW(w->win), LDIRERR);
+			g_free(filename);
+			g_free(dirname);
+			gtk_widget_destroy(filechooser);
+			return;
+		}
+		#ifdef G_OS_LINUX
+		if(g_access(dirname, 0600) != 0) {
+			errdialog(GTK_WINDOW(w->win), LPERMERR);
+			g_free(filename);
+			g_free(dirname);
+			gtk_widget_destroy(filechooser);
+			return;
+		}
+		#endif
+		g_free(dirname);
+		if (g_file_test(filename, G_FILE_TEST_IS_REGULAR)) {
+			GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(w->win), GTK_DIALOG_MODAL, GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, LFILEEXISTS, filename);
+			if (gtk_dialog_run(GTK_DIALOG(dialog)) != GTK_RESPONSE_YES) {
+				g_free(filename);
+				gtk_widget_destroy(dialog);
+				gtk_widget_destroy(filechooser);
+				return;
+			}
+			gtk_widget_destroy(dialog);
+		}
+		save_rendersettings_xml(filename, w);
+		g_free(filename);
+	}
+	gtk_widget_destroy(filechooser);
 }
 
 static void about(GtkWidget *widget, struct winctl *w)

@@ -200,7 +200,6 @@ static void render_thread(struct render_thread *r)
 	g_free(r->it_data);
 	g_free(iteration_thread);
 
-	/* FIXME: insert here update */
 	remove_idle(r);
 	g_mutex_lock(r->state_mutex);
 	succ = succ && r->state != KILL;

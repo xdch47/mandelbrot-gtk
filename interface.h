@@ -51,6 +51,7 @@ struct winctl {
 	/* misc: */
 	gboolean get_j;
 	gboolean succ_render;
+	gboolean redraw;
 	/* color: */
 	GdkColor convcol;
 	GdkColor divcol;
@@ -69,7 +70,6 @@ void statejctl(struct winctl *w);
 void run_interface(gchar *file_name);
 void calc(GtkWidget *widget, struct winctl *w);
 void reset(GtkWidget *widget, struct winctl *w);
-void alloc_colors(struct iterate_param *it_param, struct winctl *w);
 void update_pixbuf(gint x, gint y, const IterationInfo *iterinfo,  const struct iterate_param *it_param);
 void redraw_pixbuf(struct winctl *w);
 
@@ -83,9 +83,9 @@ gboolean validate_degree(GtkWidget *txtdegree, gdouble *degree, GtkWidget *win);
 void errdialog(GtkWindow *win, gchar *msg);
 
 /* implemented by config.c */
-enum configtype { LOAD_CONFIG, STORE_CONFIG };
-enum xmlsavetype { SAVE_IMAGE, SAVE_APPSETTINGS };
-gboolean configure_interface(struct winctl *w, enum configtype type);
+enum configtype { LOAD_CONFIG, STORE_CONFIG, LOAD_RENDER_CONFIG };
+gboolean configure_interface(struct winctl *w, const gchar *configfile, enum configtype type);
+void save_rendersettings_xml(const gchar *filename, struct winctl *w);
 
 /* implemented by pref.c */
 void preference_show(struct winctl *w);

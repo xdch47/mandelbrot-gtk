@@ -78,7 +78,6 @@ static void progressbtn_clicked(GtkWidget *widget, struct savectl *s)
 		render_thread_kill(s->render_thread);
 		render_thread_free(s->render_thread);
 		s->render_thread = NULL;
-		g_free(s->it_param.color);
 	}
 
 	g_free(s->filename);
@@ -267,7 +266,9 @@ static void savedialog(GtkWidget *widget, struct savectl *s)
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
 	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(filechooser), gtk_entry_get_text(GTK_ENTRY(s->txtfilename)));
 	if (gtk_dialog_run(GTK_DIALOG(filechooser)) == GTK_RESPONSE_OK) {
-		gtk_entry_set_text(GTK_ENTRY(s->txtfilename),  gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filechooser)));
+		gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filechooser));
+		gtk_entry_set_text(GTK_ENTRY(s->txtfilename),  filename);
+		g_free(filename);
 	}
 	gtk_widget_destroy(filechooser);
 }
@@ -389,7 +390,9 @@ static void btnsave_clicked(GtkWidget *widget, struct savectl *s)
 		s->it_param.pixels = gdk_pixbuf_get_pixels(s->pixbuf);
 		s->it_param.n_channels = gdk_pixbuf_get_n_channels (s->pixbuf);
 		s->it_param.rowstride = gdk_pixbuf_get_rowstride (s->pixbuf);
-		alloc_colors(&s->it_param, s->w);
+		s->it_param.color[0] = (guchar)(s->w->convcol.red >> 8);
+		s->it_param.color[1] = (guchar)(s->w->convcol.green >> 8);
+		s->it_param.color[2] = (guchar)(s->w->convcol.blue >> 8);
 		s->it_param.degree = s->w->it_param.degree;
 		if (s->w->it_param.type == MANDELBROT_SET) {
 			s->it_param.iterate_func = (s->w->it_param.degree == 2.0) ? (GThreadFunc)mandelbrot_set_row_count : (GThreadFunc)mandelbrot_set_deg_row_count;
