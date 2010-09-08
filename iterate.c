@@ -43,6 +43,7 @@
 #include "iterate_template.h"
 
 /* mandelbrot_set function with status: */
+/* FIXME: this does not work: */ 
 #undef IT_FUNC_NAME
 #define IT_FUNC_NAME mandelbrot_set_row_count
 #undef IT_VAR

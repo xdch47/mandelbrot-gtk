@@ -528,8 +528,10 @@ static void open_xmlfile(GtkWidget *widget, struct winctl *w)
 	gtk_file_filter_add_mime_type(GTK_FILE_FILTER(filefilter), "text/xml");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(filechooser), filefilter);
 	if (gtk_dialog_run(GTK_DIALOG(filechooser)) == GTK_RESPONSE_OK) {
+		gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filechooser));
 		w->succ_render = FALSE;
-		configure_interface(w, gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filechooser)), LOAD_RENDER_CONFIG);
+		configure_interface(w, filename, LOAD_RENDER_CONFIG);
+		g_free(filename);
 	}
 	gtk_widget_destroy(filechooser);
 	
