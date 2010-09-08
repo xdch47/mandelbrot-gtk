@@ -199,7 +199,7 @@ void initialize_func(int index)
 		index = index - COLORFUNC_COUNT;
 
 	 if (last_func != index) {
-		if (CFD[last_func % COLORFUNC_COUNT].finalize_func) {
+		if (CFD[last_func % COLORFUNC_COUNT].finalize_func && last_func != -1) {
 			(*CFD[last_func % COLORFUNC_COUNT].finalize_func)();
 		}
 		if (CFD[index % COLORFUNC_COUNT].initialize_func) {

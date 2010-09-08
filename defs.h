@@ -15,8 +15,8 @@
 #endif
 
 /* config-file location */
+/* this string is g_free()d in interface.c */
 #ifdef G_OS_UNIX
-	/* this string is freed in interface.c */
 	#define CONFIGDIR g_strdup(g_get_user_config_dir())
 	/* #define CONFIGDIR s_build_filename(g_get_user_config_dir(), "subdir", NULL) */
 #else
@@ -52,6 +52,8 @@ extern const gchar *LCPLX[4];
 #define BUFSIZE 200
 #define NUMFORMAT "%.12f"
 #define LFILE _("_File")
+#define LSAVEXML _("Save as _XML")
+#define LFILTERXMLNAME _("xml-Files")
 #define LPREFMENU _("_Option")
 #define LZOOMPROP _("Retain aspect ratio")
 #define LSETCPLX _("Adjust complex _plane to imagesize")
