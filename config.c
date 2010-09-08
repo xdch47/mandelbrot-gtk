@@ -284,25 +284,25 @@ static gboolean xmlcplxplane(xmlNode *node, double *cplxplane, enum configtype t
 
 		name = (char *)node->name;
 		if (strcmp(name, XML_MIN_RE) == 0) {
-			if (type == LOAD_CONFIG || LOAD_RENDER_CONFIG)
+			if (type == LOAD_CONFIG || type == LOAD_RENDER_CONFIG)
 				cplxplane[0] = xmlNodeContenttod(node);
 			else if (type == STORE_CONFIG)
 				xmlNodeSetContent(node, BAD_CAST ascii_dtostr(cplxplane[0], c));
 			retval = TRUE;
 		} else if (strcmp(name, XML_MAX_RE) == 0) {
-			if (type == LOAD_CONFIG || LOAD_RENDER_CONFIG)
+			if (type == LOAD_CONFIG || type == LOAD_RENDER_CONFIG)
 				cplxplane[1] = xmlNodeContenttod(node);
 			else if (type == STORE_CONFIG)
 				xmlNodeSetContent(node, BAD_CAST ascii_dtostr(cplxplane[1], c));
 			retval = TRUE;
 		} else if (strcmp(name, XML_MIN_IM) == 0) {
-			if (type == LOAD_CONFIG || LOAD_RENDER_CONFIG)
+			if (type == LOAD_CONFIG || type == LOAD_RENDER_CONFIG)
 				cplxplane[2] = xmlNodeContenttod(node);
 			else if (type == STORE_CONFIG)
 				xmlNodeSetContent(node, BAD_CAST ascii_dtostr(cplxplane[2], c));
 			retval = TRUE;
 		} else if (strcmp(name, XML_MAX_IM) == 0) {
-			if (type == LOAD_CONFIG || LOAD_RENDER_CONFIG)
+			if (type == LOAD_CONFIG || type == LOAD_RENDER_CONFIG)
 				cplxplane[3] = xmlNodeContenttod(node);
 			else if (type == STORE_CONFIG)
 				xmlNodeSetContent(node, BAD_CAST ascii_dtostr(cplxplane[3], c));
