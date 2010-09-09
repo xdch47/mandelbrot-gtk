@@ -81,9 +81,7 @@ static void progressbtn_clicked(GtkWidget *widget, struct savectl *s)
 	}
 
 	g_free(s->filename);
-	gtk_window_set_modal(GTK_WINDOW(s->progresswin), FALSE);
-	gtk_widget_hide(s->progresswin);
-	gtk_widget_show(s->win);
+	gtk_widget_destroy(s->win);
 }
 
 static gboolean progresswin_close(GtkWidget *widget, GdkEvent *event, struct savectl *s)
@@ -113,13 +111,43 @@ static void set_progress(struct savectl *s)
 
 static void render_thread_done(gboolean succ, struct savectl *s)
 {
+	GdkPixbuf *pixbuf;
+	IterationInfo *itermap;
+	ColorFunc colorfunc;
+	gint width, height, rowstride, n_channels;
+	guchar *itp, *endp;
+
+	itermap = s->it_param.itermap;
 	gdk_threads_enter();
 	if (succ) {
+		setIterMax(s->it_param.itermax);
+		pixbuf = s->pixbuf;
+		initialize_func(s->it_param.color_func_index);
+		colorfunc = getColorFunc(s->it_param.color_func_index);
+		n_channels = gdk_pixbuf_get_n_channels(pixbuf);
+		width = gdk_pixbuf_get_width(pixbuf) - 1;
+		height = gdk_pixbuf_get_height(pixbuf) - 1;
+		rowstride = gdk_pixbuf_get_rowstride(pixbuf);
+		itp = s->it_param.pixels;
+		endp = itp + height * rowstride + width * n_channels;
+
+		for (; itp < endp; itp += 4) {
+			if (itermap->iter != -1) {
+				colorfunc(itermap++, itp);
+			} else {
+				itp[0] = s->it_param.color[0];
+				itp[1] = s->it_param.color[1];
+				itp[2] = s->it_param.color[2];
+				itermap++;
+			}
+		}
 		save_pixbuf_to_stream(s);
+		setIterMax(s->w->it_param.itermax);
 	} else {
 		gtk_label_set_text(GTK_LABEL(s->progresslbl), LSAVELABELCANCEL);
 		gtk_button_set_label(GTK_BUTTON(s->progressbtn), LSAVEDONE);
 	}
+	g_free(s->it_param.itermap);
 	gdk_threads_leave();
 }
 
@@ -154,8 +182,9 @@ void store_drawing_show(struct winctl *w)
 	GtkWidget *vbox, *hbox, *vbox2, *hbox2, *table, *align;
 	GtkWidget *frame, *frame2, *lbl, *btn;
 	gint i;
+	struct savectl *s;
 
-	struct savectl *s = (struct savectl *)g_malloc(sizeof(struct savectl));
+	s = (struct savectl *)g_malloc(sizeof(struct savectl));
 	s->w = w;
 
 	/* initialize threads: */
@@ -390,6 +419,8 @@ static void btnsave_clicked(GtkWidget *widget, struct savectl *s)
 		s->it_param.pixels = gdk_pixbuf_get_pixels(s->pixbuf);
 		s->it_param.n_channels = gdk_pixbuf_get_n_channels (s->pixbuf);
 		s->it_param.rowstride = gdk_pixbuf_get_rowstride (s->pixbuf);
+		s->it_param.itermap = (IterationInfo *)g_malloc(sizeof(IterationInfo) * width * height);
+
 		s->it_param.color[0] = (guchar)(s->w->convcol.red >> 8);
 		s->it_param.color[1] = (guchar)(s->w->convcol.green >> 8);
 		s->it_param.color[2] = (guchar)(s->w->convcol.blue >> 8);
@@ -414,7 +445,6 @@ static void destroy(GtkWidget *widgets, struct savectl *s)
 {
 	iterate_param_free(&s->it_param);
 	gtk_widget_destroy(s->progresswin);
-	gtk_widget_destroy(s->win);
 	g_free(s);
 }
 

@@ -514,7 +514,10 @@ static void change_divcol(GtkWidget *widget, struct winctl *w)
 
 static void store_drawing(GtkWidget *widget, struct winctl *w)
 {
-	render_thread_pause(w->render_thread);
+	if (is_render_thread_alive(w->render_thread)) {
+	    render_thread_pause(w->render_thread);
+	    g_timer_stop(w->timer);
+	}
 	gtk_button_set_label(GTK_BUTTON(w->btncalc), LCALC);
 	store_drawing_show(w);
 }
