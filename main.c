@@ -6,7 +6,6 @@
 
 #ifdef _WIN32
 	#include <windows.h>
-	#include <stdlib.h>
 	#define __ENTRYPOINT__ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmdLine, int nCmdShow)
 #else 
 	#define __ENTRYPOINT__ int main(int argc, char *argv[])

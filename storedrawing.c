@@ -140,6 +140,7 @@ static void render_thread_done(gboolean succ, struct savectl *s)
 				itp[2] = s->it_param.color[2];
 				itermap++;
 			}
+			itp[3] = 0xff;
 		}
 		save_pixbuf_to_stream(s);
 		setIterMax(s->w->it_param.itermax);
@@ -340,7 +341,7 @@ static void btnsave_clicked(GtkWidget *widget, struct savectl *s)
 	g_stpcpy(s->filename, gtk_entry_get_text(GTK_ENTRY(s->txtfilename)));
 	dirname = g_path_get_dirname(s->filename);
 	/* check the directory for existing and read/write permission: */
-	chkdir = g_file_test(dirname, G_FILE_TEST_IS_DIR);
+	chkdir = dirname ? g_file_test(dirname, G_FILE_TEST_IS_DIR) : 1;
 
 	if (!chkdir) {
 		errdialog(GTK_WINDOW(s->win), LDIRERR);
@@ -365,10 +366,10 @@ static void btnsave_clicked(GtkWidget *widget, struct savectl *s)
 	}
 
 	ext = g_strrstr(basename, ".");
-	if (strcmp(ext, ".jpg") == 0) {
+	if (ext && strcmp(ext, ".jpg") == 0) {
 		g_stpcpy(ext, ".jpeg");
 	}
-	if (ext != NULL && (strcmp(ext, ".png") == 0 || strcmp(ext, ".jpeg") == 0 || strcmp(ext, ".bmp") == 0)) {
+	if (ext && (strcmp(ext, ".png") == 0 || strcmp(ext, ".jpeg") == 0 || strcmp(ext, ".bmp") == 0)) {
 		g_stpcpy(s->format, ++ext);
 	} else {
 		g_stpcpy(s->format, "png");
