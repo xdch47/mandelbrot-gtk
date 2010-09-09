@@ -7,6 +7,14 @@
 /* using dirty define/include-hacks for fast-inline templates... */
 /* look at iterate_template.h */
 
+static int outcircle(gdouble cx, gdouble cy, gdouble sqrr, double x, double y)
+{
+	x -= cx;
+	y -= cy;
+	return (x * x + y * y > sqrr) ? 1 : 0;
+}
+
+
 /* mandelbrot_set function: */
 #undef IT_FUNC_NAME
 #define IT_FUNC_NAME mandelbrot_set
@@ -15,35 +23,41 @@
 #undef IT_INIT
 #define IT_INIT
 #undef IT_INLINE_FUNC
-#define IT_INLINE_FUNC                                \
-        zre = itre;                                   \
-        zim = itim;                                   \
-        tmpzre = sqr(zre);                            \
-        tmpzim = sqr(zim);                            \
-        iterinfo = param->itermap + x + y * xmax;     \
-        iterinfo->sqr_abs_z = tmpzre + tmpzim;        \
-        for (;;) {                                    \
-                if (tmpzre + tmpzim < 4.0) {          \
-                        zim = 2.0 * zre * zim + itim; \
-                        zre = tmpzre - tmpzim + itre; \
-                } else {                              \
-			iterinfo->iter = iter;        \
-                        break;                        \
-                }                                     \
-                ++iter;                               \
-                if (iter > itermax) {                 \
-			iterinfo->iter = -1;          \
-                        break;                        \
-		}                                     \
-                tmpzre = sqr(zre);                    \
-                tmpzim = sqr(zim);                    \
+#define IT_INLINE_FUNC                                                \
+        zre = itre;                                                   \
+        zim = itim;                                                   \
+        tmpzre = sqr(zre);                                            \
+        tmpzim = sqr(zim);                                            \
+        iterinfo = param->itermap + x + y * xmax;                     \
+        /* iterinfo->sqr_abs_z = tmpzre + tmpzim; */                  \
+        if ((outcircle(-0.11, 0.0, sqr(0.63), zre, zim) || zre > 0.1) \
+            && outcircle(-1.0, 0.0, sqr(0.25), zre, zim)              \
+            && outcircle(-0.125, 0.744, sqr(0.092), zre, zim)         \
+            && outcircle(-1.308, 0.0, sqr(0.058), zre, zim)           \
+            && outcircle(0.0, 0.25, sqr(0.35), zre, zim)) {           \
+                for (;;) {                                            \
+                        if (tmpzre + tmpzim < 4.0) {                  \
+                                zim = 2.0 * zre * zim + itim;         \
+                                zre = tmpzre - tmpzim + itre;         \
+                        } else {                                      \
+                                iterinfo->iter = iter;                \
+                                break;                                \
+                        }                                             \
+                        ++iter;                                       \
+                        if (iter > itermax) {                         \
+                                iterinfo->iter = -1;                  \
+                                break;                                \
+                        }                                             \
+                        tmpzre = sqr(zre);                            \
+                        tmpzim = sqr(zim);                            \
+                }                                                     \
+        } else {                                                      \
+                iterinfo->iter = -1;                                  \
         }
 #undef IT_FIRST_FOR
 #define USE_UPDATE_FUNC
 #include "iterate_template.h"
 
-/* mandelbrot_set function with status: */
-/* FIXME: this does not work: */ 
 #undef IT_FUNC_NAME
 #define IT_FUNC_NAME mandelbrot_set_row_count
 #undef IT_VAR
@@ -71,7 +85,7 @@
         tmpzre = sqr(zre);                            \
         tmpzim = sqr(zim);                            \
         iterinfo = param->itermap + x + y * xmax;     \
-        iterinfo->sqr_abs_z = tmpzre + tmpzim;        \
+        /* iterinfo->sqr_abs_z = tmpzre + tmpzim; */  \
         for (;;) {                                    \
                 if (tmpzre + tmpzim < 4.0) {          \
                         zim = 2.0 * zre * zim + jim;  \
@@ -121,7 +135,7 @@
         zim = itim;                                         \
         r = sqr(zre) + sqr(zim);                            \
         iterinfo = param->itermap + x + y * xmax;           \
-        iterinfo->sqr_abs_z = r;                            \
+        /* iterinfo->sqr_abs_z = r; */                      \
         for (;;) {                                          \
                 if (r < 4.0) {                              \
                         r = pow(r, degree / 2.0);           \
@@ -174,7 +188,7 @@
         zim = itim;                                        \
         r = sqr(zre) + sqr(zim);                           \
         iterinfo = param->itermap + x + y * xmax;          \
-        iterinfo->sqr_abs_z = r;                           \
+        /* iterinfo->sqr_abs_z = r; */                     \
         for (;;) {                                         \
                 if (r < 4.0) {                             \
                         r = pow(r, degree / 2.0);          \

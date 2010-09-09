@@ -7,7 +7,7 @@
 #define N_(x) x
 
 static int last_func = -1;
-gint itermax;
+gint IterMax;
 static AVLtree color_lookuptable = NULL;
 
 #define EXPORT_LOOKUP_ALGO(name)                                                       \
@@ -175,8 +175,13 @@ const ColorFuncDescriptor CFD[COLORFUNC_COUNT] = {
 	#define DIVCONV_IDX 1
 	{ N_("Convergent / Divergent Set"), NULL                  , NULL                , divconv }             ,
 	{ N_("Dixius Algo Grey")          , initialize_lookuptable, finalize_lookuptable, mb_color_standard_sw },
-	{ N_("RBG-S5")                    , initialize_lookuptable, finalize_lookuptable, clRGBS5 }             , 
+	{ N_("RBG-S5")                    , initialize_lookuptable, finalize_lookuptable, clRGBS5 }             ,
 };
+
+void setIterMax(const gint itermax)
+{
+	IterMax = itermax;
+}
 
 int getColorFunc_count()
 {

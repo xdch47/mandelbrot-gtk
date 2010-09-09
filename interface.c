@@ -195,6 +195,7 @@ static gboolean start_calc(struct winctl *w)
 	divcolor[1] = (guchar)(w->divcol.green >> 8);
 	divcolor[2] = (guchar)(w->divcol.blue >> 8);
 	setDivergentColor(divcolor);
+	setIterMax(w->it_param.itermax);
 	w->it_param.degree = degree;
 	if (w->it_param.type == MANDELBROT_SET) {
 		w->it_param.iterate_func = (degree == 2.0) ? (GThreadFunc)mandelbrot_set : (GThreadFunc)mandelbrot_set_deg;

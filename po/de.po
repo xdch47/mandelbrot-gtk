@@ -358,10 +358,7 @@ msgstr ""
 msgid "default"
 msgstr ""
 
-msgid "Digiorg1"
-msgstr ""
-
-msgid "Digiorg2"
+msgid "droz08"
 msgstr ""
 
 msgid "droz10"
@@ -440,9 +437,6 @@ msgid "droz60"
 msgstr ""
 
 msgid "droz62"
-msgstr ""
-
-msgid "droz8"
 msgstr ""
 
 msgid "drozdis1"
@@ -665,9 +659,6 @@ msgid "Morgan2"
 msgstr ""
 
 msgid "Morgan3"
-msgstr ""
-
-msgid "Morgen3"
 msgstr ""
 
 msgid "neon"
