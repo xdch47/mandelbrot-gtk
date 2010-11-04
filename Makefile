@@ -35,7 +35,7 @@ CC              := gcc
 
 # ------------  compiler flags  ------------------------------------------------
 DEBUG_CFLAGS    := -Wall -pedantic -O0 -g
-RELEASE_CFLAGS  := -Wall -pedantic -O4 -pipe -mtune=native -march=native -DNDEBUG \
+RELEASE_CFLAGS  := -pedantic -O4 -pipe -mtune=native -march=native -DNDEBUG \
 	-DPACKAGE="\"$(EXECUTABLE)\"" -DMO_DIR="\"$(MO_DIR)\""
 
 #-------------  Directories  ---------------------------------------------------
