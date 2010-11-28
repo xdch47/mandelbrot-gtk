@@ -256,20 +256,26 @@ static void writexmlfile(const char *configfile, const struct winctl *w, enum xm
 
 static double xmlNodeContenttod(xmlNode *node)
 {
-	const char *c = (char *)xmlNodeGetContent(node);
+	double retval;
+	char *c = (char *)xmlNodeGetContent(node);
 	if (c == NULL)
 		return 0.0;
 
-	return g_ascii_strtod((char *)xmlNodeGetContent(node), NULL);
+	retval = g_ascii_strtod(c, NULL);
+	free(c);
+	return retval;
 }
 
 static int xmlNodeContenttol(xmlNode *node)
 {
-	const char *c = (char *)xmlNodeGetContent(node);
+	int retval;
+	char *c = (char *)xmlNodeGetContent(node);
 	if (c == NULL)
 		return 0;
 
-	return strtol((char *)xmlNodeGetContent(node), NULL, 10);
+	retval = strtol(c, NULL, 10);
+	free(c);
+	return retval;
 }
 
 static gboolean xmlcplxplane(xmlNode *node, double *cplxplane, enum configtype type)
@@ -338,7 +344,7 @@ static void xmlconstj(xmlNode *node, double j[2], enum configtype type)
 static gboolean xmlrenderdata(xmlNode *node, struct iterate_param *it_param, enum configtype type)
 {
 	xmlNode *cplx_node;
-	const char *attr, *name;
+	char *attr, *name;
 	char c[BUFSIZE_NUMTOSTR];
 	gboolean retval = FALSE;
 
@@ -350,6 +356,7 @@ static gboolean xmlrenderdata(xmlNode *node, struct iterate_param *it_param, enu
 		else if (type == STORE_CONFIG)
 			xmlSetProp(node, BAD_CAST XML_ITERMAX, BAD_CAST ltostr(it_param->itermax, c));
 	}
+	free(attr);
 
 	/* degree: */
 	attr = (char *)xmlGetProp(node, BAD_CAST XML_DEGREE);
@@ -360,6 +367,8 @@ static gboolean xmlrenderdata(xmlNode *node, struct iterate_param *it_param, enu
 			xmlSetProp(node, BAD_CAST XML_DEGREE, BAD_CAST ascii_dtostr(it_param->degree, c));
 		}
 	}
+	free(attr);
+
 	/* type: */
 	attr = (char *)xmlGetProp(node, BAD_CAST XML_TYPE);
 	if(type == LOAD_RENDER_CONFIG) 
@@ -371,6 +380,7 @@ static gboolean xmlrenderdata(xmlNode *node, struct iterate_param *it_param, enu
 			xmlSetProp(node, BAD_CAST XML_TYPE, BAD_CAST ((it_param->type == JULIA_SET) ? XML_TYPE_JULIA : XML_TYPE_MANDELBROT));
 		}
 	}
+	free(attr);
 
 	cplx_node = node;
 	node = node->children;
@@ -393,6 +403,7 @@ static gboolean xmlrenderdata(xmlNode *node, struct iterate_param *it_param, enu
 			retval = FALSE;
 		}
 	}
+	free(attr);
 	return retval;
 }
 
@@ -425,7 +436,7 @@ static void xmlsize(xmlNode *node, GtkWindow *win, enum configtype type)
 
 static void xmlsetcolor(xmlNode *node, GdkColor *color, enum configtype type)
 {
-	const char *attr;
+	char *attr;
 	char c[BUFSIZE_NUMTOSTR];
 
 	attr = (char *)xmlGetProp(node, BAD_CAST XML_COLOR_RED);
@@ -435,6 +446,7 @@ static void xmlsetcolor(xmlNode *node, GdkColor *color, enum configtype type)
 		else if (type == STORE_CONFIG)
 			xmlSetProp(node, BAD_CAST XML_COLOR_RED, BAD_CAST ltostr(color->red, c));
 	}
+	free(attr);
 	attr = (char *)xmlGetProp(node, BAD_CAST XML_COLOR_GREEN);
 	if (attr) {
 		if (type == LOAD_CONFIG || type == LOAD_RENDER_CONFIG) 
@@ -442,6 +454,7 @@ static void xmlsetcolor(xmlNode *node, GdkColor *color, enum configtype type)
 		else if (type == STORE_CONFIG)
 			xmlSetProp(node, BAD_CAST XML_COLOR_GREEN, BAD_CAST ltostr(color->green, c));
 	}
+	free(attr);
 	attr = (char *)xmlGetProp(node, BAD_CAST XML_COLOR_BLUE);
 	if (attr) {
 		if (type == LOAD_CONFIG || type == LOAD_RENDER_CONFIG) 
@@ -449,11 +462,12 @@ static void xmlsetcolor(xmlNode *node, GdkColor *color, enum configtype type)
 		else if (type == STORE_CONFIG)
 			xmlSetProp(node, BAD_CAST XML_COLOR_BLUE, BAD_CAST ltostr(color->blue, c));
 	}
+	free(attr);
 }
 
 static void xmlcolor(xmlNode *node, struct winctl *w, enum configtype type)
 {
-	const char *attr;
+	char *attr;
 	char c[BUFSIZE_NUMTOSTR];
 
 	attr = (char *)xmlGetProp(node, BAD_CAST XML_COLOR_ALGO);
@@ -463,6 +477,7 @@ static void xmlcolor(xmlNode *node, struct winctl *w, enum configtype type)
 		else if (type == STORE_CONFIG)
 			xmlSetProp(node, BAD_CAST XML_COLOR_ALGO, BAD_CAST ltostr(w->it_param.color_func_index, c));
 	}
+	free(attr);
 
 	node = node->children;
 	forall_node(node) {

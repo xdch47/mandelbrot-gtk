@@ -87,11 +87,14 @@ static void destroy(GtkWidget *widget, struct winctl *w)
 	configure_interface(w, w->configfile, STORE_CONFIG);
 	render_thread_free(w->render_thread);
 	iterate_param_free(&w->it_param);
+	g_free(w->itermap);
+	g_free(w->mcolalgo);
 
 	gtk_widget_destroy(w->drawmenu);
 	gtk_widget_destroy(w->pjmenu);
 	g_free(w->configfile);
 	g_free(w);
+
 	gtk_main_quit();
 }
 
@@ -158,8 +161,8 @@ static gboolean start_calc(struct winctl *w)
 		g_object_unref(w->pixbufcalc);
 	if (w->pixbufshow)
 		g_object_unref(w->pixbufshow);
-	if (w->itermap)
-		g_free(w->itermap);
+
+	g_free(w->itermap);
 
 	width = w->drawing->allocation.width;
 	height = w->drawing->allocation.height;
