@@ -231,7 +231,7 @@ static void btnok_clicked(GtkWidget *widget, struct prefctl *p)
 		p->w->it_param.j[0] = j[0];
 		p->w->it_param.j[1] = j[1];
 	}
-	
+
 	gtk_widget_modify_fg(p->w->drawing, GTK_STATE_NORMAL, &p->w->focus_color);
 	gtk_widget_destroy(p->win);
 }

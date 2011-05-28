@@ -6,7 +6,7 @@
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
 struct threaddata {
-	gdouble b_re; 
+	gdouble b_re;
 	gdouble b_im;
 	gdouble dre;
 	gdouble dim;

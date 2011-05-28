@@ -50,7 +50,7 @@ void iterate_param_init(struct iterate_param *param, gint count)
 	param->ystart = (gint *)g_malloc(sizeof(gint) * count);
 	param->row_count = (gint *)g_malloc(sizeof(gint) * count);
 
-	/* 
+	/*
 	 * yo = factor(count);
 	 * xo = count / yo;
 	 */
@@ -106,7 +106,7 @@ gboolean start_render_thread(struct render_thread *r, const struct iterate_param
 		it->state_mutex = r->state_mutex;
 		it->resume_cond = r->resume_cond;
 		it->state = &r->state;
-		param->row_count[i] = 0; 
+		param->row_count[i] = 0;
 	}
 	r->param = param;
 
@@ -210,11 +210,11 @@ static void render_thread(struct render_thread *r)
 	r->destroy(succ, r->userdata);
 	return;
 }
-	
-static void add_idle(struct render_thread *r) 
+
+static void add_idle(struct render_thread *r)
 {
 	g_mutex_lock(r->idle_mutex);
-	if (!r->idle_tag) 
+	if (!r->idle_tag)
 		r->idle_tag = g_idle_add((GSourceFunc)idle_wrapper, r);
 	g_mutex_unlock(r->idle_mutex);
 }

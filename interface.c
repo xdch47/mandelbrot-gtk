@@ -168,7 +168,7 @@ static gboolean start_calc(struct winctl *w)
 	height = w->drawing->allocation.height;
 	w->itermap = (IterationInfo *)g_malloc(sizeof(IterationInfo) * width * height);
 	w->pixbufcalc = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, width, height);
-	
+
 	clearpixbuf(w->pixbufcalc);
 	w->pixbufshow = g_object_ref(w->pixbufcalc);
 	gdk_window_invalidate_rect(w->drawing->window, NULL, FALSE);
@@ -259,7 +259,7 @@ void calc(GtkWidget *widget, struct winctl *w)
 			vbox = gtk_vbox_new(FALSE, 0);
 			gtk_box_pack_start(GTK_BOX(vbox), lbl, FALSE, FALSE, 0);
 			gtk_container_set_border_width(GTK_CONTAINER(vbox), 10);
-			dialog = gtk_dialog_new_with_buttons(LWCAP, GTK_WINDOW(w->win), GTK_DIALOG_MODAL, LCONTDRAW, RESPONSE_CONTDRAW, LREDRAW, 
+			dialog = gtk_dialog_new_with_buttons(LWCAP, GTK_WINDOW(w->win), GTK_DIALOG_MODAL, LCONTDRAW, RESPONSE_CONTDRAW, LREDRAW,
 			    RESPONSE_REDRAW, LCANCEL, RESPONSE_CANCEL, NULL);
 			gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), vbox, FALSE, FALSE, 10);
 			gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
@@ -647,7 +647,7 @@ void redraw_pixbuf(struct winctl *w)
 			itermap++;
 		}
 	}
-	
+
 	configure_event(NULL, NULL, w);
 	redraw_drawing(w, 0, 0, -1, -1);
 }

@@ -7,7 +7,7 @@
 #ifdef _WIN32
 	#include <windows.h>
 	#define __ENTRYPOINT__ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmdLine, int nCmdShow)
-#else 
+#else
 	#define __ENTRYPOINT__ int main(int argc, char *argv[])
 #endif
 
@@ -31,7 +31,7 @@ __ENTRYPOINT__
 	textdomain(PACKAGE);
 
 	setlocale(LC_ALL, "");
-	
+
 	run_interface(*argv);
 	gtk_main();
 	gdk_threads_leave();

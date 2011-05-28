@@ -50,10 +50,10 @@ RELEASE_DIR     := ./release
 
 # ------------  linker flags  --------------------------------------------------
 DEBUG_LDFLAGS   := -g
-RELEASE_LDFLAGS := 
+RELEASE_LDFLAGS :=
 
 ifeq (YES, ${DEBUG})
-CFLAGS          := ${DEBUG_CFLAGS} 
+CFLAGS          := ${DEBUG_CFLAGS}
 LDFLAGS         := ${DEBUG_LDFLAGS}
 OUT_DIR         := ${DEBUG_DIR}
 else
@@ -68,7 +68,7 @@ endif
 PKG_CONF_ARG    = gtk+-2.0 gthread-2.0
 
 # ------------  additional include directories  --------------------------------
-INC_DIR  = 
+INC_DIR  =
 
 # ------------  additional library directories  --------------------------------
 LIB_DIR  =
@@ -127,7 +127,7 @@ ifeq (YES, ${SHARED})
 else
 	$(AR) cr $(OUT_DIR)/$(TARGET) $(OBJECTS)
 	ln -sf $(OUT_DIR)/$(TARGET) ./$(LIBRARY_NAME)
-	#ranlib ./$(LIBRARY_NAME)
+	ranlib ./$(LIBRARY_NAME)
 endif
 
 #-------------  Create the directories -----------------------------------------
@@ -165,7 +165,7 @@ zip:
 		zip -r  $$lokaldir.zip * -x $(ZIP_EXCLUDE)
 
 # ------------  installl  ------------------------------------------------------
-install: 
+install:
 ifeq (YES, ${SHARED})
 	install -D -m755 $(RELEASE_DIR)/$(TARGET) ${DESTDIR}$(PREFIX)/lib/${RPATH}$(TARGET)
 	ln -sf ${DESTDIR}$(PREFIX)/lib/${RPATH}$(TARGET) \
