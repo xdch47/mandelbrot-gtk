@@ -3,7 +3,7 @@
 
 static int cmpLookUpItem(LookUpItem *it1, LookUpItem *it2)
 {
-	if (it1->key < it2->key) 
+	if (it1->key < it2->key)
 		return -1;
 	else if (it1->key == it2->key)
 		return 0;

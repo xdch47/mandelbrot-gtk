@@ -159,7 +159,7 @@ static const guchar *clRGBS5_algo(const gint iter)
 		color[2] = 0;
 	}
 	return color;
-} 
+}
 EXPORT_LOOKUP_ALGO(clRGBS5)
 
 /* Function to access the color-algorithms based on fractINT map-files */
@@ -191,7 +191,7 @@ int getColorFunc_count()
 const char *getColorFunc_name(int index)
 {
 	index = index % getColorFunc_count();
-	if (index < COLORFUNC_COUNT) 
+	if (index < COLORFUNC_COUNT)
 		return CFD[index].name;
 	else
 		return getColorMapFunc_name(index - COLORFUNC_COUNT);
@@ -200,7 +200,7 @@ const char *getColorFunc_name(int index)
 void initialize_func(int index)
 {
 	index = index % getColorFunc_count();
-	if (index >= COLORFUNC_COUNT) 
+	if (index >= COLORFUNC_COUNT)
 		index = index - COLORFUNC_COUNT;
 
 	 if (last_func != index) {

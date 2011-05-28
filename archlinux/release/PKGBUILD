@@ -28,7 +28,7 @@ md5sums=(8febe8f309d171b61dcb67e7576d4b74)
 build() {
   cd "$srcdir/$pkgname-$pkgver.$pkgrel"
 
-  make -j3
+  make
 }
 
 package() {

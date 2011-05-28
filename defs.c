@@ -19,7 +19,7 @@ const gchar *LPJMENU[6] = {
 	N_("Misiurewicz-Point")
 };
 
-const gdouble JDEFINES[12] = { 
+const gdouble JDEFINES[12] = {
         0.0,    1.0,    /* dendrit */
         -1.0,   0.0,    /* san-marco-dragon */
         0.286,  0.0115, /* jula-dragon */

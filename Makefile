@@ -31,12 +31,18 @@ SOURCES         := main.c defs.c interface.c layout.c config.c \
 	render.c iterate.c storedrawing.c validate.c pref.c
 
 # ------------  compiler  ------------------------------------------------------
-CC              := gcc
+CC               := gcc
+#CC               := icc
+
+# ------------  archiver  ------------------------------------------------------
+#AR              := xiar
 
 # ------------  compiler flags  ------------------------------------------------
-DEBUG_CFLAGS    := -Wall -O0 -g 
-RELEASE_CFLAGS  := -O4 -pipe -mtune=native -march=native -DNDEBUG \
-	-DPACKAGE="\"$(EXECUTABLE)\"" -DMO_DIR="\"$(MO_DIR)\""
+DEBUG_CFLAGS    := -Wall -O0 -g
+RELEASE_CFLAGS  := -O2 -pipe -mtune=native -march=native \
+				   -DNDEBUG -DPACKAGE="\"$(EXECUTABLE)\"" -DMO_DIR="\"$(MO_DIR)\""
+#RELEASE_CFLAGS  := -w0 -ipo -O3 -mtune=core2 -xSSE4.1 -axSSE4.1 -unroll-agressiv -static-intel \
+#				    -DNDEBUG -DPACKAGE="\"$(EXECUTABLE)\"" -DMO_DIR="\"$(MO_DIR)\""
 
 #-------------  Directories  ---------------------------------------------------
 DEBUG_DIR       := ./debug
@@ -47,7 +53,7 @@ DEBUG_LDFLAGS   := -g
 RELEASE_LDFLAGS :=
 
 ifeq (YES, ${DEBUG})
-CFLAGS          := ${DEBUG_CFLAGS} 
+CFLAGS          := ${DEBUG_CFLAGS}
 LDFLAGS         := ${DEBUG_LDFLAGS}
 OUT_DIR         := ${DEBUG_DIR}
 else
@@ -64,7 +70,7 @@ endif
 PKG_CONF_ARG    = gtk+-2.0 gthread-2.0 libxml-2.0
 
 # ------------  additional include directories  --------------------------------
-INC_DIR  = 
+INC_DIR  =
 
 # ------------  additional library directories  --------------------------------
 LIB_DIR  = ./libcolor
@@ -117,7 +123,7 @@ endif
 
 # ------------  make the executable  -------------------------------------------
 $(OUT_DIR)/$(EXECUTABLE): $(OUT_DIR) $(OBJECTS)
-	+make -C ./libcolor DEBUG=${DEBUG} SHARED=${SHARED} \
+	+make -C ./libcolor CC=${CC} AR=${AR} CFLAGS="${CFLAGS}" DEBUG=${DEBUG} SHARED=${SHARED} \
 		DESTDIR=${DESTDIR} PREFIX=${PREFIX} RPATH=${RPATH}
 	$(CC) -o $(OUT_DIR)/$(EXECUTABLE) $(OBJECTS) \
 		$(ALL_LFLAGS) $(ALL_LIB_DIR) $(LIBS) $(LIBS_PKG_CONF)
@@ -152,7 +158,7 @@ zip:
 
 
 # ------------  installl  ------------------------------------------------------
-install: 
+install:
 	@[ -f $(RELEASE_DIR)/$(EXECUTABLE) ] || ( echo "Executable does not exist. You must build the project before install."; exit 1 )
 	@for POFILE in ./po/*.po; do \
 		LOCALE_DIR=${DESTDIR}$(MO_DIR)/$$(basename $$POFILE .po)/LC_MESSAGES; \

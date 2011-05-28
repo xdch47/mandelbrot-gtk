@@ -74,10 +74,10 @@ static int outcircle(gdouble cx, gdouble cy, gdouble sqrr, double x, double y)
 #undef IT_FUNC_NAME
 #define IT_FUNC_NAME julia_set
 #undef IT_VAR
-#define IT_VAR register gdouble zre, zim, tmpzre, tmpzim, jre, jim; 
+#define IT_VAR register gdouble zre, zim, tmpzre, tmpzim, jre, jim;
 #undef IT_INIT
 #define IT_INIT jre = param->j[0]; \
-	jim = param->j[1]; 
+	jim = param->j[1];
 #undef IT_INLINE_FUNC
 #define IT_INLINE_FUNC                                \
         zre = itre;                                   \
@@ -217,7 +217,7 @@ static int outcircle(gdouble cx, gdouble cy, gdouble sqrr, double x, double y)
 #define IT_VAR register gdouble zre, zim, jre, jim, r, phi; \
 	register gdouble degree; \
 	gint *col_count;
-#undef IT_INIT 
+#undef IT_INIT
 #define IT_INIT degree = param->degree; \
 	jre = param->j[0]; \
 	jim = param->j[1]; \

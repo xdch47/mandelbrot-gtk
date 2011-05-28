@@ -132,7 +132,7 @@ static void writexmlfile(const char *configfile, const struct winctl *w, enum xm
 
 	xmlTextWriterStartDocument(writer, "1.0", "UTF-8", "yes");
 	xmlTextWriterStartElement(writer, BAD_CAST XML_ROOTNODE);
-	
+
 	#ifdef XML_COMMENTS
 	xmlTextWriterWriteComment(writer, BAD_CAST " data for rendering ");
 	#endif
@@ -142,7 +142,7 @@ static void writexmlfile(const char *configfile, const struct winctl *w, enum xm
 	xmlTextWriterWriteAttribute(writer, BAD_CAST XML_DEGREE, BAD_CAST ascii_dtostr(w->it_param.degree, c));
 	if (w->it_param.type == MANDELBROT_SET)
 		xmlTextWriterWriteAttribute(writer, BAD_CAST XML_TYPE, BAD_CAST XML_TYPE_MANDELBROT);
-	else 
+	else
 		xmlTextWriterWriteAttribute(writer, BAD_CAST XML_TYPE, BAD_CAST XML_TYPE_JULIA);
 
 	/* <renderdata> */
@@ -371,7 +371,7 @@ static gboolean xmlrenderdata(xmlNode *node, struct iterate_param *it_param, enu
 
 	/* type: */
 	attr = (char *)xmlGetProp(node, BAD_CAST XML_TYPE);
-	if(type == LOAD_RENDER_CONFIG) 
+	if(type == LOAD_RENDER_CONFIG)
 		it_param->type = MANDELBROT_SET;
 	if (attr != NULL) {
 		if ((type == LOAD_CONFIG || type == LOAD_RENDER_CONFIG) && strcmp(attr, XML_TYPE_JULIA) == 0) {
@@ -421,9 +421,9 @@ static void xmlsize(xmlNode *node, GtkWindow *win, enum configtype type)
 		if (strcmp(name, XML_WIDTH) == 0) {
 			if (type == LOAD_CONFIG )
 				win_width = xmlNodeContenttol(node);
-			else if (type == STORE_CONFIG) 
+			else if (type == STORE_CONFIG)
 				xmlNodeSetContent(node, BAD_CAST ltostr(GTK_WIDGET(win)->allocation.width, c));
-		} else if (strcmp(name, XML_HEIGHT) == 0) {	
+		} else if (strcmp(name, XML_HEIGHT) == 0) {
 			if (type == LOAD_CONFIG)
 				win_height = xmlNodeContenttol(node);
 			else if (type == STORE_CONFIG)
@@ -441,7 +441,7 @@ static void xmlsetcolor(xmlNode *node, GdkColor *color, enum configtype type)
 
 	attr = (char *)xmlGetProp(node, BAD_CAST XML_COLOR_RED);
 	if (attr) {
-		if (type == LOAD_CONFIG || type == LOAD_RENDER_CONFIG) 
+		if (type == LOAD_CONFIG || type == LOAD_RENDER_CONFIG)
 			color->red = strtol(attr, NULL, 10);
 		else if (type == STORE_CONFIG)
 			xmlSetProp(node, BAD_CAST XML_COLOR_RED, BAD_CAST ltostr(color->red, c));
@@ -449,7 +449,7 @@ static void xmlsetcolor(xmlNode *node, GdkColor *color, enum configtype type)
 	free(attr);
 	attr = (char *)xmlGetProp(node, BAD_CAST XML_COLOR_GREEN);
 	if (attr) {
-		if (type == LOAD_CONFIG || type == LOAD_RENDER_CONFIG) 
+		if (type == LOAD_CONFIG || type == LOAD_RENDER_CONFIG)
 			color->green = strtol(attr, NULL, 10);
 		else if (type == STORE_CONFIG)
 			xmlSetProp(node, BAD_CAST XML_COLOR_GREEN, BAD_CAST ltostr(color->green, c));
@@ -457,7 +457,7 @@ static void xmlsetcolor(xmlNode *node, GdkColor *color, enum configtype type)
 	free(attr);
 	attr = (char *)xmlGetProp(node, BAD_CAST XML_COLOR_BLUE);
 	if (attr) {
-		if (type == LOAD_CONFIG || type == LOAD_RENDER_CONFIG) 
+		if (type == LOAD_CONFIG || type == LOAD_RENDER_CONFIG)
 			color->blue = strtol(attr, NULL, 10);
 		else if (type == STORE_CONFIG)
 			xmlSetProp(node, BAD_CAST XML_COLOR_BLUE, BAD_CAST ltostr(color->blue, c));
@@ -472,7 +472,7 @@ static void xmlcolor(xmlNode *node, struct winctl *w, enum configtype type)
 
 	attr = (char *)xmlGetProp(node, BAD_CAST XML_COLOR_ALGO);
 	if (attr != NULL) {
-		if (type == LOAD_CONFIG || type == LOAD_RENDER_CONFIG) 
+		if (type == LOAD_CONFIG || type == LOAD_RENDER_CONFIG)
 			w->it_param.color_func_index = CLAMP(strtol(attr, NULL, 10), 0, getColorFunc_count());
 		else if (type == STORE_CONFIG)
 			xmlSetProp(node, BAD_CAST XML_COLOR_ALGO, BAD_CAST ltostr(w->it_param.color_func_index, c));
@@ -519,7 +519,7 @@ static void xmlpreference(xmlNode *node, struct winctl *w, enum configtype type)
 			else if (type == STORE_CONFIG)
 				xmlNodeSetContent(node, BAD_CAST ltostr(w->get_jitermax, c));
 		} else if (strcmp((char *)node->name, XML_THREADS_COUNT) == 0) {
-			if (type == LOAD_CONFIG) 
+			if (type == LOAD_CONFIG)
 				w->it_param.threads_count = CLAMP(xmlNodeContenttol(node), 1, MAXTHREADS);
 			else if (type == STORE_CONFIG)
 				xmlNodeSetContent(node, BAD_CAST ltostr(w->it_param.threads_count, c));
@@ -564,7 +564,7 @@ gboolean configure_interface(struct winctl *w, const gchar *configfile, enum con
 
 	if (!g_file_test(configfile, G_FILE_TEST_EXISTS)) {
 		writexmlfile(configfile, w, SAVE_APPSETTINGS);
-		if (type == STORE_CONFIG) 
+		if (type == STORE_CONFIG)
 			return TRUE;
 	} else {
 		doc = xmlReadFile(configfile, NULL, 0);
@@ -583,7 +583,7 @@ gboolean configure_interface(struct winctl *w, const gchar *configfile, enum con
 			}
 		}
 	}
-	
+
 	w->it_param.colorfunc = getColorFunc(w->it_param.color_func_index);
 	for (i = 0; i < 4; ++i) {
 		dtostr(w->it_param.cplxplane[i], c);

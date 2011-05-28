@@ -40,7 +40,7 @@ struct iteration_data {
 	volatile enum thread_state *state;
 	const struct iterate_param *param;
 	gint number;
-	gdouble b_re; 
+	gdouble b_re;
 	gdouble b_im;
 	gdouble dre;
 	gdouble dim;

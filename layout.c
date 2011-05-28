@@ -63,7 +63,7 @@ struct winctl *buildinterface(void)
 	/* menu: */
 	accel_group = gtk_accel_group_new();
 	gtk_window_add_accel_group(GTK_WINDOW(w->win), accel_group);
-	menubar = gtk_menu_bar_new();	
+	menubar = gtk_menu_bar_new();
 	menuit = gtk_menu_item_new_with_mnemonic(LFILE);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), menuit);
 	menu = gtk_menu_new();
@@ -227,7 +227,7 @@ struct winctl *buildinterface(void)
 	gtk_box_pack_start(GTK_BOX(vbox2), createcplxplane(w->txtcplx), FALSE, FALSE, 0);
 
 	/* setting data: */
-	frame = gtk_frame_new(LFKT);	
+	frame = gtk_frame_new(LFKT);
 	table = gtk_table_new(2, 4, FALSE);
 	gtk_container_set_border_width(GTK_CONTAINER(table), 5);
 
@@ -252,7 +252,7 @@ struct winctl *buildinterface(void)
 	gtk_label_set_mnemonic_widget(GTK_LABEL(lbl), w->txtitermax);
 	gtk_table_attach(GTK_TABLE(table), lbl          , 0, 2, 1, 2, GTK_EXPAND | GTK_FILL, GTK_SHRINK, 0, 0);
 	gtk_table_attach(GTK_TABLE(table), w->txtitermax, 0, 2, 2, 3, GTK_EXPAND | GTK_FILL, GTK_SHRINK, 0, 0);
-	gtk_table_set_row_spacing(GTK_TABLE(table), 2, 6); 
+	gtk_table_set_row_spacing(GTK_TABLE(table), 2, 6);
 
 	/* notebook: */
 	/* chkjulia */
@@ -500,7 +500,7 @@ static void change_color(gint type, const gchar* title, struct winctl *w)
 		gtk_color_selection_set_current_color(colorsel, &w->divcol);
 	gtk_window_set_modal(GTK_WINDOW(colordialog), TRUE);
 	gtk_widget_show(colordialog);
-}	
+}
 
 static void change_convcol(GtkWidget *widget, struct winctl *w)
 {
@@ -537,7 +537,7 @@ static void open_xmlfile(GtkWidget *widget, struct winctl *w)
 		g_free(filename);
 	}
 	gtk_widget_destroy(filechooser);
-	
+
 	render_thread_kill(w->render_thread);
 	calc(w->btncalc, w);
 }

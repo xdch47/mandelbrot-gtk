@@ -9,7 +9,7 @@ typedef struct _Node {
 	struct _Node *left;
 	struct _Node *right;
 	struct _Node *parent;
-	char balance; 
+	char balance;
 	char descend; /* -1 => left node, 1 => right node, 0 => root node */
 } Node;
 

@@ -6,7 +6,7 @@
 
 typedef struct _IterationInfo {
 	gint iter;
-/*	gdouble sqr_abs_z; */ 
+/*	gdouble sqr_abs_z; */
 } IterationInfo;
 
 typedef void (*ColorFunc)(const IterationInfo *iterinfo, guchar *pixel);
@@ -18,7 +18,7 @@ typedef struct _ColorFuncDescriptor {
 	ColorFunc colorfunc;
 } ColorFuncDescriptor;
 
-/* Maximum of iteration, defined in color.c */ 
+/* Maximum of iteration, defined in color.c */
 extern gint IterMax;
 
 /* Functions to access the color-algorithmens */

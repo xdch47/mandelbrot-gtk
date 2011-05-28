@@ -23,7 +23,7 @@ gpointer IT_FUNC_NAME(struct iteration_data *p)
 	IterationInfo *iterinfo;
 
 	IT_VAR
-	
+
 	retval = (gboolean *)g_malloc(sizeof(gboolean));
 	*retval = TRUE;
 	id = p->number;
@@ -70,7 +70,7 @@ gpointer IT_FUNC_NAME(struct iteration_data *p)
 			#ifdef USE_UPDATE_FUNC
 			(*param->update_func)(x, y, iterinfo, param);
 			#endif
-				
+
 
 		}
 	}

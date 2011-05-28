@@ -27,15 +27,15 @@ static Node *rotateleft(Node *node)
 		parent->right = newhead;
 	node->parent = newhead;
 	node->descend = -1;
-	
+
 	chnode = newhead->left;
 	node->right = chnode;
 	if (chnode) {
 		chnode->parent = node;
 		chnode->descend = 1;
 	}
-	
-	newhead->left = node; 
+
+	newhead->left = node;
 
 	ntmpbal = newhead->balance;
 	newhead->balance = node->balance-- - 2;
@@ -54,7 +54,7 @@ static Node *rotateright(Node *node)
   	Node *newhead;
 	Node *chnode; /* Element that change the parent */
 	Node *parent;
-	
+
 	newhead = node->left;
 	descend = newhead->descend = node->descend;
 	parent = newhead->parent = node->parent;
@@ -74,25 +74,25 @@ static Node *rotateright(Node *node)
 	}
 
   	newhead->right = node;
-  
+
   	ntmpbal = newhead->balance;
   	newhead->balance = node->balance++ + 2;
   	if (ntmpbal >= 0)
   		 newhead->balance += ntmpbal - node->balance;
-	else 
+	else
   		node->balance -= ntmpbal;
- 
+
   	return newhead;
 }
 
 static Node *rotate(Node *node)
 {
 	if (node->balance == -2) {
-		if (node->left->balance == 1) 
+		if (node->left->balance == 1)
 			node->left = rotateleft(node->left);
 		return rotateright(node);
 	} else {
-		if (node->right->balance == -1) 
+		if (node->right->balance == -1)
 			node->right = rotateright(node->right);
 		return rotateleft(node);
 	}
@@ -274,7 +274,7 @@ void *avl_delete(AVLtree tree, Node *node)
 	return data;
 }
 
-AVLtree avl_create() 
+AVLtree avl_create()
 {
 	AVLtree tree = (AVLtree)malloc(sizeof(Node *));
 	*tree = NULL;

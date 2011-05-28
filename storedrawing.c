@@ -196,9 +196,9 @@ void store_drawing_show(struct winctl *w)
 	gtk_window_set_title(GTK_WINDOW(s->win), LSAVECAP);
 	gtk_container_set_border_width(GTK_CONTAINER(s->win), 5);
 	gtk_window_set_resizable(GTK_WINDOW(s->win), FALSE);
-	
+
 	vbox = gtk_vbox_new(FALSE, 0);
-	
+
 	frame = gtk_frame_new(LSAVEPATH);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
 	hbox = gtk_hbox_new(FALSE, 5);
@@ -287,7 +287,7 @@ void store_drawing_show(struct winctl *w)
 	restore_pictopt(NULL, s);
 	create_progress_dialog(s);
 	gtk_widget_show_all(s->win);
-	
+
 }
 
 static void savedialog(GtkWidget *widget, struct savectl *s)
@@ -390,7 +390,7 @@ static void btnsave_clicked(GtkWidget *widget, struct savectl *s)
 	width = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(s->sbtwidth));
 	height = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(s->sbtheight));
 	equal = TRUE;
-	
+
 	if (!(validate_cplx(s->txtcplx, s->it_param.cplxplane, s->win) && validate_itermax(s->txtitermax, &s->it_param.itermax, s->win))) {
 		return;
 	}
