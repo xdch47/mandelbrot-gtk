@@ -575,11 +575,11 @@ gboolean configure_interface(struct winctl *w, const gchar *configfile, enum con
 			if (type == STORE_CONFIG) {
 				xmlSaveFormatFile(configfile, doc, 1);
 				xmlFreeDoc(doc);
-				xmlCleanupParser();
+				//xmlCleanupParser();
 				return TRUE;
 			} else {
 				xmlFreeDoc(doc);
-				xmlCleanupParser();
+				//xmlCleanupParser();
 			}
 		}
 	}
