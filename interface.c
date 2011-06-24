@@ -5,7 +5,6 @@
 #include <glib/gprintf.h>
 #include <glib/gstdio.h>
 #include <gdk/gdk.h>
-#include <gdk/gdkkeysyms.h>
 #include "interface.h"
 #include "libcolor/color.h"
 
@@ -16,7 +15,6 @@ static void get_julia_set(GtkWidget *widget, struct winctl *w);
 static gboolean draw_event(GtkWidget *widget, cairo_t *cr, struct winctl *w);
 static gboolean configure_event(GtkWidget *widget, GdkEventConfigure *event, struct winctl *w);
 static gboolean scroll_event(GtkWidget *widget, GdkEventScroll *event, struct winctl *w);
-static gboolean key_press_event(GtkWidget *widget, GdkEventKey *event, struct winctl *w);
 static gboolean button_press_event(GtkWidget *widget, GdkEventButton *event, struct winctl *w);
 static gboolean motion_notify_event(GtkWidget *widget, GdkEventMotion *event, struct winctl *w);
 static gboolean button_release_event(GtkWidget *widget, GdkEventButton *event, struct winctl *w);
@@ -33,12 +31,10 @@ void run_interface(gchar *file_name)
 	gchar *dirname;
 	GtkAllocation drawing_alloc;
 
-
 	g_signal_connect(G_OBJECT(w->win), "destroy", G_CALLBACK(destroy), w);
 	g_signal_connect(G_OBJECT(w->drawing), "configure_event", G_CALLBACK(configure_event), w);
 	g_signal_connect(G_OBJECT(w->drawing), "draw", G_CALLBACK(draw_event), w);
 	g_signal_connect(G_OBJECT(w->drawing), "scroll_event", G_CALLBACK(scroll_event), w);
-	g_signal_connect(G_OBJECT(w->win), "key_press_event", G_CALLBACK(key_press_event), w);
 	g_signal_connect(G_OBJECT(w->drawing), "button_press_event", G_CALLBACK(button_press_event), w);
 	g_signal_connect(G_OBJECT(w->drawing), "motion_notify_event", G_CALLBACK(motion_notify_event), w);
 	g_signal_connect(G_OBJECT(w->drawing), "button_release_event", G_CALLBACK(button_release_event), w);
@@ -362,9 +358,7 @@ static gboolean configure_event(GtkWidget *widget, GdkEventConfigure *event, str
 	return TRUE;
 }
 
-enum zoom_mode { ZOOM_IN, ZOOM_OUT };
-
-static void zoom(struct winctl *w, enum zoom_mode mode)
+void zoom(struct winctl *w, enum zoom_mode mode)
 {
 	gdouble b_re, b_im, dim, dre;
 	gdouble val[4];
@@ -422,24 +416,6 @@ static gboolean scroll_event(GtkWidget *widget, GdkEventScroll *event, struct wi
 		zoom(w, ZOOM_IN);
 	} else if (event->direction == GDK_SCROLL_DOWN) {
 		zoom(w, ZOOM_OUT);
-	}
-	return FALSE;
-}
-
-static gboolean key_press_event(GtkWidget *widget, GdkEventKey *event, struct winctl *w)
-{
-	if (event->keyval == GDK_KEY_i) {
-		zoom(w, ZOOM_IN);
-		return TRUE;
-	} else if (event->keyval == GDK_KEY_o) {
-		zoom(w, ZOOM_OUT);
-		return TRUE;
-	} else if (event->keyval == GDK_KEY_n) {
-		w->it_param.color_func_index = (w->it_param.color_func_index + 1) % getColorFunc_count();
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(w->mcolalgo[w->it_param.color_func_index]), TRUE);
-	} else if (event->keyval == GDK_KEY_p) {
-		w->it_param.color_func_index = (getColorFunc_count() + w->it_param.color_func_index - 1) % getColorFunc_count();
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(w->mcolalgo[w->it_param.color_func_index]), TRUE);
 	}
 	return FALSE;
 }

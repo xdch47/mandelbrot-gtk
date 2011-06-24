@@ -28,6 +28,9 @@ msgstr ""
 msgid "Misiurewicz-Point"
 msgstr ""
 
+msgid "Key-Stroke: p (previous) / n (next)"
+msgstr ""
+
 msgid "Mandelbrot- / Juliaset"
 msgstr ""
 
