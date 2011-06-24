@@ -138,6 +138,9 @@ msgstr ""
 msgid "Color of the divergent set"
 msgstr ""
 
+msgid "Open.."
+msgstr ""
+
 msgid "Save.."
 msgstr ""
 
@@ -219,7 +222,7 @@ msgstr ""
 msgid "Complex Plane (Mb)"
 msgstr ""
 
-msgid "Complex Plane of the Mandelbortset: "
+msgid "Complex Plane of the Mandelbrotset: "
 msgstr ""
 
 msgid "_Reset"
@@ -294,28 +297,10 @@ msgstr ""
 msgid "blues"
 msgstr ""
 
-msgid "bud2"
-msgstr ""
-
 msgid "bud3"
 msgstr ""
 
-msgid "bud4"
-msgstr ""
-
-msgid "bud5"
-msgstr ""
-
-msgid "bud6"
-msgstr ""
-
 msgid "bud7"
-msgstr ""
-
-msgid "Carlson1"
-msgstr ""
-
-msgid "chroma"
 msgstr ""
 
 msgid "damien1"
@@ -351,88 +336,10 @@ msgstr ""
 msgid "droz13"
 msgstr ""
 
-msgid "droz14"
-msgstr ""
-
-msgid "droz15"
-msgstr ""
-
-msgid "droz21"
-msgstr ""
-
-msgid "droz22"
-msgstr ""
-
-msgid "droz23"
-msgstr ""
-
-msgid "droz28"
-msgstr ""
-
-msgid "droz31"
-msgstr ""
-
-msgid "droz33"
-msgstr ""
-
-msgid "droz34"
-msgstr ""
-
-msgid "droz35"
-msgstr ""
-
-msgid "droz36"
-msgstr ""
-
-msgid "droz38"
-msgstr ""
-
-msgid "droz39"
-msgstr ""
-
-msgid "droz40"
-msgstr ""
-
-msgid "droz44"
-msgstr ""
-
 msgid "droz46"
 msgstr ""
 
-msgid "droz49"
-msgstr ""
-
-msgid "droz52"
-msgstr ""
-
-msgid "droz54"
-msgstr ""
-
-msgid "droz56"
-msgstr ""
-
 msgid "droz60"
-msgstr ""
-
-msgid "droz62"
-msgstr ""
-
-msgid "drozdis1"
-msgstr ""
-
-msgid "firestrm"
-msgstr ""
-
-msgid "froth316"
-msgstr ""
-
-msgid "froth3"
-msgstr ""
-
-msgid "froth616"
-msgstr ""
-
-msgid "froth6"
 msgstr ""
 
 msgid "Gallet01"
@@ -453,9 +360,6 @@ msgstr ""
 msgid "Gallet06"
 msgstr ""
 
-msgid "Gallet07"
-msgstr ""
-
 msgid "Gallet08"
 msgstr ""
 
@@ -465,13 +369,7 @@ msgstr ""
 msgid "Gallet10"
 msgstr ""
 
-msgid "Gallet11"
-msgstr ""
-
 msgid "Gallet12"
-msgstr ""
-
-msgid "Gallet13"
 msgstr ""
 
 msgid "Gallet14"
@@ -483,52 +381,19 @@ msgstr ""
 msgid "Gallet16"
 msgstr ""
 
-msgid "Gallet17"
-msgstr ""
-
-msgid "Gallet18"
-msgstr ""
-
 msgid "gamma1"
 msgstr ""
 
 msgid "gamma2"
 msgstr ""
 
-msgid "glasses1"
-msgstr ""
-
-msgid "glasses2"
-msgstr ""
-
 msgid "goodega"
-msgstr ""
-
-msgid "green"
 msgstr ""
 
 msgid "grey"
 msgstr ""
 
-msgid "grid"
-msgstr ""
-
-msgid "headache"
-msgstr ""
-
-msgid "landscap"
-msgstr ""
-
 msgid "Lindaa01"
-msgstr ""
-
-msgid "Lindaa02"
-msgstr ""
-
-msgid "Lindaa03"
-msgstr ""
-
-msgid "Lindaa04"
 msgstr ""
 
 msgid "Lindaa05"
@@ -540,28 +405,10 @@ msgstr ""
 msgid "Lindaa07"
 msgstr ""
 
-msgid "Lindaa08"
-msgstr ""
-
-msgid "Lindaa09"
-msgstr ""
-
 msgid "Lindaa10"
 msgstr ""
 
-msgid "Lindaa11"
-msgstr ""
-
 msgid "Lindaa12"
-msgstr ""
-
-msgid "Lindaa14"
-msgstr ""
-
-msgid "Lindaa15"
-msgstr ""
-
-msgid "Lindaa16"
 msgstr ""
 
 msgid "Lindaa17"
@@ -577,54 +424,6 @@ msgid "lkmtch02"
 msgstr ""
 
 msgid "lkmtch03"
-msgstr ""
-
-msgid "lkmtch04"
-msgstr ""
-
-msgid "lkmtch05"
-msgstr ""
-
-msgid "lkmtch06"
-msgstr ""
-
-msgid "lkmtch07"
-msgstr ""
-
-msgid "lkmtch08"
-msgstr ""
-
-msgid "lkmtch09"
-msgstr ""
-
-msgid "lkmtch10"
-msgstr ""
-
-msgid "lkmtch11"
-msgstr ""
-
-msgid "lkmtch12"
-msgstr ""
-
-msgid "lkmtch13"
-msgstr ""
-
-msgid "lkmtch14"
-msgstr ""
-
-msgid "lkmtch15"
-msgstr ""
-
-msgid "lkmtch16"
-msgstr ""
-
-msgid "lkmtch17"
-msgstr ""
-
-msgid "lkmtch18"
-msgstr ""
-
-msgid "lkmtch19"
 msgstr ""
 
 msgid "lyapunov"
@@ -669,9 +468,6 @@ msgstr ""
 msgid "Skydye07"
 msgstr ""
 
-msgid "Skydye08"
-msgstr ""
-
 msgid "Skydye09"
 msgstr ""
 
@@ -684,38 +480,5 @@ msgstr ""
 msgid "Skydye12"
 msgstr ""
 
-msgid "topo"
-msgstr ""
-
 msgid "volcano"
-msgstr ""
-
-msgid "Wizzl011"
-msgstr ""
-
-msgid "Wizzl012"
-msgstr ""
-
-msgid "Wizzl013"
-msgstr ""
-
-msgid "Wizzl014"
-msgstr ""
-
-msgid "Wizzl015"
-msgstr ""
-
-msgid "Wizzl016"
-msgstr ""
-
-msgid "Wizzl017"
-msgstr ""
-
-msgid "Wizzl018"
-msgstr ""
-
-msgid "Wizzl019"
-msgstr ""
-
-msgid "Wizzl020"
 msgstr ""
