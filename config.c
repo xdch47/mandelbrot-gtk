@@ -87,9 +87,12 @@ static void init_config(struct winctl *w)
 	w->convcol.red = 0;
 	w->convcol.green = 0;
 	w->convcol.blue = 0;
-	w->divcol.red = 0xffff;
-	w->divcol.green = 0xffff;
-	w->divcol.blue = 0xffff;
+	w->convcol.alpha = 1.0;
+
+	w->divcol.red = 1.0;
+	w->divcol.green = 1.0;
+	w->divcol.blue = 1.0;
+	w->divcol.alpha = 1.0;
 
 
 	w->get_j = FALSE;
@@ -440,12 +443,12 @@ static void xmlsetcolor(xmlNode *node, GdkRGBA *color, enum configtype type)
 {
 	char *attr;
 	attr = (char *)xmlGetProp(node, BAD_CAST XML_COLOR_RGBA);
-	if (attr) {
-		if (type == LOAD_CONFIG || type == LOAD_RENDER_CONFIG)
-			gdk_rgba_parse(color, attr);
-		else if (type == STORE_CONFIG)
-			xmlSetProp(node, BAD_CAST XML_COLOR_RGBA, BAD_CAST gdk_rgba_to_string(color));
-	}
+
+	if (attr && (type == LOAD_CONFIG || type == LOAD_RENDER_CONFIG))
+		gdk_rgba_parse(color, attr);
+	else if (type == STORE_CONFIG)
+		xmlSetProp(node, BAD_CAST XML_COLOR_RGBA, BAD_CAST gdk_rgba_to_string(color));
+
 	free(attr);
 }
 
