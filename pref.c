@@ -94,7 +94,7 @@ void preference_show(struct winctl *w)
 	gtk_container_set_border_width(GTK_CONTAINER(hbox1), 4);
 	lbl = gtk_label_new(LPREFLFOCUSCOLOR);
 	gtk_box_pack_start(GTK_BOX(hbox1), lbl, FALSE, FALSE, 5);
-	p->cbtfocus = gtk_color_button_new_with_color(&w->focus_color);
+	p->cbtfocus = gtk_color_button_new_with_rgba(&w->focus_color);
 	gtk_box_pack_start(GTK_BOX(hbox1), p->cbtfocus, FALSE, FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(frame), hbox1);
 	gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 5);
@@ -202,6 +202,7 @@ static void btnok_clicked(GtkWidget *widget, struct prefctl *p)
 	gint jitermax;
 	gint threads_count;
 	gint i;
+
 	if (!validate_cplx(p->txtcplx, cplx, p->win)) {
 		return;
 	}
@@ -216,7 +217,7 @@ static void btnok_clicked(GtkWidget *widget, struct prefctl *p)
 		p->w->default_cplxplane[i] = cplx[i];
 		p->w->default_mcplxplane[i] = mcplx[i];
 	}
-	gtk_color_button_get_color(GTK_COLOR_BUTTON(p->cbtfocus), &p->w->focus_color);
+	gtk_color_button_get_rgba(GTK_COLOR_BUTTON(p->cbtfocus), &p->w->focus_color);
 	p->w->get_jitermax = jitermax;
 	p->w->zoomfactor = gtk_spin_button_get_value(GTK_SPIN_BUTTON(p->sbtzoom)) / 100.0;
 	p->w->get_jitermax = jitermax;
@@ -232,7 +233,7 @@ static void btnok_clicked(GtkWidget *widget, struct prefctl *p)
 		p->w->it_param.j[1] = j[1];
 	}
 
-	gtk_widget_modify_fg(p->w->drawing, GTK_STATE_NORMAL, &p->w->focus_color);
+	gtk_widget_override_color(p->w->drawing, GTK_STATE_NORMAL, &p->w->focus_color);
 	gtk_widget_destroy(p->win);
 }
 

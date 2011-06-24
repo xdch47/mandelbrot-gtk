@@ -33,9 +33,7 @@
 #define XML_COLOR_DIVERGENT "divergent-color"
 #define XML_COLOR_CONVERGET "convergent-color"
 #define XML_COLOR_FOCUS "focus-color"
-#define XML_COLOR_RED "red"
-#define XML_COLOR_GREEN "green"
-#define XML_COLOR_BLUE "blue"
+#define XML_COLOR_RGBA "rgba"
 #define XML_ZOOM_PROP "zoom-prop"
 #define XML_ZOOM_FACTOR "zoom-factor"
 #define XML_GET_J_ITERMAX "get_j-itermax"
@@ -93,12 +91,14 @@ static void init_config(struct winctl *w)
 	w->divcol.green = 0xffff;
 	w->divcol.blue = 0xffff;
 
-	w->focus_color.red = 0xffff;
-	w->focus_color.green = 0xffff;
-	w->focus_color.blue = 0xffff;
+
 	w->get_j = FALSE;
 	w->get_jitermax = DEFITERMAX;
-	gtk_widget_modify_fg(w->drawing, GTK_STATE_NORMAL, &w->focus_color);
+
+	w->focus_color.red = 1.0;
+	w->focus_color.green = 1.0;
+	w->focus_color.blue = 1.0;
+	w->focus_color.alpha = 1.0;
 }
 
 static char *ascii_dtostr(double d, char *c)
@@ -167,13 +167,15 @@ static void writexmlfile(const char *configfile, const struct winctl *w, enum xm
 	xmlTextWriterEndElement(writer);
 
 	if (type == SAVE_APPSETTINGS) {
+		GtkAllocation win_alloc;
+		gtk_widget_get_allocation(w->win, &win_alloc);
 		#ifdef XML_COMMENTS
 		xmlTextWriterWriteComment(writer, BAD_CAST " windowsize ");
 		#endif
 		/* <size> */
 		xmlTextWriterStartElement(writer, BAD_CAST XML_SIZE);
-		xmlTextWriterWriteElement(writer, BAD_CAST XML_WIDTH, BAD_CAST ltostr(GTK_WIDGET(w->win)->allocation.width, c));
-		xmlTextWriterWriteElement(writer, BAD_CAST XML_HEIGHT, BAD_CAST ltostr(GTK_WIDGET(w->win)->allocation.height, c));
+		xmlTextWriterWriteElement(writer, BAD_CAST XML_WIDTH, BAD_CAST ltostr(win_alloc.width, c));
+		xmlTextWriterWriteElement(writer, BAD_CAST XML_HEIGHT, BAD_CAST ltostr(win_alloc.height, c));
 		xmlTextWriterEndElement(writer);
 		/* </size> */
 	}
@@ -185,24 +187,18 @@ static void writexmlfile(const char *configfile, const struct winctl *w, enum xm
 	xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_ALGO, BAD_CAST ltostr(w->it_param.color_func_index, c));
 	/* <convergent-color/> */
 	xmlTextWriterWriteElement(writer, BAD_CAST XML_COLOR_CONVERGET, BAD_CAST NULL);
-	xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_RED, BAD_CAST ltostr(w->convcol.red, c));
-	xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_GREEN, BAD_CAST ltostr(w->convcol.green, c));
-	xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_BLUE, BAD_CAST ltostr(w->convcol.blue, c));
+	xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_RGBA, BAD_CAST gdk_rgba_to_string(&w->convcol));
 	xmlTextWriterEndElement(writer);
 	if (type == SAVE_APPSETTINGS || w->it_param.color_func_index == getDivConv_idx()) {
 		/* <divergent-color/> */
 		xmlTextWriterWriteElement(writer, BAD_CAST XML_COLOR_DIVERGENT, BAD_CAST NULL);
-		xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_RED, BAD_CAST ltostr(w->divcol.red, c));
-		xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_GREEN, BAD_CAST ltostr(w->divcol.green, c));
-		xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_BLUE, BAD_CAST ltostr(w->divcol.blue, c));
+		xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_RGBA, BAD_CAST gdk_rgba_to_string(&w->divcol));
 		xmlTextWriterEndElement(writer);
 	}
 	if (type == SAVE_APPSETTINGS) {
 		/* <focus-color/> */
 		xmlTextWriterWriteElement(writer, BAD_CAST XML_COLOR_FOCUS, BAD_CAST NULL);
-		xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_RED, BAD_CAST ltostr(w->focus_color.red, c));
-		xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_GREEN, BAD_CAST ltostr(w->focus_color.green, c));
-		xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_BLUE, BAD_CAST ltostr(w->focus_color.blue, c));
+		xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_RGBA, BAD_CAST gdk_rgba_to_string(&w->focus_color));
 		xmlTextWriterEndElement(writer);
 	}
 	/* </color> */
@@ -407,11 +403,13 @@ static gboolean xmlrenderdata(xmlNode *node, struct iterate_param *it_param, enu
 	return retval;
 }
 
-static void xmlsize(xmlNode *node, GtkWindow *win, enum configtype type)
+static void xmlsize(xmlNode *node, GtkWidget *win, enum configtype type)
 {
 	int win_width, win_height;
 	const char *name;
 	char c[BUFSIZE_NUMTOSTR];
+	GtkAllocation win_alloc;
+
 	win_width = win_height = -1;
 	forall_node(node) {
 		if (node->type != XML_ELEMENT_NODE)
@@ -419,48 +417,34 @@ static void xmlsize(xmlNode *node, GtkWindow *win, enum configtype type)
 
 		name = (char *)node->name;
 		if (strcmp(name, XML_WIDTH) == 0) {
-			if (type == LOAD_CONFIG )
+			if (type == LOAD_CONFIG ) {
 				win_width = xmlNodeContenttol(node);
-			else if (type == STORE_CONFIG)
-				xmlNodeSetContent(node, BAD_CAST ltostr(GTK_WIDGET(win)->allocation.width, c));
+			} else if (type == STORE_CONFIG) {
+				gtk_widget_get_allocation(win, &win_alloc);
+				xmlNodeSetContent(node, BAD_CAST ltostr(win_alloc.width, c));
+			}
 		} else if (strcmp(name, XML_HEIGHT) == 0) {
-			if (type == LOAD_CONFIG)
+			if (type == LOAD_CONFIG) {
 				win_height = xmlNodeContenttol(node);
-			else if (type == STORE_CONFIG)
-				xmlNodeSetContent(node, BAD_CAST ltostr(GTK_WIDGET(win)->allocation.height, c));
+			} else if (type == STORE_CONFIG) {
+				gtk_widget_get_allocation(win, &win_alloc);
+				xmlNodeSetContent(node, BAD_CAST ltostr(win_alloc.height, c));
+			}
 		}
 	}
 	if (type == LOAD_CONFIG)
 		gtk_window_resize(GTK_WINDOW(win), win_width, win_height);
 }
 
-static void xmlsetcolor(xmlNode *node, GdkColor *color, enum configtype type)
+static void xmlsetcolor(xmlNode *node, GdkRGBA *color, enum configtype type)
 {
 	char *attr;
-	char c[BUFSIZE_NUMTOSTR];
-
-	attr = (char *)xmlGetProp(node, BAD_CAST XML_COLOR_RED);
+	attr = (char *)xmlGetProp(node, BAD_CAST XML_COLOR_RGBA);
 	if (attr) {
 		if (type == LOAD_CONFIG || type == LOAD_RENDER_CONFIG)
-			color->red = strtol(attr, NULL, 10);
+			gdk_rgba_parse(color, attr);
 		else if (type == STORE_CONFIG)
-			xmlSetProp(node, BAD_CAST XML_COLOR_RED, BAD_CAST ltostr(color->red, c));
-	}
-	free(attr);
-	attr = (char *)xmlGetProp(node, BAD_CAST XML_COLOR_GREEN);
-	if (attr) {
-		if (type == LOAD_CONFIG || type == LOAD_RENDER_CONFIG)
-			color->green = strtol(attr, NULL, 10);
-		else if (type == STORE_CONFIG)
-			xmlSetProp(node, BAD_CAST XML_COLOR_GREEN, BAD_CAST ltostr(color->green, c));
-	}
-	free(attr);
-	attr = (char *)xmlGetProp(node, BAD_CAST XML_COLOR_BLUE);
-	if (attr) {
-		if (type == LOAD_CONFIG || type == LOAD_RENDER_CONFIG)
-			color->blue = strtol(attr, NULL, 10);
-		else if (type == STORE_CONFIG)
-			xmlSetProp(node, BAD_CAST XML_COLOR_BLUE, BAD_CAST ltostr(color->blue, c));
+			xmlSetProp(node, BAD_CAST XML_COLOR_RGBA, BAD_CAST gdk_rgba_to_string(color));
 	}
 	free(attr);
 }
@@ -484,7 +468,7 @@ static void xmlcolor(xmlNode *node, struct winctl *w, enum configtype type)
 		if (node->type != XML_ELEMENT_NODE)
 			continue;
 		if (strcmp((char *)node->name, XML_COLOR_DIVERGENT) == 0) {
-				xmlsetcolor(node, &w->divcol, type);
+			xmlsetcolor(node, &w->divcol, type);
 		} else if (strcmp((char *)node->name, XML_COLOR_CONVERGET) == 0) {
 			xmlsetcolor(node, &w->convcol, type);
 		} else if (strcmp((char *)node->name, XML_COLOR_FOCUS) == 0) {
@@ -540,7 +524,7 @@ static gboolean setxmlconfig(xmlNode *node, struct winctl *w, enum configtype ty
 			retval = xmlrenderdata(node, &w->it_param, type);
 		} else if (strcmp((char *)node->name, XML_SIZE) == 0) {
 			/* size: */
-			xmlsize(node->children, GTK_WINDOW(w->win), type);
+			xmlsize(node->children, w->win, type);
 		} else if (strcmp((char *)node->name, XML_PREFERENCE) == 0) {
 			/* preference: */
 			xmlpreference(node->children, w, type);
@@ -562,10 +546,13 @@ gboolean configure_interface(struct winctl *w, const gchar *configfile, enum con
 	if (type == LOAD_CONFIG)
 		init_config(w);
 
-	if (!g_file_test(configfile, G_FILE_TEST_EXISTS)) {
+
+	if (!g_file_test(configfile, G_FILE_TEST_EXISTS) && type != LOAD_RENDER_CONFIG) {
 		writexmlfile(configfile, w, SAVE_APPSETTINGS);
-		if (type == STORE_CONFIG)
+		if (type == STORE_CONFIG) {
+			//xmlCleanupParser();
 			return TRUE;
+		}
 	} else {
 		doc = xmlReadFile(configfile, NULL, 0);
 		if (doc != NULL && (root_node = xmlDocGetRootElement(doc)) != NULL) {
@@ -575,11 +562,11 @@ gboolean configure_interface(struct winctl *w, const gchar *configfile, enum con
 			if (type == STORE_CONFIG) {
 				xmlSaveFormatFile(configfile, doc, 1);
 				xmlFreeDoc(doc);
-				xmlCleanupParser();
+				//xmlCleanupParser();
 				return TRUE;
 			} else {
 				xmlFreeDoc(doc);
-				xmlCleanupParser();
+				//xmlCleanupParser();
 			}
 		}
 	}
@@ -599,7 +586,7 @@ gboolean configure_interface(struct winctl *w, const gchar *configfile, enum con
 
 	if (type == LOAD_CONFIG) {
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(w->mchkzoomprop), w->zoomprop);
-		gtk_widget_modify_fg(w->drawing, GTK_STATE_NORMAL, &w->focus_color);
+		gtk_widget_override_color(w->drawing, GTK_STATE_NORMAL, &w->focus_color);
 
 		iterate_param_init(&w->it_param, w->it_param.threads_count);
 	}

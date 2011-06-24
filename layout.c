@@ -1,9 +1,9 @@
 
-#include <glib/gprintf.h>
-#include <gdk/gdkkeysyms.h>
 #include <stdlib.h>
+#include <glib/gprintf.h>
 #include "interface.h"
 #include "libcolor/color.h"
+
 
 static GtkWidget *convdiv_menu(struct winctl *w);
 static void chkj_toggled(GtkWidget *widget, struct winctl *w);
@@ -72,12 +72,12 @@ struct winctl *buildinterface(void)
 	/* draw: */
 	menuit = gtk_menu_item_new_with_mnemonic(LCALC);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuit);
-	gtk_widget_add_accelerator(menuit, "activate", accel_group, GDK_F9, 0, GTK_ACCEL_VISIBLE);
+	gtk_widget_add_accelerator(menuit, "activate", accel_group, GDK_KEY_F9, 0, GTK_ACCEL_VISIBLE);
 	g_signal_connect(G_OBJECT(menuit), "activate", G_CALLBACK(calc), w);
 	/* reset: */
 	menuit = gtk_menu_item_new_with_mnemonic(LRESET);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuit);
-	gtk_widget_add_accelerator(menuit, "activate", accel_group, GDK_F2, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+	gtk_widget_add_accelerator(menuit, "activate", accel_group, GDK_KEY_F2, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 	g_signal_connect(G_OBJECT(menuit), "activate", G_CALLBACK(reset), w);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 	/* xml: */
@@ -99,7 +99,7 @@ struct winctl *buildinterface(void)
 	/* close: */
 	menuit = gtk_image_menu_item_new_from_stock(GTK_STOCK_CLOSE, accel_group);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuit);
-	gtk_widget_add_accelerator(menuit, "activate", accel_group, GDK_q, 0, 0);
+	gtk_widget_add_accelerator(menuit, "activate", accel_group, GDK_KEY_q, 0, 0);
 	g_signal_connect_swapped(G_OBJECT(menuit), "activate", G_CALLBACK(gtk_widget_destroy), w->win);
 	/* preference: */
 	menuit = gtk_menu_item_new_with_mnemonic(LPREFMENU);
@@ -109,8 +109,8 @@ struct winctl *buildinterface(void)
 	/* set complex plane: */
 	menuit = gtk_menu_item_new_with_mnemonic(LSETCPLX);
 	pmenuit = gtk_menu_item_new_with_mnemonic(LSETCPLX);
-	gtk_widget_add_accelerator(menuit , "activate", accel_group, GDK_r, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-	gtk_widget_add_accelerator(pmenuit, "activate", accel_group, GDK_r, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+	gtk_widget_add_accelerator(menuit , "activate", accel_group, GDK_KEY_r, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+	gtk_widget_add_accelerator(pmenuit, "activate", accel_group, GDK_KEY_r, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu)       , menuit);
 	gtk_menu_shell_append(GTK_MENU_SHELL(w->drawmenu), pmenuit);
 	g_signal_connect(G_OBJECT(menuit) , "activate", G_CALLBACK(menu_setcplxplane), w);
@@ -118,8 +118,8 @@ struct winctl *buildinterface(void)
 	/* scalexy: */
 	w->mchkzoomprop = gtk_check_menu_item_new_with_mnemonic(LZOOMPROP);
 	w->pmchkzoomprop = gtk_check_menu_item_new_with_mnemonic(LZOOMPROP);
-	gtk_widget_add_accelerator(w->mchkzoomprop, "activate", accel_group, GDK_s, GDK_SUPER_MASK, GTK_ACCEL_VISIBLE);
-	gtk_widget_add_accelerator(w->pmchkzoomprop, "activate", accel_group, GDK_s, GDK_SUPER_MASK, GTK_ACCEL_VISIBLE);
+	gtk_widget_add_accelerator(w->mchkzoomprop, "activate", accel_group, GDK_KEY_s, GDK_SUPER_MASK, GTK_ACCEL_VISIBLE);
+	gtk_widget_add_accelerator(w->pmchkzoomprop, "activate", accel_group, GDK_KEY_s, GDK_SUPER_MASK, GTK_ACCEL_VISIBLE);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), w->mchkzoomprop);
 	gtk_menu_shell_append(GTK_MENU_SHELL(w->drawmenu), w->pmchkzoomprop);
 	g_signal_connect(G_OBJECT(w->mchkzoomprop), "toggled", G_CALLBACK(toggle_zoomprop), w);
@@ -370,10 +370,13 @@ void setcplxplane(GtkWidget *txtcplx[4], const gdouble value[4], gint width, gin
 void restoredefaults(struct winctl *w)
 {
 	gint tmp = atoi(gtk_entry_get_text(GTK_ENTRY(w->txtdegree)));
+	GtkAllocation drawing_alloc;
+
+	gtk_widget_get_allocation(w->drawing, &drawing_alloc);
 	if ((tmp == 2) && !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w->chkjulia))) {
-		setcplxplane(w->txtcplx, w->default_mcplxplane, w->drawing->allocation.width, w->drawing->allocation.height);
+		setcplxplane(w->txtcplx, w->default_mcplxplane, drawing_alloc.width, drawing_alloc.height);
 	} else {
-		setcplxplane(w->txtcplx, w->default_cplxplane, w->drawing->allocation.width, w->drawing->allocation.height);
+		setcplxplane(w->txtcplx, w->default_cplxplane, drawing_alloc.width, drawing_alloc.height);
 	}
 }
 
@@ -419,7 +422,10 @@ static void toggle_zoomprop(GtkWidget *widget, struct winctl *w)
 
 static void menu_setcplxplane(GtkWidget *widget, struct winctl *w)
 {
-	setcplxplane(w->txtcplx, w->it_param.cplxplane, w->drawing->allocation.width, w->drawing->allocation.height);
+	GtkAllocation drawing_alloc;
+
+	gtk_widget_get_allocation(w->drawing, &drawing_alloc);
+	setcplxplane(w->txtcplx, w->it_param.cplxplane, drawing_alloc.width, drawing_alloc.height);
 }
 
 void change_color_algo(GtkWidget *widget, struct winctl *w)
@@ -466,10 +472,10 @@ static void setcolor(GtkWidget *widget, GtkColorSelectionDialog *d)
 
 	if ((*(gint *)g_object_get_data(G_OBJECT(widget), "type")) == 0) {
 		/* Color for convergent set: */
-		gtk_color_selection_get_current_color(GTK_COLOR_SELECTION(d->colorsel), &w->convcol);
+		gtk_color_selection_get_current_rgba(GTK_COLOR_SELECTION(gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(d))), &w->convcol);
 	}  else {
 		/* Color for divergent set: */
-		gtk_color_selection_get_current_color(GTK_COLOR_SELECTION(d->colorsel), &w->divcol);
+		gtk_color_selection_get_current_rgba(GTK_COLOR_SELECTION(gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(d))), &w->divcol);
 	}
 	gtk_widget_destroy(GTK_WIDGET(d));
 	if (w->succ_render) {
@@ -482,24 +488,30 @@ static void setcolor(GtkWidget *widget, GtkColorSelectionDialog *d)
 static void change_color(gint type, const gchar* title, struct winctl *w)
 {
 	GtkWidget *colordialog;
-	GtkWidget *btnok;
+	GtkWidget *ok_button, *cancel_button;
 	GtkColorSelection *colorsel;
+
 	gint *t = (gint *)g_malloc(sizeof(gint));
 	*t = type;
 	colordialog = gtk_color_selection_dialog_new(title);
-	btnok = GTK_COLOR_SELECTION_DIALOG(colordialog)->ok_button;
-	g_object_set_data_full(G_OBJECT(btnok), "type", t, g_free);
-	g_object_set_data(G_OBJECT(btnok), "main_window", w);
-	g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(colordialog)->ok_button), "clicked", G_CALLBACK(setcolor), colordialog);
-	g_signal_connect_swapped(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(colordialog)->cancel_button), "clicked", G_CALLBACK(gtk_widget_destroy), colordialog);
-	g_signal_connect_swapped(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(colordialog)), "destroy", G_CALLBACK(gtk_widget_destroy), colordialog);
-	colorsel = GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(colordialog)->colorsel);
+	g_object_get(G_OBJECT(colordialog), "ok-button", &ok_button, "cancel-button", &cancel_button, "color-selection", &colorsel, NULL);
+
+	g_object_set_data_full(G_OBJECT(ok_button), "type", t, g_free);
+	g_object_set_data(G_OBJECT(ok_button), "main_window", w);
+	g_signal_connect(G_OBJECT(ok_button), "clicked", G_CALLBACK(setcolor), colordialog);
+	g_signal_connect_swapped(G_OBJECT(cancel_button), "clicked", G_CALLBACK(gtk_widget_destroy), colordialog);
+	g_signal_connect_swapped(G_OBJECT(colordialog), "destroy", G_CALLBACK(gtk_widget_destroy), colordialog);
+
 	if (type == 0)
-		gtk_color_selection_set_current_color(colorsel, &w->convcol);
+		gtk_color_selection_set_current_rgba(colorsel, &w->convcol);
 	else
-		gtk_color_selection_set_current_color(colorsel, &w->divcol);
+		gtk_color_selection_set_current_rgba(colorsel, &w->divcol);
+
 	gtk_window_set_modal(GTK_WINDOW(colordialog), TRUE);
 	gtk_widget_show(colordialog);
+	g_object_unref(ok_button);
+	g_object_unref(cancel_button);
+	g_object_unref(colorsel);
 }
 
 static void change_convcol(GtkWidget *widget, struct winctl *w)
@@ -524,7 +536,7 @@ static void store_drawing(GtkWidget *widget, struct winctl *w)
 
 static void open_xmlfile(GtkWidget *widget, struct winctl *w)
 {
-	GtkWidget *filechooser = gtk_file_chooser_dialog_new(LSAVECAP, GTK_WINDOW(w->win), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_OK, GTK_RESPONSE_OK,
+	GtkWidget *filechooser = gtk_file_chooser_dialog_new(LOPENCAP, GTK_WINDOW(w->win), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_OK, GTK_RESPONSE_OK,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
 	GtkFileFilter *filefilter = gtk_file_filter_new();
 	gtk_file_filter_set_name(GTK_FILE_FILTER(filefilter), LFILTERXMLNAME);
