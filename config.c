@@ -457,7 +457,7 @@ static void xmlcolor(xmlNode *node, struct winctl *w, enum configtype type)
 	attr = (char *)xmlGetProp(node, BAD_CAST XML_COLOR_ALGO);
 	if (attr != NULL) {
 		if (type == LOAD_CONFIG || type == LOAD_RENDER_CONFIG)
-			w->it_param.color_func_index = CLAMP(strtol(attr, NULL, 10), 0, getColorFunc_count());
+			w->it_param.color_func_index = CLAMP(strtol(attr, NULL, 10), 0, getColorFunc_count() - 1);
 		else if (type == STORE_CONFIG)
 			xmlSetProp(node, BAD_CAST XML_COLOR_ALGO, BAD_CAST ltostr(w->it_param.color_func_index, c));
 	}
