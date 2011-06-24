@@ -18,6 +18,8 @@ static void store_drawing(GtkWidget *widget, struct winctl *w);
 static void open_xmlfile(GtkWidget *widget, struct winctl *w);
 static void save_xmlfile(GtkWidget *widget, struct winctl *w);
 static void about(GtkWidget *widget, struct winctl *w);
+static gboolean tooltip_color(GtkWidget *widget, gint x, gint y, gboolean keyboard_mode, GtkTooltip *tooltip, struct winctl *w);
+static gboolean key_stroke(GtkWidget *widget, GdkEventKey *event, struct winctl *w);
 
 GtkWidget *createcplxplane(GtkWidget *txtcplx[4])
 {
@@ -59,6 +61,7 @@ struct winctl *buildinterface(void)
 	w->win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(w->win), LWCAP);
 	rootbox = gtk_vbox_new(FALSE, 0);
+	g_signal_connect(G_OBJECT(w->win), "key_press_event", G_CALLBACK(key_stroke), w);
 
 	/* menu: */
 	accel_group = gtk_accel_group_new();
@@ -135,7 +138,11 @@ struct winctl *buildinterface(void)
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(pmenuit) , convdiv_menu(w));
 	/* set color algo: */
 	menuit  = gtk_menu_item_new_with_mnemonic(LCOLORALGO);
+	g_object_set(G_OBJECT(menuit), "has-tooltip", TRUE, NULL);
+	g_signal_connect(G_OBJECT(menuit), "query-tooltip", G_CALLBACK(tooltip_color), w);
 	pmenuit = gtk_menu_item_new_with_mnemonic(LCOLORALGO);
+	g_object_set(G_OBJECT(pmenuit), "has-tooltip", TRUE, NULL);
+	g_signal_connect(G_OBJECT(pmenuit), "query-tooltip", G_CALLBACK(tooltip_color), w);
 	submenu  = gtk_menu_new();
 	psubmenu = gtk_menu_new();
 	radio_group = pradio_group = NULL;
@@ -151,8 +158,12 @@ struct winctl *buildinterface(void)
 		g_object_set_data     (G_OBJECT(psmenuit)      , "index", index);
 		g_object_set_data(G_OBJECT(w->mcolalgo[i]), "sync_obj", psmenuit);
 		g_object_set_data(G_OBJECT(psmenuit)      , "sync_obj", w->mcolalgo[i]);
+		g_object_set(G_OBJECT(w->mcolalgo[i]), "has-tooltip", TRUE, NULL);
+		g_object_set(G_OBJECT(psmenuit), "has-tooltip", TRUE, NULL);
 		g_signal_connect(G_OBJECT(w->mcolalgo[i]), "toggled", G_CALLBACK(change_color_algo), w);
+		g_signal_connect(G_OBJECT(w->mcolalgo[i]), "query-tooltip", G_CALLBACK(tooltip_color), w);
 		g_signal_connect(G_OBJECT(psmenuit)      , "toggled", G_CALLBACK(change_color_algo), w);
+		g_signal_connect(G_OBJECT(psmenuit)      , "query-tooltip", G_CALLBACK(tooltip_color), w);
 		gtk_menu_shell_append(GTK_MENU_SHELL(submenu) , w->mcolalgo[i]);
 		gtk_menu_shell_append(GTK_MENU_SHELL(psubmenu), psmenuit);
 	}
@@ -612,4 +623,28 @@ static void about(GtkWidget *widget, struct winctl *w)
 	    "version", LVERSION,
 	    "program-name", LWCAP,
 	    NULL);
+}
+
+static gboolean key_stroke(GtkWidget *widget, GdkEventKey *event, struct winctl *w)
+{
+	if (event->keyval == GDK_KEY_i) {
+		zoom(w, ZOOM_IN);
+		return TRUE;
+	} else if (event->keyval == GDK_KEY_o) {
+		zoom(w, ZOOM_OUT);
+		return TRUE;
+	} else if (event->keyval == GDK_KEY_n) {
+		w->it_param.color_func_index = (w->it_param.color_func_index + 1) % getColorFunc_count();
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(w->mcolalgo[w->it_param.color_func_index]), TRUE);
+	} else if (event->keyval == GDK_KEY_p) {
+		w->it_param.color_func_index = (getColorFunc_count() + w->it_param.color_func_index - 1) % getColorFunc_count();
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(w->mcolalgo[w->it_param.color_func_index]), TRUE);
+	}
+	return FALSE;
+}
+
+static gboolean tooltip_color(GtkWidget *widget, gint x, gint y, gboolean keyboard_mode, GtkTooltip *tooltip, struct winctl *w)
+{
+	gtk_tooltip_set_text(tooltip, _("Key-Stroke: p (previous) / n (next)"));
+	return TRUE;
 }

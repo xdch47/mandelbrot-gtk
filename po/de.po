@@ -34,6 +34,9 @@ msgstr "Douady Kanichen"
 msgid "Misiurewicz-Point"
 msgstr "misiurewicz-Punkt"
 
+msgid "Key-Stroke: p (previous) / n (next)"
+msgstr "Tastenanschlag: p (voheriger) / n (nächster)"
+
 msgid "Mandelbrot- / Juliaset"
 msgstr "Mandelbrot- / Juliamenge"
 
