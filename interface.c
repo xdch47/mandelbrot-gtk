@@ -23,7 +23,7 @@ static gboolean button_release_event(GtkWidget *widget, GdkEventButton *event, s
 static void render_thread_done(gboolean succ, struct winctl *w);
 static void redraw_idle(struct winctl *w);
 static gboolean start_calc(struct winctl *w);
-static void redraw_drawing(struct winctl *w, gint x, gint y);
+static void redraw_drawing(struct winctl *w);
 static void clearpixbuf(GdkPixbuf *pixbuf);
 
 void run_interface(gchar *file_name)
@@ -180,8 +180,6 @@ static gboolean start_calc(struct winctl *w)
 	cairo_paint(cr);
 	cairo_destroy(cr);
 
-	//gdk_draw_pixbuf(gtk_widget_get_window(w->drawing), NULL, w->pixbufcalc, 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
-
 	gtk_button_set_label(GTK_BUTTON(w->btncalc), LSTOP);
 
 	w->timer = g_timer_new();
@@ -231,8 +229,6 @@ static void render_thread_done(gboolean succ, struct winctl *w)
 		gtk_widget_get_allocation(w->drawing, &drawing_alloc);
 		w->pixbufshow = gdk_pixbuf_scale_simple(w->pixbufcalc, drawing_alloc.width, drawing_alloc.height, INTERPOLATION);
 
-		//gdk_draw_pixbuf(gtk_widget_get_window(w->drawing), NULL, w->pixbufshow, 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
-
 		cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(w->drawing));
 		gdk_cairo_set_source_pixbuf(cr, w->pixbufshow, 0, 0);
 		cairo_paint(cr);
@@ -240,8 +236,6 @@ static void render_thread_done(gboolean succ, struct winctl *w)
 
 		gtk_button_set_label(GTK_BUTTON(w->btncalc), LCALC);
 		gtk_window_set_resizable(GTK_WINDOW(w->win), TRUE);
-		//gtk_widget_set_size_request(w->win, -1, -1);
-		///gdk_window_invalidate_rect(gtk_widget_get_window(w->drawing), NULL, FALSE);
 		if (w->redraw) {
 			redraw_pixbuf(w);
 			w->redraw = FALSE;
@@ -440,6 +434,12 @@ static gboolean key_press_event(GtkWidget *widget, GdkEventKey *event, struct wi
 	} else if (event->keyval == GDK_KEY_o) {
 		zoom(w, ZOOM_OUT);
 		return TRUE;
+	} else if (event->keyval == GDK_KEY_n) {
+		w->it_param.color_func_index = (w->it_param.color_func_index + 1) % getColorFunc_count();
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(w->mcolalgo[w->it_param.color_func_index]), TRUE);
+	} else if (event->keyval == GDK_KEY_p) {
+		w->it_param.color_func_index = (getColorFunc_count() + w->it_param.color_func_index - 1) % getColorFunc_count();
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(w->mcolalgo[w->it_param.color_func_index]), TRUE);
 	}
 	return FALSE;
 }
@@ -525,12 +525,11 @@ static gboolean motion_notify_event(GtkWidget *widget, GdkEventMotion *event, st
 		w->focus_area.y = y;
 		w->focus_area.width = width;
 		w->focus_area.height = height;
-		redraw_drawing(w, 0, 0);
+		redraw_drawing(w);
 
 		cr =  gdk_cairo_create(gtk_widget_get_window(widget));
 		gtk_render_focus(gtk_widget_get_style_context(widget), cr, x, y, width, height);
 
-		//gtk_paint_focus(gtk_widget_get_style(widget), gdk_cairo_create(gtk_widget_get_window(widget)), GTK_STATE_NORMAL, widget, NULL, x, y, width, height);
 		cairo_destroy(cr);
 	}
 
@@ -557,7 +556,6 @@ static gboolean button_release_event(GtkWidget *widget, GdkEventButton *event, s
 		gdk_cairo_set_source_pixbuf(cr, w->pixbufshow, 0, 0);
 		cairo_paint(cr);
 		cairo_destroy(cr);
-		//gdk_draw_pixbuf(gtk_widget_get_window(widget), NULL, w->pixbufshow, 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_NORMAL, 0, 0);
 	}
 
 	if (!w->focus_area.width) {
@@ -602,14 +600,14 @@ static void redraw_idle(struct winctl *w)
 		g_object_unref(w->pixbufshow);
 		w->pixbufshow = gdk_pixbuf_scale_simple(w->pixbufcalc, drawing_alloc.width, drawing_alloc.height, INTERPOLATION);
 	}
-	redraw_drawing(w, 0, 0);
+	redraw_drawing(w);
 	gdk_threads_leave();
 }
 
-static void redraw_drawing(struct winctl *w, gint x, gint y)
+static void redraw_drawing(struct winctl *w)
 {
 	cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(w->drawing));
-	gdk_cairo_set_source_pixbuf(cr, w->pixbufshow, x, y);
+	gdk_cairo_set_source_pixbuf(cr, w->pixbufshow, 0, 0);
 	cairo_paint(cr);
 	cairo_destroy(cr);
 }
@@ -689,5 +687,5 @@ void redraw_pixbuf(struct winctl *w)
 	}
 
 	configure_event(NULL, NULL, w);
-	redraw_drawing(w, 0, 0);
+	redraw_drawing(w);
 }
