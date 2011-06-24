@@ -19,7 +19,6 @@ gpointer IT_FUNC_NAME(struct iteration_data *p)
 	gint id;
 	const struct iterate_param *param;
 	gboolean *retval;
-	gint n_channels, rowstride;
 	IterationInfo *iterinfo;
 
 	IT_VAR
@@ -37,8 +36,6 @@ gpointer IT_FUNC_NAME(struct iteration_data *p)
 	yo = param->yoffset;
 	xo = param->xoffset;
 	itermax = param->itermax;
-	n_channels = param->n_channels;
-	rowstride = param->rowstride;
 	IT_INIT
 
 	itim = p->b_im;

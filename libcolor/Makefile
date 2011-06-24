@@ -65,7 +65,7 @@ endif
 
 # ------------  additional pkg-config includes and libraries  ------------------
 # gtk-libs
-PKG_CONF_ARG    = gtk+-2.0 gthread-2.0
+PKG_CONF_ARG    = gtk+-3.0
 
 # ------------  additional include directories  --------------------------------
 INC_DIR  =

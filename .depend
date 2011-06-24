@@ -1,11 +1,11 @@
-./release/main.o: main.c defs.h
-./release/defs.o: defs.c defs.h render.h libcolor/color.h
-./release/interface.o: interface.c interface.h defs.h render.h libcolor/color.h
-./release/layout.o: layout.c interface.h defs.h render.h libcolor/color.h
-./release/config.o: config.c interface.h defs.h render.h libcolor/color.h
-./release/render.o: render.c render.h libcolor/color.h defs.h
-./release/iterate.o: iterate.c render.h libcolor/color.h iterate_template.h
-./release/storedrawing.o: storedrawing.c interface.h defs.h render.h \
-./release/ libcolor/color.h
-./release/validate.o: validate.c interface.h defs.h render.h libcolor/color.h
-./release/pref.o: pref.c interface.h defs.h render.h libcolor/color.h
+./debug/main.o: main.c defs.h
+./debug/defs.o: defs.c defs.h render.h libcolor/color.h
+./debug/interface.o: interface.c interface.h defs.h render.h libcolor/color.h
+./debug/layout.o: layout.c interface.h defs.h render.h libcolor/color.h
+./debug/config.o: config.c interface.h defs.h render.h libcolor/color.h
+./debug/render.o: render.c render.h libcolor/color.h defs.h
+./debug/iterate.o: iterate.c render.h libcolor/color.h iterate_template.h
+./debug/storedrawing.o: storedrawing.c interface.h defs.h render.h \
+./debug/ libcolor/color.h
+./debug/validate.o: validate.c interface.h defs.h render.h libcolor/color.h
+./debug/pref.o: pref.c interface.h defs.h render.h libcolor/color.h

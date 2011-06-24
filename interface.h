@@ -3,6 +3,7 @@
 #define __INTERFACE_H__
 
 #include <gtk/gtk.h>
+#include <gdk/gdk.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <glib/gi18n.h>
 #include "defs.h"
@@ -39,7 +40,7 @@ struct winctl {
 	/* zooming: */
 	gint focus_x;
 	gint focus_y;
-	GdkColor focus_color;
+	GdkRGBA focus_color;
 	GdkRectangle focus_area;
 	gdouble zoomfactor;
 	gboolean zoomprop;
@@ -53,8 +54,8 @@ struct winctl {
 	gboolean succ_render;
 	gboolean redraw;
 	/* color: */
-	GdkColor convcol;
-	GdkColor divcol;
+	GdkRGBA convcol;
+	GdkRGBA divcol;
 	/* Timer:  */
 	GTimer *timer;
 };
