@@ -3,6 +3,7 @@
 #define __INTERFACE_H__
 
 #include <gtk/gtk.h>
+#include <gdk/gdk.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <glib/gi18n.h>
 #include "defs.h"
@@ -59,6 +60,8 @@ struct winctl {
 	GTimer *timer;
 };
 
+enum zoom_mode { ZOOM_IN, ZOOM_OUT };
+
 /* implemented by layout.c: */
 GtkWidget *createcplxplane(GtkWidget *txtcplx[4]);
 struct winctl *buildinterface(void);
@@ -72,6 +75,7 @@ void calc(GtkWidget *widget, struct winctl *w);
 void reset(GtkWidget *widget, struct winctl *w);
 void update_pixbuf(gint x, gint y, const IterationInfo *iterinfo,  const struct iterate_param *it_param);
 void redraw_pixbuf(struct winctl *w);
+void zoom(struct winctl *w, enum zoom_mode mode);
 
 /* implemented by storedrawing.c */
 void store_drawing_show(struct winctl *w);

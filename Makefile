@@ -15,7 +15,7 @@
 include config.mk
 
 # DEBUG can be set to YES to include debugging info, or NO otherwise
-DEBUG           := NO
+DEBUG           := YES
 
 # ------------  run executable out of this Makefile  (yes/no)  -----------------
 START           := NO
@@ -38,9 +38,11 @@ CC               := gcc
 #AR              := xiar
 
 # ------------  compiler flags  ------------------------------------------------
-DEBUG_CFLAGS    := -Wall -O0 -g
+CFLAGS_G_DISABLE_SINGLE_INCLUDES = -DG_DISABLE_SINGLE_INCLUDES -DGDK_PIXBUF_DISABLE_SINGLE_INCLUDES -DGTK_DISABLE_SINGLE_INCLUDES
+CFLAGS_G_DISABLE_DEPRECATED = -DG_DISABLE_DEPRECATED -DGDK_PIXBUF_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED
+DEBUG_CFLAGS    := -Wall -O0 -g ${CFLAGS_G_DISABLE_SINGLE_INCLUDES} ${CFLAGS_G_DISABLE_DEPRECATED}
 RELEASE_CFLAGS  := -O2 -pipe -mtune=native -march=native \
-				   -DNDEBUG -DPACKAGE="\"$(EXECUTABLE)\"" -DMO_DIR="\"$(MO_DIR)\""
+				   -DNDEBUG -DPACKAGE="\"$(EXECUTABLE)\"" -DMO_DIR="\"$(MO_DIR)\"" \
 #RELEASE_CFLAGS  := -w0 -ipo -O3 -mtune=core2 -xSSE4.1 -axSSE4.1 -unroll-agressiv -static-intel \
 #				    -DNDEBUG -DPACKAGE="\"$(EXECUTABLE)\"" -DMO_DIR="\"$(MO_DIR)\""
 
@@ -67,7 +69,7 @@ STATIC=-Wl,-Bstatic
 endif
 
 # ------------  additional pkg-config includes and libraries  ------------------
-PKG_CONF_ARG    = gtk+-2.0 gthread-2.0 libxml-2.0
+PKG_CONF_ARG    = gtk+-2.0 libxml-2.0
 
 # ------------  additional include directories  --------------------------------
 INC_DIR  =

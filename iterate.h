@@ -21,8 +21,6 @@ struct threaddata {
 	gint itermax;
 	double degree;
 	guchar *pixels;
-	gint n_channels;
-	gint rowstride;
 	guchar *convdivcol;
 	void (*setcolor)(guchar *, gint , gint , gint , gint , gint, gint,  guchar *);
 	GMutex *state_mutex;

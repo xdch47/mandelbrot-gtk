@@ -10,7 +10,7 @@
 pkgname=mandelbrot-gtk-git
 pkgver=20101104
 pkgrel=1
-pkgdesc="A multithreaded gtk+ application for rendering the mandelbrot and julia set."
+pkgdesc="A multithreaded gtk+ application for rendering the mandelbrot and julia set"
 arch=('i686' 'x86_64')
 url="http://mandelbrot-gtk.sourceforge.net"
 license=('GPL3')
@@ -27,7 +27,7 @@ noextract=()
 md5sums=() #generate with 'makepkg -g'
 
 _gitroot="git://mandelbrot-gtk.git.sourceforge.net/gitroot/mandelbrot-gtk/mandelbrot-gtk"
-_gitname="master"
+_gitname="gtk2"
 
 build() {
   cd "$srcdir"

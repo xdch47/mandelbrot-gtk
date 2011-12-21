@@ -245,9 +245,9 @@ void store_drawing_show(struct winctl *w)
 	/* combo-coloralgo: */
 	lbl = gtk_label_new_with_mnemonic(LCOLORALGO);
 	gtk_misc_set_alignment(GTK_MISC(lbl), 0.0, 1.0);
-	s->cbocolor = gtk_combo_box_new_text();
+	s->cbocolor = gtk_combo_box_text_new();
 	for (i = 0; i < getColorFunc_count(); ++i) {
-		gtk_combo_box_append_text(GTK_COMBO_BOX(s->cbocolor), getColorFunc_name(i));
+		gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(s->cbocolor), getColorFunc_name(i));
 	}
 	gtk_label_set_mnemonic_widget(GTK_LABEL(lbl), s->cbocolor);
 	gtk_combo_box_set_active(GTK_COMBO_BOX(s->cbocolor), w->it_param.color_func_index);
@@ -418,8 +418,8 @@ static void btnsave_clicked(GtkWidget *widget, struct savectl *s)
 		s->it_param.j[0] = s->w->it_param.j[0];
 		s->it_param.j[1] = s->w->it_param.j[1];
 		s->it_param.pixels = gdk_pixbuf_get_pixels(s->pixbuf);
-		s->it_param.n_channels = gdk_pixbuf_get_n_channels (s->pixbuf);
-		s->it_param.rowstride = gdk_pixbuf_get_rowstride (s->pixbuf);
+		s->it_param.rowstride = gdk_pixbuf_get_rowstride(s->pixbuf);
+		s->it_param.n_channels = gdk_pixbuf_get_n_channels(s->pixbuf);
 		s->it_param.itermap = (IterationInfo *)g_malloc(sizeof(IterationInfo) * width * height);
 
 		s->it_param.color[0] = (guchar)(s->w->convcol.red >> 8);

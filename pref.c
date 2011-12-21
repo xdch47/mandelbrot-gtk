@@ -202,6 +202,7 @@ static void btnok_clicked(GtkWidget *widget, struct prefctl *p)
 	gint jitermax;
 	gint threads_count;
 	gint i;
+
 	if (!validate_cplx(p->txtcplx, cplx, p->win)) {
 		return;
 	}

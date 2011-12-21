@@ -2,6 +2,7 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 #include <locale.h>
+#include <stdlib.h>
 #include "defs.h"
 
 #ifdef _WIN32
@@ -36,6 +37,6 @@ __ENTRYPOINT__
 	gtk_main();
 	gdk_threads_leave();
 
-	return 0;
+	exit(EXIT_SUCCESS);
 }
 

@@ -1,9 +1,10 @@
 
-#include <glib/gprintf.h>
-#include <gdk/gdkkeysyms.h>
 #include <stdlib.h>
+#include <gdk/gdkkeysyms.h>
+#include <glib/gprintf.h>
 #include "interface.h"
 #include "libcolor/color.h"
+
 
 static GtkWidget *convdiv_menu(struct winctl *w);
 static void chkj_toggled(GtkWidget *widget, struct winctl *w);
@@ -18,6 +19,8 @@ static void store_drawing(GtkWidget *widget, struct winctl *w);
 static void open_xmlfile(GtkWidget *widget, struct winctl *w);
 static void save_xmlfile(GtkWidget *widget, struct winctl *w);
 static void about(GtkWidget *widget, struct winctl *w);
+static gboolean tooltip_color(GtkWidget *widget, gint x, gint y, gboolean keyboard_mode, GtkTooltip *tooltip, struct winctl *w);
+static gboolean key_stroke(GtkWidget *widget, GdkEventKey *event, struct winctl *w);
 
 GtkWidget *createcplxplane(GtkWidget *txtcplx[4])
 {
@@ -59,6 +62,7 @@ struct winctl *buildinterface(void)
 	w->win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(w->win), LWCAP);
 	rootbox = gtk_vbox_new(FALSE, 0);
+	g_signal_connect(G_OBJECT(w->win), "key_press_event", G_CALLBACK(key_stroke), w);
 
 	/* menu: */
 	accel_group = gtk_accel_group_new();
@@ -135,7 +139,11 @@ struct winctl *buildinterface(void)
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(pmenuit) , convdiv_menu(w));
 	/* set color algo: */
 	menuit  = gtk_menu_item_new_with_mnemonic(LCOLORALGO);
+	g_object_set(G_OBJECT(menuit), "has-tooltip", TRUE, NULL);
+	g_signal_connect(G_OBJECT(menuit), "query-tooltip", G_CALLBACK(tooltip_color), w);
 	pmenuit = gtk_menu_item_new_with_mnemonic(LCOLORALGO);
+	g_object_set(G_OBJECT(pmenuit), "has-tooltip", TRUE, NULL);
+	g_signal_connect(G_OBJECT(pmenuit), "query-tooltip", G_CALLBACK(tooltip_color), w);
 	submenu  = gtk_menu_new();
 	psubmenu = gtk_menu_new();
 	radio_group = pradio_group = NULL;
@@ -151,8 +159,12 @@ struct winctl *buildinterface(void)
 		g_object_set_data     (G_OBJECT(psmenuit)      , "index", index);
 		g_object_set_data(G_OBJECT(w->mcolalgo[i]), "sync_obj", psmenuit);
 		g_object_set_data(G_OBJECT(psmenuit)      , "sync_obj", w->mcolalgo[i]);
+		g_object_set(G_OBJECT(w->mcolalgo[i]), "has-tooltip", TRUE, NULL);
+		g_object_set(G_OBJECT(psmenuit), "has-tooltip", TRUE, NULL);
 		g_signal_connect(G_OBJECT(w->mcolalgo[i]), "toggled", G_CALLBACK(change_color_algo), w);
+		g_signal_connect(G_OBJECT(w->mcolalgo[i]), "query-tooltip", G_CALLBACK(tooltip_color), w);
 		g_signal_connect(G_OBJECT(psmenuit)      , "toggled", G_CALLBACK(change_color_algo), w);
+		g_signal_connect(G_OBJECT(psmenuit)      , "query-tooltip", G_CALLBACK(tooltip_color), w);
 		gtk_menu_shell_append(GTK_MENU_SHELL(submenu) , w->mcolalgo[i]);
 		gtk_menu_shell_append(GTK_MENU_SHELL(psubmenu), psmenuit);
 	}
@@ -370,10 +382,13 @@ void setcplxplane(GtkWidget *txtcplx[4], const gdouble value[4], gint width, gin
 void restoredefaults(struct winctl *w)
 {
 	gint tmp = atoi(gtk_entry_get_text(GTK_ENTRY(w->txtdegree)));
+	GtkAllocation drawing_alloc;
+
+	gtk_widget_get_allocation(w->drawing, &drawing_alloc);
 	if ((tmp == 2) && !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w->chkjulia))) {
-		setcplxplane(w->txtcplx, w->default_mcplxplane, w->drawing->allocation.width, w->drawing->allocation.height);
+		setcplxplane(w->txtcplx, w->default_mcplxplane, drawing_alloc.width, drawing_alloc.height);
 	} else {
-		setcplxplane(w->txtcplx, w->default_cplxplane, w->drawing->allocation.width, w->drawing->allocation.height);
+		setcplxplane(w->txtcplx, w->default_cplxplane, drawing_alloc.width, drawing_alloc.height);
 	}
 }
 
@@ -419,7 +434,10 @@ static void toggle_zoomprop(GtkWidget *widget, struct winctl *w)
 
 static void menu_setcplxplane(GtkWidget *widget, struct winctl *w)
 {
-	setcplxplane(w->txtcplx, w->it_param.cplxplane, w->drawing->allocation.width, w->drawing->allocation.height);
+	GtkAllocation drawing_alloc;
+
+	gtk_widget_get_allocation(w->drawing, &drawing_alloc);
+	setcplxplane(w->txtcplx, w->it_param.cplxplane, drawing_alloc.width, drawing_alloc.height);
 }
 
 void change_color_algo(GtkWidget *widget, struct winctl *w)
@@ -466,10 +484,10 @@ static void setcolor(GtkWidget *widget, GtkColorSelectionDialog *d)
 
 	if ((*(gint *)g_object_get_data(G_OBJECT(widget), "type")) == 0) {
 		/* Color for convergent set: */
-		gtk_color_selection_get_current_color(GTK_COLOR_SELECTION(d->colorsel), &w->convcol);
+		gtk_color_selection_get_current_color(GTK_COLOR_SELECTION(gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(d))), &w->convcol);
 	}  else {
 		/* Color for divergent set: */
-		gtk_color_selection_get_current_color(GTK_COLOR_SELECTION(d->colorsel), &w->divcol);
+		gtk_color_selection_get_current_color(GTK_COLOR_SELECTION(gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(d))), &w->divcol);
 	}
 	gtk_widget_destroy(GTK_WIDGET(d));
 	if (w->succ_render) {
@@ -482,24 +500,30 @@ static void setcolor(GtkWidget *widget, GtkColorSelectionDialog *d)
 static void change_color(gint type, const gchar* title, struct winctl *w)
 {
 	GtkWidget *colordialog;
-	GtkWidget *btnok;
+	GtkWidget *ok_button, *cancel_button;
 	GtkColorSelection *colorsel;
+
 	gint *t = (gint *)g_malloc(sizeof(gint));
 	*t = type;
 	colordialog = gtk_color_selection_dialog_new(title);
-	btnok = GTK_COLOR_SELECTION_DIALOG(colordialog)->ok_button;
-	g_object_set_data_full(G_OBJECT(btnok), "type", t, g_free);
-	g_object_set_data(G_OBJECT(btnok), "main_window", w);
-	g_signal_connect(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(colordialog)->ok_button), "clicked", G_CALLBACK(setcolor), colordialog);
-	g_signal_connect_swapped(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(colordialog)->cancel_button), "clicked", G_CALLBACK(gtk_widget_destroy), colordialog);
-	g_signal_connect_swapped(G_OBJECT(GTK_COLOR_SELECTION_DIALOG(colordialog)), "destroy", G_CALLBACK(gtk_widget_destroy), colordialog);
-	colorsel = GTK_COLOR_SELECTION(GTK_COLOR_SELECTION_DIALOG(colordialog)->colorsel);
+	g_object_get(G_OBJECT(colordialog), "ok-button", &ok_button, "cancel-button", &cancel_button, "color-selection", &colorsel, NULL);
+
+	g_object_set_data_full(G_OBJECT(ok_button), "type", t, g_free);
+	g_object_set_data(G_OBJECT(ok_button), "main_window", w);
+	g_signal_connect(G_OBJECT(ok_button), "clicked", G_CALLBACK(setcolor), colordialog);
+	g_signal_connect_swapped(G_OBJECT(cancel_button), "clicked", G_CALLBACK(gtk_widget_destroy), colordialog);
+	g_signal_connect_swapped(G_OBJECT(colordialog), "destroy", G_CALLBACK(gtk_widget_destroy), colordialog);
+
 	if (type == 0)
 		gtk_color_selection_set_current_color(colorsel, &w->convcol);
 	else
 		gtk_color_selection_set_current_color(colorsel, &w->divcol);
+
 	gtk_window_set_modal(GTK_WINDOW(colordialog), TRUE);
 	gtk_widget_show(colordialog);
+	g_object_unref(ok_button);
+	g_object_unref(cancel_button);
+	g_object_unref(colorsel);
 }
 
 static void change_convcol(GtkWidget *widget, struct winctl *w)
@@ -524,7 +548,7 @@ static void store_drawing(GtkWidget *widget, struct winctl *w)
 
 static void open_xmlfile(GtkWidget *widget, struct winctl *w)
 {
-	GtkWidget *filechooser = gtk_file_chooser_dialog_new(LSAVECAP, GTK_WINDOW(w->win), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_OK, GTK_RESPONSE_OK,
+	GtkWidget *filechooser = gtk_file_chooser_dialog_new(LOPENCAP, GTK_WINDOW(w->win), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_OK, GTK_RESPONSE_OK,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
 	GtkFileFilter *filefilter = gtk_file_filter_new();
 	gtk_file_filter_set_name(GTK_FILE_FILTER(filefilter), LFILTERXMLNAME);
@@ -600,4 +624,28 @@ static void about(GtkWidget *widget, struct winctl *w)
 	    "version", LVERSION,
 	    "program-name", LWCAP,
 	    NULL);
+}
+
+static gboolean key_stroke(GtkWidget *widget, GdkEventKey *event, struct winctl *w)
+{
+	if (event->keyval == GDK_i) {
+		zoom(w, ZOOM_IN);
+		return TRUE;
+	} else if (event->keyval == GDK_o) {
+		zoom(w, ZOOM_OUT);
+		return TRUE;
+	} else if (event->keyval == GDK_n) {
+		w->it_param.color_func_index = (w->it_param.color_func_index + 1) % getColorFunc_count();
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(w->mcolalgo[w->it_param.color_func_index]), TRUE);
+	} else if (event->keyval == GDK_p) {
+		w->it_param.color_func_index = (getColorFunc_count() + w->it_param.color_func_index - 1) % getColorFunc_count();
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(w->mcolalgo[w->it_param.color_func_index]), TRUE);
+	}
+	return FALSE;
+}
+
+static gboolean tooltip_color(GtkWidget *widget, gint x, gint y, gboolean keyboard_mode, GtkTooltip *tooltip, struct winctl *w)
+{
+	gtk_tooltip_set_text(tooltip, _("Key-Stroke: p (previous) / n (next)"));
+	return TRUE;
 }

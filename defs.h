@@ -70,6 +70,7 @@ extern const gdouble CPLXPLANE[4];
 extern const gdouble MCPLXPLANE[4];
 
 /* save dialog: */
+#define LOPENCAP _("Open..")
 #define LSAVECAP _("Save..")
 #define LSAVEPATH _("Save as..")
 #define LFILECHOOSER _("Save..")
@@ -98,7 +99,7 @@ extern const gdouble MCPLXPLANE[4];
 #define LPREFSTDCPLX _("Complex Plane (Std)")
 #define LPREFLSTDCPLX _("Complex Plane\n(Reset-Werte)")
 #define LPREFSTDMCPLX _("Complex Plane (Mb)")
-#define LPREFLSTDMCPLX _("Complex Plane of the Mandelbortset: ")
+#define LPREFLSTDMCPLX _("Complex Plane of the Mandelbrotset: ")
 #define LPREFRESET _("_Reset")
 #define LPREFDEFAULT _("_Default Values")
 #define LPREFMISC _("Miscellaneous")

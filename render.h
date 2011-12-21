@@ -26,8 +26,8 @@ struct iterate_param {
 	gint ymax;
 	IterationInfo *itermap;
 	guchar *pixels;
-	gint n_channels;
 	gint rowstride;
+	gint n_channels;
 	gint color_func_index;
 	guchar color[3];
 	ColorFunc colorfunc;
