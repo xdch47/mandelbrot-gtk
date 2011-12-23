@@ -320,6 +320,7 @@ static void get_julia_set(GtkWidget *widget, struct winctl *w)
 
 	c = gdk_cursor_new(GDK_TCROSS);
 	gdk_window_set_cursor(gtk_widget_get_window(w->win), c);
+	gdk_cursor_unref(c);
 	w->get_j = TRUE;
 	if (!w->it_param.type == MANDELBROT_SET) {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(w->chkjulia), FALSE);
@@ -470,6 +471,7 @@ static gboolean motion_notify_event(GtkWidget *widget, GdkEventMotion *event, st
 
 		c = gdk_cursor_new(cursortype[pos]);
 		gdk_window_set_cursor(gtk_widget_get_window(w->win), c);
+		gdk_cursor_unref(c);
 		if (w->zoomprop) {
 			GtkAllocation drawing_alloc;
 
