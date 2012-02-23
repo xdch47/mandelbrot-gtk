@@ -636,9 +636,11 @@ static gboolean key_stroke(GtkWidget *widget, GdkEventKey *event, struct winctl 
 	} else if (event->keyval == GDK_KEY_n) {
 		w->it_param.color_func_index = (w->it_param.color_func_index + 1) % getColorFunc_count();
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(w->mcolalgo[w->it_param.color_func_index]), TRUE);
+		return TRUE;
 	} else if (event->keyval == GDK_KEY_p) {
 		w->it_param.color_func_index = (getColorFunc_count() + w->it_param.color_func_index - 1) % getColorFunc_count();
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(w->mcolalgo[w->it_param.color_func_index]), TRUE);
+		return TRUE;
 	}
 	return FALSE;
 }
