@@ -167,7 +167,7 @@ install:
 		install -d $$LOCALE_DIR; \
 		msgfmt $$POFILE -o $$LOCALE_DIR/$(EXECUTABLE).mo; \
 	done
-	install -D -m644 ./mandelbrot.xml ${DESTDIR}$(DOC_DIR)/$(EXECUTABLE)/mandelbrot.xml
+	#install -D -m644 ./mandelbrot.xml ${DESTDIR}$(DOC_DIR)/$(EXECUTABLE)/mandelbrot.xml
 	install -D -m755 $(RELEASE_DIR)/$(EXECUTABLE) ${DESTDIR}$(PREFIX)/bin/$(EXECUTABLE)
 	+make -C ./libcolor DEBUG=${DEBUG} SHARED=${SHARED} \
 		DESTDIR=${DESTDIR} PREFIX=${PREFIX} RPATH=${RPATH} install
