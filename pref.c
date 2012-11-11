@@ -33,12 +33,12 @@ void preference_show(struct winctl *w)
 	gtk_window_set_title(GTK_WINDOW(p->win), LCPREF);
 	gtk_window_set_resizable(GTK_WINDOW(p->win), FALSE);
 	gtk_container_set_border_width(GTK_CONTAINER(p->win), 10);
-	vbox1 = gtk_vbox_new(FALSE, 4);
+	vbox1 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 
 	notebook = gtk_notebook_new();
 
 	/* page default complex plane: */
-	vbox2 = gtk_vbox_new(FALSE, 3);
+	vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 3);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox2), 10);
 	lbl = gtk_label_new(LPREFLSTDCPLX);
 	gtk_misc_set_alignment(GTK_MISC(lbl), 0.0, 0.0);
@@ -51,7 +51,7 @@ void preference_show(struct winctl *w)
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), vbox2, gtk_label_new(LPREFSTDCPLX));
 
 	/* page mandelbrot complex plane: */
-	vbox2 = gtk_vbox_new(FALSE, 3);
+	vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 3);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox2), 10);
 	lbl = gtk_label_new(LPREFLSTDMCPLX);
 	gtk_misc_set_alignment(GTK_MISC(lbl), 0.0, 0.0);
@@ -64,11 +64,11 @@ void preference_show(struct winctl *w)
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), vbox2, gtk_label_new(LPREFSTDMCPLX));
 
 	/* misc page: */
-	vbox2 = gtk_vbox_new(FALSE, 0);
+	vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox2), 10);
 	/* zoom: */
 	frame = gtk_frame_new(LPREFZOOMFACTOR);
-	hbox1 = gtk_hbox_new(FALSE, 0);
+	hbox1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_container_set_border_width(GTK_CONTAINER(hbox1), 4);
 	lbl = gtk_label_new(LPREFLZOOM);
 	gtk_box_pack_start(GTK_BOX(hbox1), lbl, FALSE, FALSE, 5);
@@ -79,7 +79,7 @@ void preference_show(struct winctl *w)
 
 	/* threads: */
 	frame = gtk_frame_new(LPREFTHREADS);
-	hbox1 = gtk_hbox_new(FALSE, 0);
+	hbox1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_container_set_border_width(GTK_CONTAINER(hbox1), 4);
 	lbl = gtk_label_new(LPREFTHREADSCOUNT);
 	gtk_box_pack_start(GTK_BOX(hbox1), lbl, FALSE, FALSE, 5);
@@ -90,7 +90,7 @@ void preference_show(struct winctl *w)
 
 	/* focus color: */
 	frame = gtk_frame_new(LPREFFOCUSCOLOR);
-	hbox1 = gtk_hbox_new(FALSE, 0);
+	hbox1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_container_set_border_width(GTK_CONTAINER(hbox1), 4);
 	lbl = gtk_label_new(LPREFLFOCUSCOLOR);
 	gtk_box_pack_start(GTK_BOX(hbox1), lbl, FALSE, FALSE, 5);
@@ -101,7 +101,7 @@ void preference_show(struct winctl *w)
 
 	/* get_j itermax: */
 	frame = gtk_frame_new(LPREFITER);
-	vbox3 = gtk_vbox_new(FALSE, 0);
+	vbox3 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox3), 4);
 	lbl = gtk_label_new(LPREFLITER);
 	gtk_misc_set_alignment(GTK_MISC(lbl), 0.0, 0.0);
@@ -114,7 +114,8 @@ void preference_show(struct winctl *w)
 	gtk_box_pack_start(GTK_BOX(vbox1), notebook, FALSE, FALSE, 0);
 
 	align = gtk_alignment_new(1.0, 0.0, 0.0, 0.0);
-	hbox1 = gtk_hbox_new(TRUE, 5);
+	hbox1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+	gtk_box_set_homogeneous(GTK_BOX(hbox1), TRUE);
 	btn1 = gtk_button_new_with_mnemonic(LPREFOK);
 	gtk_box_pack_start(GTK_BOX(hbox1), btn1, FALSE, TRUE, 0);
 	g_signal_connect(G_OBJECT(btn1), "clicked", G_CALLBACK(btnok_clicked), p);
@@ -181,7 +182,8 @@ static GtkWidget *createbtn(GtkWidget **btn1, GtkWidget **btn2)
 {
 	GtkWidget *align, *hbox;
 	align = gtk_alignment_new(1.0, 0.0, 0.0, 0.0);
-	hbox = gtk_hbox_new(TRUE, 5);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+	gtk_box_set_homogeneous(GTK_BOX(hbox), TRUE);
 	*btn1 = gtk_button_new_with_mnemonic(LPREFRESET);
 	*btn2 = gtk_button_new_with_mnemonic(LPREFDEFAULT);
 	gtk_box_pack_start(GTK_BOX(hbox), *btn1, FALSE, TRUE, 0);
@@ -217,7 +219,7 @@ static void btnok_clicked(GtkWidget *widget, struct prefctl *p)
 		p->w->default_cplxplane[i] = cplx[i];
 		p->w->default_mcplxplane[i] = mcplx[i];
 	}
-	gtk_color_button_get_rgba(GTK_COLOR_BUTTON(p->cbtfocus), &p->w->focus_color);
+	gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(p->cbtfocus), &p->w->focus_color);
 	p->w->get_jitermax = jitermax;
 	p->w->zoomfactor = gtk_spin_button_get_value(GTK_SPIN_BUTTON(p->sbtzoom)) / 100.0;
 	p->w->get_jitermax = jitermax;

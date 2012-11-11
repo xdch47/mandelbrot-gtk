@@ -47,13 +47,18 @@ struct iteration_data {
 };
 
 typedef void (*IdleFunc)(gpointer data);
-typedef void (*ThreaddestroyFunc)(gboolean succ, gpointer data);
+struct ThreaddestroyData {
+	gboolean succ;
+	gpointer data;
+};
+
+typedef void (*ThreaddestroyFunc)(struct ThreaddestroyData *data);
 
 struct render_thread {
-	GMutex *control_mutex;
-	GMutex *state_mutex;
-	GMutex *idle_mutex;
-	GCond *resume_cond;
+	GMutex control_mutex;
+	GMutex state_mutex;
+	GMutex idle_mutex;
+	GCond resume_cond;
 	GThread *control_thread;
 	volatile gboolean isalive;
 	volatile enum thread_state state;

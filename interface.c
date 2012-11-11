@@ -18,7 +18,7 @@ static gboolean scroll_event(GtkWidget *widget, GdkEventScroll *event, struct wi
 static gboolean button_press_event(GtkWidget *widget, GdkEventButton *event, struct winctl *w);
 static gboolean motion_notify_event(GtkWidget *widget, GdkEventMotion *event, struct winctl *w);
 static gboolean button_release_event(GtkWidget *widget, GdkEventButton *event, struct winctl *w);
-static void render_thread_done(gboolean succ, struct winctl *w);
+static void render_thread_done(struct ThreaddestroyData *data);
 static void redraw_idle(struct winctl *w);
 static gboolean start_calc(struct winctl *w);
 static void redraw_drawing(struct winctl *w);
@@ -212,14 +212,14 @@ static gboolean start_calc(struct winctl *w)
 	return TRUE;
 }
 
-static void render_thread_done(gboolean succ, struct winctl *w)
+static void render_thread_done(struct ThreaddestroyData *data)
 {
 	gchar buf[50];
 	GtkAllocation drawing_alloc;
+	struct winctl *w = (struct winctl *)data->data;
 
 	g_timer_stop(w->timer);
-	if (succ) {
-		gdk_threads_enter();
+	if (data->succ) {
 		if (w->pixbufshow)
 			g_object_unref(w->pixbufshow);
 		gtk_widget_get_allocation(w->drawing, &drawing_alloc);
@@ -236,11 +236,9 @@ static void render_thread_done(gboolean succ, struct winctl *w)
 			redraw_pixbuf(w);
 			w->redraw = FALSE;
 		}
-		gdk_threads_leave();
 	}
 
-	gdk_threads_enter();
-	w->succ_render = succ;
+	w->succ_render = data->succ;
 	gtk_button_set_label(GTK_BUTTON(w->btncalc), LCALC);
 	if (w->it_param.type == MANDELBROT_SET) {
 		g_snprintf(buf, 50, LCAPM, g_timer_elapsed(w->timer, NULL));
@@ -248,8 +246,8 @@ static void render_thread_done(gboolean succ, struct winctl *w)
 		g_snprintf(buf, 50, LCAPJ, g_timer_elapsed(w->timer, NULL));
 	}
 	gtk_label_set_text(GTK_LABEL(w->lbldraw), buf);
-	gdk_threads_leave();
-	g_timer_destroy(w->timer);
+	//FIXME:
+	//g_timer_destroy(w->timer);
 }
 
 void calc(GtkWidget *widget, struct winctl *w)
@@ -264,7 +262,7 @@ void calc(GtkWidget *widget, struct winctl *w)
 			gint response;
 
 			lbl = gtk_label_new(LTHREADPAUSE);
-			vbox = gtk_vbox_new(FALSE, 0);
+			vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 			gtk_box_pack_start(GTK_BOX(vbox), lbl, FALSE, FALSE, 0);
 			gtk_container_set_border_width(GTK_CONTAINER(vbox), 10);
 			dialog = gtk_dialog_new_with_buttons(LWCAP, GTK_WINDOW(w->win), GTK_DIALOG_MODAL, LCONTDRAW, RESPONSE_CONTDRAW, LREDRAW,
@@ -373,7 +371,9 @@ void zoom(struct winctl *w, enum zoom_mode mode)
 	sf = (mode == ZOOM_IN) ? w->zoomfactor: 1.0 / w->zoomfactor;
 
 	gtk_widget_get_allocation(w->drawing, &drawing_alloc);
-	gtk_widget_get_pointer(w->drawing, &px, &py);
+	display = gtk_widget_get_display(GTK_WIDGET(w->win));
+	dev = gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(display));
+	gdk_window_get_device_position(gtk_widget_get_window(w->drawing), dev, &px, &py, NULL);
 	dre = (w->it_param.cplxplane[1] - w->it_param.cplxplane[0]) / (gdouble)drawing_alloc.width;
 	dim = (w->it_param.cplxplane[3] - w->it_param.cplxplane[2]) / (gdouble)drawing_alloc.height;
 	b_re = w->it_param.cplxplane[0] + dre * (px - sf * (gdouble)drawing_alloc.width / 2.0);
@@ -383,8 +383,6 @@ void zoom(struct winctl *w, enum zoom_mode mode)
 	val[2] = b_im;
 	val[3] = b_im - sf * dim * drawing_alloc.height;
 	setcplxplane(w->txtcplx, val, drawing_alloc.width, drawing_alloc.height);
-	display = gdk_display_get_default();
-	dev = gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(display));
 	s = gdk_display_get_default_screen(display);
 	gdk_device_get_position(dev, NULL, &pwx, &pwy);
 	gdk_device_warp(dev, s, pwx - px + drawing_alloc.width / 2, pwy - py + drawing_alloc.height / 2);
@@ -397,8 +395,12 @@ static void setj(struct winctl *w)
 	gdouble dim, dre;
 	gint px, py;
 	GtkAllocation drawing_alloc;
+	GdkDevice *dev;
 
-	gtk_widget_get_pointer(w->drawing, &px, &py);
+	dev = gdk_device_manager_get_client_pointer(
+			gdk_display_get_device_manager(
+		     gtk_widget_get_display(GTK_WIDGET(w->win))));
+	gdk_window_get_device_position(gtk_widget_get_window(w->drawing), dev, &px, &py, NULL);
 
 	gtk_widget_get_allocation(w->drawing, &drawing_alloc);
 
@@ -451,13 +453,17 @@ static gboolean motion_notify_event(GtkWidget *widget, GdkEventMotion *event, st
 
 
 	if (event->state & GDK_BUTTON1_MASK) {
+		GdkDevice *dev;
 		GdkCursor *c;
 		gint x, y, px, py, width, height, sw, sh;
 		gint delta;
 		gint pos = 0;
 		cairo_t *cr;
 
-		gtk_widget_get_pointer(w->drawing, &px, &py);
+		dev = gdk_device_manager_get_client_pointer(
+				gdk_display_get_device_manager(
+					gtk_widget_get_display(GTK_WIDGET(w->win))));
+		gdk_window_get_device_position(gtk_widget_get_window(w->drawing), dev, &px, &py, NULL);
 		width = w->focus_x - px;
 		sw = SIGN(width);
 		width *= sw;
@@ -568,16 +574,15 @@ static void redraw_idle(struct winctl *w)
 {
 	GtkAllocation drawing_alloc;
 
-	gdk_threads_enter();
 	gtk_widget_get_allocation(w->drawing, &drawing_alloc);
 
 
-	if (drawing_alloc.width != gdk_pixbuf_get_width(w->pixbufcalc) || drawing_alloc.height != gdk_pixbuf_get_height(w->pixbufcalc)) {
+	if (drawing_alloc.width != gdk_pixbuf_get_width(w->pixbufcalc) 
+			|| drawing_alloc.height != gdk_pixbuf_get_height(w->pixbufcalc)) {
 		g_object_unref(w->pixbufshow);
 		w->pixbufshow = gdk_pixbuf_scale_simple(w->pixbufcalc, drawing_alloc.width, drawing_alloc.height, INTERPOLATION);
 	}
 	redraw_drawing(w);
-	gdk_threads_leave();
 }
 
 static void redraw_drawing(struct winctl *w)

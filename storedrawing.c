@@ -47,7 +47,7 @@ static void create_progress_dialog(struct savectl *s)
 	gtk_window_set_resizable(GTK_WINDOW(s->progresswin), FALSE);
 	gtk_window_set_title(GTK_WINDOW(s->progresswin), LSAVECAP);
 	gtk_container_set_border_width(GTK_CONTAINER(s->progresswin), 10);
-	vbox = gtk_vbox_new(FALSE, 0);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	s->progresslbl = gtk_label_new(LSAVELABEL);
 	gtk_misc_set_alignment(GTK_MISC(s->progresslbl), 0.0, 0.0);
 	gtk_box_pack_start(GTK_BOX(vbox), s->progresslbl, FALSE, FALSE, 0);
@@ -96,7 +96,6 @@ static void set_progress(struct savectl *s)
 	gdouble p;
 	gchar buf[20];
 
-	gdk_threads_enter();
 	row_count = 0;
 	for (i = 0; i < s->it_param.threads_count; ++i) {
 		row_count += s->it_param.row_count[i];
@@ -105,21 +104,19 @@ static void set_progress(struct savectl *s)
 	g_snprintf(buf, 20, "%.0f %%", p * 100);
 	gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(s->progressbar), p);
 	gtk_progress_bar_set_text(GTK_PROGRESS_BAR(s->progressbar), buf);
-	gdk_threads_leave();
-
 }
 
-static void render_thread_done(gboolean succ, struct savectl *s)
+static void render_thread_done(struct ThreaddestroyData *data)
 {
 	GdkPixbuf *pixbuf;
 	IterationInfo *itermap;
 	ColorFunc colorfunc;
 	gint width, height, rowstride, n_channels;
 	guchar *itp, *endp;
+	struct savectl *s = (struct savectl *)data->data;
 
 	itermap = s->it_param.itermap;
-	gdk_threads_enter();
-	if (succ) {
+	if (data->succ) {
 		setIterMax(s->it_param.itermax);
 		pixbuf = s->pixbuf;
 		initialize_func(s->it_param.color_func_index);
@@ -149,7 +146,6 @@ static void render_thread_done(gboolean succ, struct savectl *s)
 		gtk_button_set_label(GTK_BUTTON(s->progressbtn), LSAVEDONE);
 	}
 	g_free(s->it_param.itermap);
-	gdk_threads_leave();
 }
 
 static void save_pixbuf_to_stream(struct savectl *s)
@@ -180,7 +176,7 @@ static void save_pixbuf_to_stream(struct savectl *s)
 /* store drawing dialog: */
 void store_drawing_show(struct winctl *w)
 {
-	GtkWidget *vbox, *hbox, *vbox2, *hbox2, *table, *align;
+	GtkWidget *vbox, *hbox, *vbox2, *hbox2, *grid, *align;
 	GtkWidget *frame, *frame2, *lbl, *btn;
 	gint i;
 	struct savectl *s;
@@ -197,11 +193,11 @@ void store_drawing_show(struct winctl *w)
 	gtk_container_set_border_width(GTK_CONTAINER(s->win), 5);
 	gtk_window_set_resizable(GTK_WINDOW(s->win), FALSE);
 
-	vbox = gtk_vbox_new(FALSE, 0);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
 	frame = gtk_frame_new(LSAVEPATH);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
-	hbox = gtk_hbox_new(FALSE, 5);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
 	lbl = gtk_label_new_with_mnemonic(LFILENAME);
 	s->txtfilename = gtk_entry_new();
 	gtk_widget_set_size_request(s->txtfilename, 400, -1);
@@ -215,35 +211,39 @@ void store_drawing_show(struct winctl *w)
 	gtk_container_add(GTK_CONTAINER(frame), hbox);
 
 	frame = gtk_frame_new(LRENDEROPT);
-	hbox = gtk_hbox_new(FALSE, 4);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 	gtk_container_set_border_width(GTK_CONTAINER(hbox), 5);
 	frame2 = gtk_frame_new(LPICTOPT);
-	vbox2 = gtk_vbox_new(FALSE, 0);
+	vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox2), 5);
 	/* width: */
-	table = gtk_table_new(3, 4, FALSE);
-	gtk_table_set_col_spacing(GTK_TABLE(table), 0, 5);
-	gtk_table_set_col_spacing(GTK_TABLE(table), 1, 10);
-	gtk_table_set_row_spacing(GTK_TABLE(table), 1, 5);
+	grid = gtk_grid_new();
+	gtk_grid_set_column_spacing(GTK_GRID(grid), 5);
 	lbl = gtk_label_new(LWIDTH);
-	gtk_table_attach(GTK_TABLE(table), lbl, 0, 1, 0, 1, GTK_SHRINK, GTK_SHRINK, FALSE, FALSE);
+	gtk_misc_set_alignment(GTK_MISC(lbl), 0.0, 0.5);
+	gtk_grid_attach(GTK_GRID(grid), lbl, 0, 0, 1, 1);
 	s->sbtwidth = gtk_spin_button_new_with_range(1.0, 5000.0, 1.0);
-	gtk_table_attach(GTK_TABLE(table), s->sbtwidth, 1, 2, 0, 1, GTK_SHRINK | GTK_FILL, GTK_SHRINK, FALSE, FALSE);
+	gtk_widget_set_margin_right(s->sbtwidth, 5);
+	gtk_grid_attach(GTK_GRID(grid), s->sbtwidth, 1, 0, 1, 1);
 	/* height: */
 	lbl = gtk_label_new(LHEIGTH);
-	gtk_table_attach(GTK_TABLE(table), lbl, 0, 1, 1, 2, GTK_SHRINK, GTK_SHRINK, 0, 0);
+	gtk_misc_set_alignment(GTK_MISC(lbl), 0.0, 0.5);
+	gtk_grid_attach(GTK_GRID(grid), lbl, 0, 1, 1, 1);
 	s->sbtheight = gtk_spin_button_new_with_range(1.0, 5000.0, 1.0);
-	gtk_table_attach(GTK_TABLE(table), s->sbtheight, 1, 2, 1, 2, GTK_SHRINK | GTK_FILL, GTK_SHRINK, 0, 0);
+	gtk_widget_set_margin_right(s->sbtheight, 5);
+	gtk_grid_attach(GTK_GRID(grid), s->sbtheight, 1, 1, 1, 1);
 	/* itermax:	 */
 	lbl = gtk_label_new_with_mnemonic(LITERMAX);
 	gtk_misc_set_alignment(GTK_MISC(lbl), 0.0, 1.0);
 	s->txtitermax = gtk_entry_new();
 	gtk_widget_set_size_request(s->txtitermax, 70, -1);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(lbl), s->txtitermax);
-	gtk_table_attach(GTK_TABLE(table), lbl, 2, 3, 0, 1, GTK_EXPAND | GTK_FILL, GTK_SHRINK, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), s->txtitermax, 2, 3, 1, 2, GTK_EXPAND | GTK_FILL, GTK_SHRINK, 0, 0);
+	gtk_misc_set_alignment(GTK_MISC(lbl), 0.0, 0.5);
+	gtk_grid_attach(GTK_GRID(grid), lbl, 2, 0, 1, 1);
+	gtk_grid_attach(GTK_GRID(grid), s->txtitermax, 2, 1, 1, 1);
 	/* combo-coloralgo: */
 	lbl = gtk_label_new_with_mnemonic(LCOLORALGO);
+	gtk_widget_set_margin_top(lbl, 10);
 	gtk_misc_set_alignment(GTK_MISC(lbl), 0.0, 1.0);
 	s->cbocolor = gtk_combo_box_text_new();
 	for (i = 0; i < getColorFunc_count(); ++i) {
@@ -251,9 +251,9 @@ void store_drawing_show(struct winctl *w)
 	}
 	gtk_label_set_mnemonic_widget(GTK_LABEL(lbl), s->cbocolor);
 	gtk_combo_box_set_active(GTK_COMBO_BOX(s->cbocolor), w->it_param.color_func_index);
-	gtk_table_attach(GTK_TABLE(table), lbl, 0, 3, 2, 3, GTK_SHRINK | GTK_FILL, GTK_SHRINK, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), s->cbocolor, 0, 3, 3, 4, GTK_SHRINK | GTK_FILL, GTK_SHRINK, 0, 0);
-	gtk_box_pack_start(GTK_BOX(vbox2), table, FALSE, FALSE, 5);
+	gtk_grid_attach(GTK_GRID(grid), lbl, 0, 3, 3, 1);
+	gtk_grid_attach(GTK_GRID(grid), s->cbocolor, 0, 4, 3, 1);
+	gtk_box_pack_start(GTK_BOX(vbox2), grid, FALSE, FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(frame2), vbox2);
 	gtk_box_pack_start(GTK_BOX(hbox), frame2, FALSE, FALSE, 0);
 
@@ -261,14 +261,15 @@ void store_drawing_show(struct winctl *w)
 	gtk_container_add(GTK_CONTAINER(frame), hbox);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 5);
 	align = gtk_alignment_new(1.0, 0.0, 0.0, 0.0);
-	hbox = gtk_hbox_new(FALSE, 4);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 	btn = gtk_button_new_with_mnemonic(LRESTOREVAL);
 	gtk_box_pack_start(GTK_BOX(hbox), btn, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(btn), "clicked", G_CALLBACK(restore_pictopt), s);
 	btn = gtk_button_new_with_mnemonic(LSSETCPLX);
 	gtk_box_pack_start(GTK_BOX(hbox), btn, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(btn), "clicked", G_CALLBACK(ssetcplxplane), s);
-	hbox2 = gtk_hbox_new(TRUE, 4);
+	hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+	gtk_box_set_homogeneous(GTK_BOX(hbox2), TRUE);
 	btn = gtk_button_new_with_mnemonic(LSAVEBTN);
 	g_signal_connect(G_OBJECT(btn), "clicked", G_CALLBACK(btnsave_clicked), s);
 	gtk_box_pack_start(GTK_BOX(hbox2), btn, TRUE, TRUE, 0);
