@@ -23,31 +23,32 @@ static gboolean key_stroke(GtkWidget *widget, GdkEventKey *event, struct winctl 
 
 GtkWidget *createcplxplane(GtkWidget *txtcplx[4])
 {
-	GtkWidget *frame, *table, *lbl;
+	GtkWidget *frame, *grid, *lbl;
 	guint i;
 	frame = gtk_frame_new(LCOORD);
-	table = gtk_table_new(4, 2, FALSE);
+	grid = gtk_grid_new();
 	for (i = 0; i <= 3; ++i) {
 		lbl = gtk_label_new(_(LCPLX[i]));
-		gtk_misc_set_alignment(GTK_MISC(lbl), 0.0, 0.0);
-		gtk_table_attach(GTK_TABLE(table), lbl, 0, 1, i, i + 1, GTK_SHRINK | GTK_FILL, GTK_SHRINK, 0, 0);
+		gtk_misc_set_alignment(GTK_MISC(lbl), 0.0, 0.5);
+		gtk_grid_attach(GTK_GRID(grid), lbl, 0 , i, 1, 1);
 		txtcplx[i] = gtk_entry_new();
 		gtk_entry_set_max_length(GTK_ENTRY(txtcplx[i]), TEXTLEN);
 		gtk_widget_set_size_request(txtcplx[i], 160, -1);
-		gtk_table_attach(GTK_TABLE(table), txtcplx[i], 1, 2, i, i + 1, GTK_EXPAND | GTK_FILL, GTK_SHRINK, 0, 0);
+		gtk_widget_set_hexpand(txtcplx[i], TRUE);
+		gtk_grid_attach(GTK_GRID(grid), txtcplx[i], 1 , i, 1, 1);
 	}
-	gtk_table_set_row_spacing(GTK_TABLE(table), 0 , 1);
-	gtk_table_set_row_spacing(GTK_TABLE(table), 1 , 4);
-	gtk_table_set_row_spacing(GTK_TABLE(table), 2 , 1);
-	gtk_table_set_col_spacing(GTK_TABLE(table), 0 , 5);
-	gtk_container_set_border_width(GTK_CONTAINER(table), 5);
-	gtk_container_add(GTK_CONTAINER(frame), table);
+
+	gtk_grid_set_row_spacing(GTK_GRID(grid), 5);
+	gtk_grid_set_column_spacing(GTK_GRID(grid), 5);
+
+	gtk_container_set_border_width(GTK_CONTAINER(grid), 5);
+	gtk_container_add(GTK_CONTAINER(frame), grid);
 	return frame;
 }
 
 struct winctl *buildinterface(void)
 {
-	GtkWidget *rootbox, *vbox, *vbox2, *vbox3, *hbox, *table, *table2, *align;
+	GtkWidget *rootbox, *vbox, *vbox2, *vbox3, *hbox, *grid, *grid2, *align;
 	GtkWidget *frame, *frame2, *lbl;
 	GtkWidget *notebook;
 	GtkWidget *menubar, *menu, *menuit, *pmenuit, *submenu, *psubmenu, *psmenuit;
@@ -60,7 +61,7 @@ struct winctl *buildinterface(void)
 	struct winctl *w = (struct winctl *)g_malloc(sizeof(struct winctl));
 	w->win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(w->win), LWCAP);
-	rootbox = gtk_vbox_new(FALSE, 0);
+	rootbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	g_signal_connect(G_OBJECT(w->win), "key_press_event", G_CALLBACK(key_stroke), w);
 
 	/* menu: */
@@ -199,10 +200,10 @@ struct winctl *buildinterface(void)
 	}
 
 	gtk_box_pack_start(GTK_BOX(rootbox), menubar, FALSE, FALSE, 0);
-	vbox = gtk_vbox_new(FALSE, 0);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	gtk_box_pack_start(GTK_BOX(rootbox), vbox, TRUE, TRUE, 0);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 10);
-	hbox = gtk_hbox_new(FALSE, 10);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
 
 	/* create image: */
@@ -210,14 +211,14 @@ struct winctl *buildinterface(void)
 	gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
 	frame2 = gtk_frame_new(NULL);
 	gtk_frame_set_shadow_type(GTK_FRAME(frame2), GTK_SHADOW_IN);
-	vbox2 = gtk_vbox_new(FALSE, 0);
+	vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	w->lbldraw = gtk_label_new(LWCAP);
 	gtk_label_set_width_chars(GTK_LABEL(w->lbldraw), 50);
 	gtk_box_pack_start(GTK_BOX(vbox2), w->lbldraw, FALSE, FALSE, 0);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox2), 3);
 	gtk_container_add(GTK_CONTAINER(frame2), vbox2);
 
-	vbox2 = gtk_vbox_new(FALSE, 15);
+	vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 15);
 	align = gtk_alignment_new(0.5, 0.5, 0.6, 0.0);
 	gtk_container_add(GTK_CONTAINER(align), frame2);
 
@@ -232,15 +233,15 @@ struct winctl *buildinterface(void)
 
 	/* create options: */
 	align = gtk_alignment_new(0.0, 0.0, 0.0, 0.0);
-	vbox2 = gtk_vbox_new(FALSE, 8);
+	vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 8);
 
 	/* setting the complex-area: */
 	gtk_box_pack_start(GTK_BOX(vbox2), createcplxplane(w->txtcplx), FALSE, FALSE, 0);
 
 	/* setting data: */
 	frame = gtk_frame_new(LFKT);
-	table = gtk_table_new(2, 4, FALSE);
-	gtk_container_set_border_width(GTK_CONTAINER(table), 5);
+	grid = gtk_grid_new();
+	gtk_container_set_border_width(GTK_CONTAINER(grid), 5);
 
 	/* degree: */
 	lbl = gtk_label_new_with_mnemonic(LDEGREE);
@@ -251,9 +252,10 @@ struct winctl *buildinterface(void)
 	align = gtk_alignment_new(1.0, 0.0, 0.0, 0.0);
 	gtk_widget_set_size_request(w->txtdegree, 20, -1);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(lbl), w->txtdegree);
-	gtk_table_set_col_spacing(GTK_TABLE(table), 0, 5);
-	gtk_table_attach(GTK_TABLE(table), lbl         , 0, 1, 0, 1, GTK_SHRINK | GTK_FILL, GTK_SHRINK, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), w->txtdegree, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_SHRINK, 0, 0);
+	gtk_grid_attach(GTK_GRID(grid), lbl, 0, 0, 1, 1);
+	gtk_misc_set_alignment(GTK_MISC(lbl), 0.0, 0.5);
+	gtk_grid_attach(GTK_GRID(grid), w->txtdegree, 1, 0, 1, 1);
+	gtk_widget_set_hexpand(w->txtdegree, TRUE);
 
 	/* itermax: */
 	lbl = gtk_label_new_with_mnemonic(LITERMAX);
@@ -261,9 +263,9 @@ struct winctl *buildinterface(void)
 	w->txtitermax = gtk_entry_new();
 	gtk_entry_set_max_length(GTK_ENTRY(w->txtitermax), TEXTLEN);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(lbl), w->txtitermax);
-	gtk_table_attach(GTK_TABLE(table), lbl          , 0, 2, 1, 2, GTK_EXPAND | GTK_FILL, GTK_SHRINK, 0, 0);
-	gtk_table_attach(GTK_TABLE(table), w->txtitermax, 0, 2, 2, 3, GTK_EXPAND | GTK_FILL, GTK_SHRINK, 0, 0);
-	gtk_table_set_row_spacing(GTK_TABLE(table), 2, 6);
+	gtk_grid_attach(GTK_GRID(grid), lbl, 0, 1, 2, 1);
+	gtk_grid_attach(GTK_GRID(grid), w->txtitermax, 0, 2, 2, 1);
+	//gtk_table_set_row_spacing(GTK_TABLE(table), 2, 6);
 
 	/* notebook: */
 	/* chkjulia */
@@ -272,36 +274,39 @@ struct winctl *buildinterface(void)
 	gtk_notebook_set_show_tabs(GTK_NOTEBOOK(notebook), FALSE);
 	w->chkjulia = gtk_check_button_new_with_mnemonic(LCHKJULIA);
 	g_signal_connect(G_OBJECT(w->chkjulia), "toggled", G_CALLBACK(chkj_toggled), w);
-	vbox3 = gtk_vbox_new(FALSE, 4);
+	vbox3 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
 	gtk_box_pack_start(GTK_BOX(vbox3), w->chkjulia, FALSE, FALSE, 0);
 
 	/* julia-const j: */
 	eventbox = gtk_event_box_new();
 	gtk_event_box_set_above_child(GTK_EVENT_BOX(eventbox), FALSE);
 	frame2 = gtk_frame_new(LJCONST);
-	table2 = gtk_table_new(2, 2, FALSE);
-	gtk_table_set_col_spacing(GTK_TABLE(table2), 0, 5);
-	gtk_container_set_border_width(GTK_CONTAINER(table2), 5);
+	grid2 = gtk_grid_new();
+	gtk_grid_set_row_spacing(GTK_GRID(grid2), 5);
+	gtk_grid_set_column_spacing(GTK_GRID(grid2), 5);
+	//gtk_table_set_col_spacing(GTK_TABLE(table2), 0, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(grid2), 5);
 	w->lbljre = gtk_label_new_with_mnemonic(LJCRE);
-	gtk_misc_set_alignment(GTK_MISC(w->lbljre), 0.0, 0.0);
+	gtk_misc_set_alignment(GTK_MISC(w->lbljre), 0.0, 0.5);
 	w->txtjre = gtk_entry_new();
 	gtk_entry_set_text(GTK_ENTRY(w->txtjre), "0");
 	gtk_entry_set_max_length(GTK_ENTRY(w->txtjre), TEXTLEN);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(w->lbljre), w->txtjre);
 	gtk_widget_set_size_request(w->txtjre, 50, -1);
-	gtk_table_attach(GTK_TABLE(table2), w->lbljre, 0, 1, 0, 1, GTK_SHRINK | GTK_FILL, GTK_SHRINK, 0, 0);
-	gtk_table_attach(GTK_TABLE(table2), w->txtjre, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_SHRINK, 0, 0);
-	gtk_table_set_row_spacing(GTK_TABLE(table), 0 , 1);
+	gtk_grid_attach(GTK_GRID(grid2), w->lbljre, 0, 0, 1, 1);
+	gtk_grid_attach(GTK_GRID(grid2), w->txtjre, 1, 0, 1, 1);
+	gtk_widget_set_hexpand(w->txtjre, TRUE);
 	w->lbljim = gtk_label_new_with_mnemonic(LJCIM);
-	gtk_misc_set_alignment(GTK_MISC(w->lbljim), 0.0, 0.0);
+	gtk_misc_set_alignment(GTK_MISC(w->lbljim), 0.0, 0.5);
 	w->txtjim = gtk_entry_new();
 	gtk_entry_set_text(GTK_ENTRY(w->txtjim), "0");
 	gtk_entry_set_max_length(GTK_ENTRY(w->txtjim), TEXTLEN);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(w->lbljim), w->txtjim);
 	gtk_widget_set_size_request(w->txtjim, 50, -1);
-	gtk_table_attach(GTK_TABLE(table2), w->lbljim, 0, 1, 1, 2, GTK_SHRINK | GTK_FILL, GTK_SHRINK, 0, 0);
-	gtk_table_attach(GTK_TABLE(table2), w->txtjim, 1, 2, 1, 2, GTK_EXPAND | GTK_FILL, GTK_SHRINK, 0, 0);
-	gtk_container_add(GTK_CONTAINER(frame2), table2);
+	gtk_grid_attach(GTK_GRID(grid2), w->lbljim, 0, 1, 1, 1);
+	gtk_grid_attach(GTK_GRID(grid2), w->txtjim, 1, 1, 1, 1);
+	gtk_widget_set_hexpand(w->txtjre, TRUE);
+	gtk_container_add(GTK_CONTAINER(frame2), grid2);
 	gtk_container_add(GTK_CONTAINER(eventbox), frame2);
 	gtk_box_pack_start(GTK_BOX(vbox3), eventbox, FALSE, FALSE, 0);
 	gtk_widget_set_events(eventbox, GDK_BUTTON_PRESS_MASK);
@@ -314,16 +319,19 @@ struct winctl *buildinterface(void)
 	gtk_box_pack_start(GTK_BOX(vbox3), w->btnj, FALSE, FALSE, 0);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox3), 5);
 	gtk_container_add(GTK_CONTAINER(notebook), vbox3);
-	gtk_table_attach(GTK_TABLE(table), notebook, 0, 2, 3, 4, GTK_EXPAND | GTK_FILL, GTK_SHRINK, 0, 0);
-	gtk_container_add(GTK_CONTAINER(frame), table);
+	gtk_grid_attach(GTK_GRID(grid), notebook, 0, 3, 2, 1);
+	gtk_widget_set_hexpand(notebook, TRUE);
+	gtk_container_add(GTK_CONTAINER(frame), grid);
 	gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 0);
 
 	gtk_container_add(GTK_CONTAINER(align), vbox2);
+	gtk_widget_set_hexpand(align, FALSE);
 	gtk_box_pack_start(GTK_BOX(hbox), align, FALSE, FALSE, 0);
 
 	/* create calculation-/close-buttons: */
 	align = gtk_alignment_new(1.0, 0.0, 0.0, 0.0);
-	hbox = gtk_hbox_new(TRUE, 5);
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
+	gtk_box_set_homogeneous(GTK_BOX(hbox), TRUE);
 
 	/* draw: */
 	w->btncalc = gtk_button_new_with_mnemonic(LCALC);
@@ -445,7 +453,7 @@ void change_color_algo(GtkWidget *widget, struct winctl *w)
 	sync_obj = (GtkWidget *)g_object_get_data(G_OBJECT(widget), "sync_obj");
 
 	if (gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(sync_obj))
-	    == gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget))) {
+			== gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget))) {
 		return;
 	}
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(sync_obj), TRUE);
@@ -477,52 +485,31 @@ static void insert_j(GtkWidget *widget, struct winctl *w)
 	gtk_entry_set_text(GTK_ENTRY(w->txtjim), buf);
 }
 
-static void setcolor(GtkWidget *widget, GtkColorSelectionDialog *d)
-{
-	struct winctl *w = (struct winctl *)g_object_get_data(G_OBJECT(widget), "main_window");
-
-	if ((*(gint *)g_object_get_data(G_OBJECT(widget), "type")) == 0) {
-		/* Color for convergent set: */
-		gtk_color_selection_get_current_rgba(GTK_COLOR_SELECTION(gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(d))), &w->convcol);
-	}  else {
-		/* Color for divergent set: */
-		gtk_color_selection_get_current_rgba(GTK_COLOR_SELECTION(gtk_color_selection_dialog_get_color_selection(GTK_COLOR_SELECTION_DIALOG(d))), &w->divcol);
-	}
-	gtk_widget_destroy(GTK_WIDGET(d));
-	if (w->succ_render) {
-		redraw_pixbuf(w);
-	} else {
-		w->redraw = TRUE;
-	}
-}
-
 static void change_color(gint type, const gchar* title, struct winctl *w)
 {
 	GtkWidget *colordialog;
-	GtkWidget *ok_button, *cancel_button;
-	GtkColorSelection *colorsel;
 
-	gint *t = (gint *)g_malloc(sizeof(gint));
-	*t = type;
-	colordialog = gtk_color_selection_dialog_new(title);
-	g_object_get(G_OBJECT(colordialog), "ok-button", &ok_button, "cancel-button", &cancel_button, "color-selection", &colorsel, NULL);
-
-	g_object_set_data_full(G_OBJECT(ok_button), "type", t, g_free);
-	g_object_set_data(G_OBJECT(ok_button), "main_window", w);
-	g_signal_connect(G_OBJECT(ok_button), "clicked", G_CALLBACK(setcolor), colordialog);
-	g_signal_connect_swapped(G_OBJECT(cancel_button), "clicked", G_CALLBACK(gtk_widget_destroy), colordialog);
-	g_signal_connect_swapped(G_OBJECT(colordialog), "destroy", G_CALLBACK(gtk_widget_destroy), colordialog);
+	colordialog = gtk_color_chooser_dialog_new(title, GTK_WINDOW(w->win));
 
 	if (type == 0)
-		gtk_color_selection_set_current_rgba(colorsel, &w->convcol);
+		gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(colordialog), &w->convcol);
 	else
-		gtk_color_selection_set_current_rgba(colorsel, &w->divcol);
-
-	gtk_window_set_modal(GTK_WINDOW(colordialog), TRUE);
-	gtk_widget_show(colordialog);
-	g_object_unref(ok_button);
-	g_object_unref(cancel_button);
-	g_object_unref(colorsel);
+		gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(colordialog), &w->divcol);
+	if (gtk_dialog_run(GTK_DIALOG(colordialog)) == GTK_RESPONSE_OK) {
+		if (type == 0) {
+			/* Color for convergent set: */
+			gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(colordialog), &w->convcol);
+		}  else {
+			/* Color for divergent set: */
+			gtk_color_chooser_get_rgba(GTK_COLOR_CHOOSER(colordialog), &w->divcol);
+		}
+		gtk_widget_destroy(GTK_WIDGET(colordialog));
+		if (w->succ_render) {
+			redraw_pixbuf(w);
+		} else {
+			w->redraw = TRUE;
+		}
+	}
 }
 
 static void change_convcol(GtkWidget *widget, struct winctl *w)
@@ -538,8 +525,8 @@ static void change_divcol(GtkWidget *widget, struct winctl *w)
 static void store_drawing(GtkWidget *widget, struct winctl *w)
 {
 	if (is_render_thread_alive(w->render_thread)) {
-	    render_thread_pause(w->render_thread);
-	    g_timer_stop(w->timer);
+		render_thread_pause(w->render_thread);
+		g_timer_stop(w->timer);
 	}
 	gtk_button_set_label(GTK_BUTTON(w->btncalc), LCALC);
 	store_drawing_show(w);
@@ -589,7 +576,7 @@ static void save_xmlfile(GtkWidget *widget, struct winctl *w)
 			gtk_widget_destroy(filechooser);
 			return;
 		}
-		#ifdef G_OS_LINUX
+#ifdef G_OS_LINUX
 		if(g_access(dirname, 0600) != 0) {
 			errdialog(GTK_WINDOW(w->win), LPERMERR);
 			g_free(filename);
@@ -597,7 +584,7 @@ static void save_xmlfile(GtkWidget *widget, struct winctl *w)
 			gtk_widget_destroy(filechooser);
 			return;
 		}
-		#endif
+#endif
 		g_free(dirname);
 		if (g_file_test(filename, G_FILE_TEST_IS_REGULAR)) {
 			GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(w->win), GTK_DIALOG_MODAL, GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, LFILEEXISTS, filename);
@@ -618,11 +605,11 @@ static void save_xmlfile(GtkWidget *widget, struct winctl *w)
 static void about(GtkWidget *widget, struct winctl *w)
 {
 	gtk_show_about_dialog(NULL,
-	    "copyright", "Copyright (c) by Lexif Systems Inc.",
-	    "license", GPLv3,
-	    "version", LVERSION,
-	    "program-name", LWCAP,
-	    NULL);
+			"copyright", "Copyright (c) by Lexif Systems Inc.",
+			"license", GPLv3,
+			"version", LVERSION,
+			"program-name", LWCAP,
+			NULL);
 }
 
 static gboolean key_stroke(GtkWidget *widget, GdkEventKey *event, struct winctl *w)
