@@ -22,7 +22,6 @@ __ENTRYPOINT__
 	int argc = __argc;
 	#endif
 
-	g_thread_init(NULL);
 	gdk_threads_init();
 	gdk_threads_enter();
 	gtk_init(&argc, &argv);
