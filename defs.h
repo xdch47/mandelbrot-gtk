@@ -3,6 +3,7 @@
 #define __DEF_H__
 
 #include <gtk/gtk.h>
+#include <glib/gi18n.h>
 
 #define LVERSION "0.4"
 
@@ -41,7 +42,7 @@
 #define LCALC _(" _Render ")
 #define LSTOP _(" _Stop ")
 #define LRESET _(" _Reset ")
-#define LCLOSE _(" _Quit ")
+#define LCLOSE _(" _Close ")
 #define LTHREADPAUSE _("The renderprocess has been interrupted. Continue or restart process?")
 #define LCONTDRAW _(" _Continue")
 #define LREDRAW _("_Restart")
