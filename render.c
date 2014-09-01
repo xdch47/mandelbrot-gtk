@@ -201,12 +201,14 @@ static void render_thread(struct render_thread *r)
 
 	remove_idle(r);
 	g_mutex_lock(&r->state_mutex);
-	data->succ = data->succ && r->state != KILL;
+	gboolean iskilled = r->state == KILL;
+	data->succ = data->succ && !iskilled;
 	r->isalive = FALSE;
 	r->state = RUN;
 	g_mutex_unlock(&r->state_mutex);
 	data->data = r->userdata;
-	g_main_context_invoke(NULL, (GSourceFunc)r->destroy, data);
+	if (!iskilled)
+		g_main_context_invoke(NULL, (GSourceFunc)r->destroy, data);
 	return;
 }
 
