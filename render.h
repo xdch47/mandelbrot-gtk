@@ -68,6 +68,7 @@ struct render_thread {
 	ThreaddestroyFunc destroy;
 	const struct iterate_param *param;
 	gpointer userdata;
+	volatile gboolean invoked;
 };
 
 

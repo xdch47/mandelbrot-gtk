@@ -294,7 +294,7 @@ void store_drawing_show(struct winctl *w)
 static void savedialog(GtkWidget *widget, struct savectl *s)
 {
 	GtkWidget *filechooser = gtk_file_chooser_dialog_new(LSAVECAP, GTK_WINDOW(s->win),
-			GTK_FILE_CHOOSER_ACTION_SAVE, 
+			GTK_FILE_CHOOSER_ACTION_SAVE,
 			_("_OK"), GTK_RESPONSE_OK,
 			_("_Cancel"), GTK_RESPONSE_CANCEL, NULL);
 	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(filechooser), gtk_entry_get_text(GTK_ENTRY(s->txtfilename)));

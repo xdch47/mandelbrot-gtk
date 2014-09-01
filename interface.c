@@ -149,6 +149,11 @@ static gboolean start_calc(struct winctl *w)
 		w->it_param.type = MANDELBROT_SET;
 	}
 	render_thread_kill(w->render_thread);
+	
+	while (w->render_thread->invoked) {
+		gtk_main_iteration();
+	}
+
 	if (w->it_param.type == MANDELBROT_SET) {
 		gtk_label_set_text(GTK_LABEL(w->lbldraw), LCAPMRENDER);
 	} else {
@@ -249,6 +254,7 @@ static gboolean render_thread_done(struct ThreaddestroyData *data)
 	g_timer_destroy(w->timer);
 	w->timer = NULL;
 
+	w->render_thread->invoked = FALSE;
 	/* return false to run function just once */
 	return FALSE;
 }
@@ -580,7 +586,7 @@ static void redraw_idle(struct winctl *w)
 	gtk_widget_get_allocation(w->drawing, &drawing_alloc);
 
 
-	if (drawing_alloc.width != gdk_pixbuf_get_width(w->pixbufcalc) 
+	if (drawing_alloc.width != gdk_pixbuf_get_width(w->pixbufcalc)
 			|| drawing_alloc.height != gdk_pixbuf_get_height(w->pixbufcalc)) {
 		g_object_unref(w->pixbufshow);
 		w->pixbufshow = gdk_pixbuf_scale_simple(w->pixbufcalc, drawing_alloc.width, drawing_alloc.height, INTERPOLATION);

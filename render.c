@@ -38,6 +38,7 @@ struct render_thread *render_thread_new(IdleFunc idle_func, ThreaddestroyFunc de
 	r->destroy = destroy;
 	r->userdata = data;
 	r->it_data = NULL;
+	r->invoked = FALSE;
 	return r;
 }
 
@@ -207,8 +208,10 @@ static void render_thread(struct render_thread *r)
 	r->state = RUN;
 	g_mutex_unlock(&r->state_mutex);
 	data->data = r->userdata;
-	if (!iskilled)
+	if (!iskilled) {
+		r->invoked = TRUE;
 		g_main_context_invoke(NULL, (GSourceFunc)r->destroy, data);
+	}
 	return;
 }
 
