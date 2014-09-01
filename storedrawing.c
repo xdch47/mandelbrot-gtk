@@ -223,14 +223,14 @@ void store_drawing_show(struct winctl *w)
 	gtk_misc_set_alignment(GTK_MISC(lbl), 0.0, 0.5);
 	gtk_grid_attach(GTK_GRID(grid), lbl, 0, 0, 1, 1);
 	s->sbtwidth = gtk_spin_button_new_with_range(1.0, 5000.0, 1.0);
-	gtk_widget_set_margin_right(s->sbtwidth, 5);
+	gtk_widget_set_margin_end(s->sbtwidth, 5);
 	gtk_grid_attach(GTK_GRID(grid), s->sbtwidth, 1, 0, 1, 1);
 	/* height: */
 	lbl = gtk_label_new(LHEIGTH);
 	gtk_misc_set_alignment(GTK_MISC(lbl), 0.0, 0.5);
 	gtk_grid_attach(GTK_GRID(grid), lbl, 0, 1, 1, 1);
 	s->sbtheight = gtk_spin_button_new_with_range(1.0, 5000.0, 1.0);
-	gtk_widget_set_margin_right(s->sbtheight, 5);
+	gtk_widget_set_margin_end(s->sbtheight, 5);
 	gtk_grid_attach(GTK_GRID(grid), s->sbtheight, 1, 1, 1, 1);
 	/* itermax:	 */
 	lbl = gtk_label_new_with_mnemonic(LITERMAX);
@@ -293,8 +293,10 @@ void store_drawing_show(struct winctl *w)
 
 static void savedialog(GtkWidget *widget, struct savectl *s)
 {
-	GtkWidget *filechooser = gtk_file_chooser_dialog_new(LSAVECAP, GTK_WINDOW(s->win), GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_OK, GTK_RESPONSE_OK,
-			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
+	GtkWidget *filechooser = gtk_file_chooser_dialog_new(LSAVECAP, GTK_WINDOW(s->win),
+			GTK_FILE_CHOOSER_ACTION_SAVE, 
+			_("_OK"), GTK_RESPONSE_OK,
+			_("_Cancel"), GTK_RESPONSE_CANCEL, NULL);
 	gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(filechooser), gtk_entry_get_text(GTK_ENTRY(s->txtfilename)));
 	if (gtk_dialog_run(GTK_DIALOG(filechooser)) == GTK_RESPONSE_OK) {
 		gchar *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(filechooser));

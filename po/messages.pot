@@ -28,6 +28,24 @@ msgstr ""
 msgid "Misiurewicz-Point"
 msgstr ""
 
+msgid "_Open"
+msgstr ""
+
+msgid "_Save"
+msgstr ""
+
+msgid "_Close"
+msgstr ""
+
+msgid "_About"
+msgstr ""
+
+msgid "_OK"
+msgstr ""
+
+msgid "_Cancel"
+msgstr ""
+
 msgid "Key-Stroke: p (previous) / n (next)"
 msgstr ""
 
@@ -94,9 +112,6 @@ msgid " _Continue"
 msgstr ""
 
 msgid "_Restart"
-msgstr ""
-
-msgid "_Cancel"
 msgstr ""
 
 msgid "_File"
@@ -168,12 +183,6 @@ msgstr ""
 msgid "Reload _values"
 msgstr ""
 
-msgid "_Save"
-msgstr ""
-
-msgid "_Close"
-msgstr ""
-
 msgid "_Adjust complexplane"
 msgstr ""
 
@@ -186,9 +195,6 @@ msgid "Saved Image to file."
 msgstr ""
 
 msgid "Rendering was aborted by user."
-msgstr ""
-
-msgid "_OK"
 msgstr ""
 
 msgid "Abort rendering?"

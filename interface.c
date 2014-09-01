@@ -18,7 +18,7 @@ static gboolean scroll_event(GtkWidget *widget, GdkEventScroll *event, struct wi
 static gboolean button_press_event(GtkWidget *widget, GdkEventButton *event, struct winctl *w);
 static gboolean motion_notify_event(GtkWidget *widget, GdkEventMotion *event, struct winctl *w);
 static gboolean button_release_event(GtkWidget *widget, GdkEventButton *event, struct winctl *w);
-static void render_thread_done(struct ThreaddestroyData *data);
+static gboolean render_thread_done(struct ThreaddestroyData *data);
 static void redraw_idle(struct winctl *w);
 static gboolean start_calc(struct winctl *w);
 static void redraw_drawing(struct winctl *w);
@@ -212,7 +212,7 @@ static gboolean start_calc(struct winctl *w)
 	return TRUE;
 }
 
-static void render_thread_done(struct ThreaddestroyData *data)
+static gboolean render_thread_done(struct ThreaddestroyData *data)
 {
 	gchar buf[50];
 	GtkAllocation drawing_alloc;
@@ -246,8 +246,11 @@ static void render_thread_done(struct ThreaddestroyData *data)
 		g_snprintf(buf, 50, LCAPJ, g_timer_elapsed(w->timer, NULL));
 	}
 	gtk_label_set_text(GTK_LABEL(w->lbldraw), buf);
-	//FIXME:
-	//g_timer_destroy(w->timer);
+	g_timer_destroy(w->timer);
+	w->timer = NULL;
+
+	/* return false to run function just once */
+	return FALSE;
 }
 
 void calc(GtkWidget *widget, struct winctl *w)

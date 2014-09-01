@@ -1,5 +1,4 @@
 
-#include <glib/gi18n.h>
 #include "defs.h"
 #include "render.h"
 

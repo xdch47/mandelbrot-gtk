@@ -1,6 +1,5 @@
 
 #include <gtk/gtk.h>
-#include <glib/gi18n.h>
 #include <locale.h>
 #include <stdlib.h>
 #include "defs.h"
@@ -28,7 +27,7 @@ __ENTRYPOINT__
 
 	gtk_init(&argc, &argv);
 
-	setlocale(LC_ALL, "");
+	//setlocale(LC_ALL, "");
 
 	run_interface(*argv);
 	gtk_main();

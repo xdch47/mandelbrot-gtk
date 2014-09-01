@@ -1,8 +1,10 @@
 
 #include <stdlib.h>
 #include <glib/gprintf.h>
+#include <gdk-pixbuf/gdk-pixdata.h>
 #include "interface.h"
 #include "libcolor/color.h"
+#include "icon.h"
 
 
 static GtkWidget *convdiv_menu(struct winctl *w);
@@ -85,15 +87,40 @@ struct winctl *buildinterface(void)
 	g_signal_connect(G_OBJECT(menuit), "activate", G_CALLBACK(reset), w);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
 	/* xml: */
-	menuit = gtk_image_menu_item_new_from_stock(GTK_STOCK_OPEN, accel_group);
+#ifdef GTK_DISABLE_DEPRECATED
+	menuit = gtk_menu_item_new_with_mnemonic(_("_Open"));
+#else
+	menuit = gtk_image_menu_item_new_with_mnemonic(_("_Open"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuit), 
+			gtk_image_new_from_icon_name("document-open", GTK_ICON_SIZE_MENU));
+#endif
+
 	g_signal_connect(G_OBJECT(menuit), "activate", G_CALLBACK(open_xmlfile), w);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuit);
+#ifdef GTK_DISABLE_DEPRECATED
 	menuit = gtk_menu_item_new_with_mnemonic(LSAVEXML);
+#else
+	menuit = gtk_image_menu_item_new_with_mnemonic(LSAVEXML);
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuit), 
+			gtk_image_new_from_icon_name("document-save-as", GTK_ICON_SIZE_MENU));
+#endif
 	g_signal_connect(G_OBJECT(menuit), "activate", G_CALLBACK(save_xmlfile), w);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuit);
 	/* save: */
-	menuit = gtk_image_menu_item_new_from_stock(GTK_STOCK_SAVE, accel_group);
-	pmenuit = gtk_image_menu_item_new_from_stock(GTK_STOCK_SAVE, accel_group);
+#ifdef GTK_DISABLE_DEPRECATED
+	menuit = gtk_menu_item_new_with_mnemonic(_("_Save"));
+#else
+	menuit = gtk_image_menu_item_new_with_mnemonic(_("_Save"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuit), 
+			gtk_image_new_from_icon_name("document-save", GTK_ICON_SIZE_MENU));
+#endif
+#ifdef GTK_DISABLE_DEPRECATED
+	pmenuit = gtk_menu_item_new_with_mnemonic(_("_Save"));
+#else
+	pmenuit = gtk_image_menu_item_new_with_mnemonic(_("_Save"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(pmenuit), 
+			gtk_image_new_from_icon_name("document-save", GTK_ICON_SIZE_MENU));
+#endif
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuit);
 	gtk_menu_shell_append(GTK_MENU_SHELL(w->drawmenu), pmenuit);
 	g_signal_connect(G_OBJECT(menuit) , "activate", G_CALLBACK(store_drawing), w);
@@ -101,9 +128,15 @@ struct winctl *buildinterface(void)
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu)       , gtk_separator_menu_item_new());
 	gtk_menu_shell_append(GTK_MENU_SHELL(w->drawmenu), gtk_separator_menu_item_new());
 	/* close: */
-	menuit = gtk_image_menu_item_new_from_stock(GTK_STOCK_CLOSE, accel_group);
+#ifdef GTK_DISABLE_DEPRECATED
+	menuit = gtk_menu_item_new_with_mnemonic(_("_Close"));
+#else
+	menuit = gtk_image_menu_item_new_with_mnemonic(_("_Close"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuit), 
+			gtk_image_new_from_icon_name("window-close", GTK_ICON_SIZE_MENU));
+#endif
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuit);
-	gtk_widget_add_accelerator(menuit, "activate", accel_group, GDK_KEY_q, 0, 0);
+	gtk_widget_add_accelerator(menuit, "activate", accel_group, GDK_KEY_w, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 	g_signal_connect_swapped(G_OBJECT(menuit), "activate", G_CALLBACK(gtk_widget_destroy), w->win);
 	/* preference: */
 	menuit = gtk_menu_item_new_with_mnemonic(LPREFMENU);
@@ -174,7 +207,13 @@ struct winctl *buildinterface(void)
 	gtk_menu_shell_append(GTK_MENU_SHELL(w->drawmenu), pmenuit);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu)       , gtk_separator_menu_item_new());
 	/* preference: */
+#ifdef GTK_DISABLE_DEPRECATED
 	menuit = gtk_menu_item_new_with_mnemonic(LPREF);
+#else
+	menuit = gtk_image_menu_item_new_with_mnemonic(LPREF);
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuit), 
+			gtk_image_new_from_icon_name("preferences-system", GTK_ICON_SIZE_MENU));
+#endif
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuit);
 	g_signal_connect_swapped(G_OBJECT(menuit), "activate", G_CALLBACK(preference_show), w);
 	/* info menu: */
@@ -182,11 +221,13 @@ struct winctl *buildinterface(void)
 	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), menuit);
 	menu = gtk_menu_new();
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuit), menu);
-	/* 	menuit = gtk_image_menu_item_new_from_stock(GTK_STOCK_HELP, accel_group);
-	 * 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuit);
-	 * 	g_signal_connect(G_OBJECT(menuit), "activate", G_CALLBACK(^), w);
-	 */
-	menuit = gtk_image_menu_item_new_from_stock(GTK_STOCK_ABOUT, accel_group);
+#ifdef GTK_DISABLE_DEPRECATED
+	menuit = gtk_menu_item_new_with_mnemonic(_("_About"));
+#else
+	menuit = gtk_image_menu_item_new_with_mnemonic(_("_About"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuit), 
+			gtk_image_new_from_icon_name("help-about", GTK_ICON_SIZE_MENU));
+#endif
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuit);
 	g_signal_connect(G_OBJECT(menuit), "activate", G_CALLBACK(about), w);
 	w->pjmenu = gtk_menu_new();
@@ -534,8 +575,10 @@ static void store_drawing(GtkWidget *widget, struct winctl *w)
 
 static void open_xmlfile(GtkWidget *widget, struct winctl *w)
 {
-	GtkWidget *filechooser = gtk_file_chooser_dialog_new(LOPENCAP, GTK_WINDOW(w->win), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_OK, GTK_RESPONSE_OK,
-			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
+	GtkWidget *filechooser = gtk_file_chooser_dialog_new(LOPENCAP, GTK_WINDOW(w->win),
+			GTK_FILE_CHOOSER_ACTION_OPEN,
+			_("_OK"), GTK_RESPONSE_OK,
+			_("_Cancel"), GTK_RESPONSE_CANCEL, NULL);
 	GtkFileFilter *filefilter = gtk_file_filter_new();
 	gtk_file_filter_set_name(GTK_FILE_FILTER(filefilter), LFILTERXMLNAME);
 	gtk_file_filter_add_mime_type(GTK_FILE_FILTER(filefilter), "text/xml");
@@ -557,8 +600,10 @@ static void save_xmlfile(GtkWidget *widget, struct winctl *w)
 	gchar *filename;
 	gchar *dirname;
 	gboolean chkdir;
-	GtkWidget *filechooser = gtk_file_chooser_dialog_new(LSAVECAP, GTK_WINDOW(w->win), GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_OK, GTK_RESPONSE_OK,
-			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, NULL);
+	GtkWidget *filechooser = gtk_file_chooser_dialog_new(LSAVECAP, GTK_WINDOW(w->win), 
+			GTK_FILE_CHOOSER_ACTION_SAVE,
+			_("_OK"), GTK_RESPONSE_OK,
+			_("_Cancel"), GTK_RESPONSE_CANCEL, NULL);
 	GtkFileFilter *filefilter = gtk_file_filter_new();
 	gtk_file_filter_set_name(GTK_FILE_FILTER(filefilter), LFILTERXMLNAME);
 	gtk_file_filter_add_mime_type(GTK_FILE_FILTER(filefilter), "text/xml");
@@ -604,11 +649,15 @@ static void save_xmlfile(GtkWidget *widget, struct winctl *w)
 
 static void about(GtkWidget *widget, struct winctl *w)
 {
-	gtk_show_about_dialog(NULL,
+	gtk_show_about_dialog(GTK_WINDOW(w->win),
+			"logo", gdk_pixbuf_from_pixdata(&app_icon, FALSE, NULL),
 			"copyright", "Copyright (c) by Lexif Systems Inc.",
 			"license", GPLv3,
+			//"license-type", GTK_LICENSE_GPL_3_0,
 			"version", LVERSION,
 			"program-name", LWCAP,
+			"website-label", "mandelbrot-gtk",
+			"website", "http://sourceforge.net/projects/mandelbrot-gtk/",
 			NULL);
 }
 

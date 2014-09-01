@@ -5,7 +5,6 @@
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
-#include <glib/gi18n.h>
 #include "defs.h"
 #include "render.h"
 

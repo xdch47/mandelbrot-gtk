@@ -34,6 +34,24 @@ msgstr "Douady Kanichen"
 msgid "Misiurewicz-Point"
 msgstr "misiurewicz-Punkt"
 
+msgid "_Open"
+msgstr "Ö_ffnen"
+
+msgid "_Speicher"
+msgstr ""
+
+msgid "_Close"
+msgstr "S_chließen"
+
+msgid "_About"
+msgstr "_Information"
+
+msgid "_OK"
+msgstr "_OK"
+
+msgid "_Cancel"
+msgstr "_Abbrechen"
+
 msgid "Key-Stroke: p (previous) / n (next)"
 msgstr "Tastenanschlag: p (voheriger) / n (nächster)"
 
@@ -104,9 +122,6 @@ msgstr "_Fortsetzen"
 msgid "_Restart"
 msgstr "_Neustart"
 
-msgid "_Cancel"
-msgstr "_Abbrechen"
-
 msgid "_File"
 msgstr "_Datei"
 
@@ -176,12 +191,6 @@ msgstr "Höhe (in Pixel):"
 msgid "Reload _values"
 msgstr "Aktuelle _Werte"
 
-msgid "_Save"
-msgstr "_Speichern"
-
-msgid "_Close"
-msgstr "S_chließen"
-
 msgid "_Adjust complexplane"
 msgstr "_Zahleneb. anpassen"
 
@@ -198,8 +207,6 @@ msgstr "Grafik wurde gespeichert."
 msgid "Rendering was aborted by user."
 msgstr "Rendervorgang abgebrochen."
 
-msgid "_OK"
-msgstr "_OK"
 
 msgid "Abort rendering?"
 msgstr "Sind sie sicher, dass sie das Speichern abbrechen wollen?"
