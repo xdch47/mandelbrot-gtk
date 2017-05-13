@@ -41,7 +41,7 @@ static void ssetcplxplane(GtkWidget *widget, struct savectl *s);
 /* progress dialog: */
 static void create_progress_dialog(struct savectl *s)
 {
-	GtkWidget *vbox, *align;
+	GtkWidget *vbox;
 
 	s->progresswin = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_resizable(GTK_WINDOW(s->progresswin), FALSE);
@@ -49,16 +49,15 @@ static void create_progress_dialog(struct savectl *s)
 	gtk_container_set_border_width(GTK_CONTAINER(s->progresswin), 10);
 	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	s->progresslbl = gtk_label_new(LSAVELABEL);
-	gtk_misc_set_alignment(GTK_MISC(s->progresslbl), 0.0, 0.0);
+	gtk_widget_set_halign(s->progresslbl, GTK_ALIGN_START);
 	gtk_box_pack_start(GTK_BOX(vbox), s->progresslbl, FALSE, FALSE, 0);
 	s->progressbar = gtk_progress_bar_new();
 	gtk_widget_set_size_request(s->progressbar, 300, -1);
 	gtk_box_pack_start(GTK_BOX(vbox), s->progressbar, FALSE, FALSE, 10);
-	align = gtk_alignment_new(0.5, 0.5, 0.0, 0.0);
 	s->progressbtn = gtk_button_new_with_mnemonic(LCANCEL);
 	gtk_widget_set_size_request(s->progressbtn, 100, -1);
-	gtk_container_add(GTK_CONTAINER(align), s->progressbtn);
-	gtk_box_pack_start(GTK_BOX(vbox), align, FALSE, FALSE, 0);
+	gtk_widget_set_halign(s->progressbtn, GTK_ALIGN_CENTER);
+	gtk_box_pack_start(GTK_BOX(vbox), s->progressbtn, FALSE, FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(s->progresswin), vbox);
 	g_signal_connect(G_OBJECT(s->progresswin), "delete_event", G_CALLBACK(progresswin_close), s);
 	g_signal_connect(G_OBJECT(s->progressbtn), "clicked", G_CALLBACK(progressbtn_clicked), s);
@@ -176,7 +175,7 @@ static void save_pixbuf_to_stream(struct savectl *s)
 /* store drawing dialog: */
 void store_drawing_show(struct winctl *w)
 {
-	GtkWidget *vbox, *hbox, *vbox2, *hbox2, *grid, *align;
+	GtkWidget *vbox, *hbox, *vbox2, *hbox2, *grid;
 	GtkWidget *frame, *frame2, *lbl, *btn;
 	gint i;
 	struct savectl *s;
@@ -220,31 +219,31 @@ void store_drawing_show(struct winctl *w)
 	grid = gtk_grid_new();
 	gtk_grid_set_column_spacing(GTK_GRID(grid), 5);
 	lbl = gtk_label_new(LWIDTH);
-	gtk_misc_set_alignment(GTK_MISC(lbl), 0.0, 0.5);
+	gtk_widget_set_halign(lbl, GTK_ALIGN_START);
 	gtk_grid_attach(GTK_GRID(grid), lbl, 0, 0, 1, 1);
 	s->sbtwidth = gtk_spin_button_new_with_range(1.0, 5000.0, 1.0);
 	gtk_widget_set_margin_end(s->sbtwidth, 5);
 	gtk_grid_attach(GTK_GRID(grid), s->sbtwidth, 1, 0, 1, 1);
 	/* height: */
 	lbl = gtk_label_new(LHEIGTH);
-	gtk_misc_set_alignment(GTK_MISC(lbl), 0.0, 0.5);
+	gtk_widget_set_halign(lbl, GTK_ALIGN_START);
 	gtk_grid_attach(GTK_GRID(grid), lbl, 0, 1, 1, 1);
 	s->sbtheight = gtk_spin_button_new_with_range(1.0, 5000.0, 1.0);
 	gtk_widget_set_margin_end(s->sbtheight, 5);
 	gtk_grid_attach(GTK_GRID(grid), s->sbtheight, 1, 1, 1, 1);
 	/* itermax:	 */
 	lbl = gtk_label_new_with_mnemonic(LITERMAX);
-	gtk_misc_set_alignment(GTK_MISC(lbl), 0.0, 1.0);
+	gtk_widget_set_halign(lbl, GTK_ALIGN_START);
 	s->txtitermax = gtk_entry_new();
 	gtk_widget_set_size_request(s->txtitermax, 70, -1);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(lbl), s->txtitermax);
-	gtk_misc_set_alignment(GTK_MISC(lbl), 0.0, 0.5);
+	gtk_widget_set_halign(lbl, GTK_ALIGN_START);
 	gtk_grid_attach(GTK_GRID(grid), lbl, 2, 0, 1, 1);
 	gtk_grid_attach(GTK_GRID(grid), s->txtitermax, 2, 1, 1, 1);
 	/* combo-coloralgo: */
 	lbl = gtk_label_new_with_mnemonic(LCOLORALGO);
 	gtk_widget_set_margin_top(lbl, 10);
-	gtk_misc_set_alignment(GTK_MISC(lbl), 0.0, 1.0);
+	gtk_widget_set_halign(lbl, GTK_ALIGN_START);
 	s->cbocolor = gtk_combo_box_text_new();
 	for (i = 0; i < getColorFunc_count(); ++i) {
 		gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(s->cbocolor), getColorFunc_name(i));
@@ -260,7 +259,6 @@ void store_drawing_show(struct winctl *w)
 	gtk_box_pack_start(GTK_BOX(hbox), createcplxplane(s->txtcplx), FALSE, FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(frame), hbox);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 5);
-	align = gtk_alignment_new(1.0, 0.0, 0.0, 0.0);
 	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
 	btn = gtk_button_new_with_mnemonic(LRESTOREVAL);
 	gtk_box_pack_start(GTK_BOX(hbox), btn, FALSE, FALSE, 0);
@@ -276,8 +274,8 @@ void store_drawing_show(struct winctl *w)
 	btn = gtk_button_new_with_mnemonic(LSAVECLOSE);
 	g_signal_connect_swapped(G_OBJECT(btn), "clicked", G_CALLBACK(gtk_widget_destroy), s->win);
 	gtk_box_pack_start(GTK_BOX(hbox2), btn, TRUE, TRUE, 0);
-	gtk_container_add(GTK_CONTAINER(align), hbox2);
-	gtk_box_pack_start(GTK_BOX(hbox), align, TRUE, TRUE, 0);
+	gtk_widget_set_halign(hbox2, GTK_ALIGN_START);
+	gtk_box_pack_start(GTK_BOX(hbox), hbox2, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	gtk_container_add(GTK_CONTAINER(s->win), vbox);

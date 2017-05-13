@@ -25,32 +25,37 @@ static gboolean key_stroke(GtkWidget *widget, GdkEventKey *event, struct winctl 
 
 GtkWidget *createcplxplane(GtkWidget *txtcplx[4])
 {
-	GtkWidget *frame, *grid, *lbl;
+	GtkWidget *frame, *vbox, *hbox, *lbl;
 	guint i;
 	frame = gtk_frame_new(LCOORD);
-	grid = gtk_grid_new();
+
+	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	for (i = 0; i <= 3; ++i) {
 		lbl = gtk_label_new(_(LCPLX[i]));
-		gtk_misc_set_alignment(GTK_MISC(lbl), 0.0, 0.5);
-		gtk_grid_attach(GTK_GRID(grid), lbl, 0 , i, 1, 1);
+		gtk_widget_set_halign(lbl, GTK_ALIGN_START);
+		gtk_box_pack_start(GTK_BOX(vbox), lbl, TRUE, TRUE, 0);
+	}
+	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
+
+	vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+	for (i = 0; i <= 3; ++i) {
 		txtcplx[i] = gtk_entry_new();
 		gtk_entry_set_max_length(GTK_ENTRY(txtcplx[i]), TEXTLEN);
 		gtk_widget_set_size_request(txtcplx[i], 160, -1);
-		gtk_widget_set_hexpand(txtcplx[i], TRUE);
-		gtk_grid_attach(GTK_GRID(grid), txtcplx[i], 1 , i, 1, 1);
+		gtk_widget_set_halign(txtcplx[i], GTK_ALIGN_END);
+		gtk_box_pack_start(GTK_BOX(vbox), txtcplx[i], TRUE, TRUE, 0);
 	}
+	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 0);
 
-	gtk_grid_set_row_spacing(GTK_GRID(grid), 5);
-	gtk_grid_set_column_spacing(GTK_GRID(grid), 5);
-
-	gtk_container_set_border_width(GTK_CONTAINER(grid), 5);
-	gtk_container_add(GTK_CONTAINER(frame), grid);
+	gtk_container_set_border_width(GTK_CONTAINER(hbox), 5);
+	gtk_container_add(GTK_CONTAINER(frame), hbox);
 	return frame;
 }
 
 struct winctl *buildinterface(void)
 {
-	GtkWidget *rootbox, *vbox, *vbox2, *vbox3, *hbox, *grid, *grid2, *align;
+	GtkWidget *rootbox, *vbox, *vbox2, *vbox3, *hbox, *grid, *grid2;
 	GtkWidget *frame, *frame2, *lbl;
 	GtkWidget *notebook;
 	GtkWidget *menubar, *menu, *menuit, *pmenuit, *submenu, *psubmenu, *psmenuit;
@@ -125,7 +130,7 @@ struct winctl *buildinterface(void)
 	gtk_menu_shell_append(GTK_MENU_SHELL(w->drawmenu), pmenuit);
 	g_signal_connect(G_OBJECT(menuit) , "activate", G_CALLBACK(store_drawing), w);
 	g_signal_connect(G_OBJECT(pmenuit), "activate", G_CALLBACK(store_drawing), w);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu)       , gtk_separator_menu_item_new());
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu)	   , gtk_separator_menu_item_new());
 	gtk_menu_shell_append(GTK_MENU_SHELL(w->drawmenu), gtk_separator_menu_item_new());
 	/* close: */
 #ifdef GTK_DISABLE_DEPRECATED
@@ -148,7 +153,7 @@ struct winctl *buildinterface(void)
 	pmenuit = gtk_menu_item_new_with_mnemonic(LSETCPLX);
 	gtk_widget_add_accelerator(menuit , "activate", accel_group, GDK_KEY_r, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 	gtk_widget_add_accelerator(pmenuit, "activate", accel_group, GDK_KEY_r, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu)       , menuit);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu)	   , menuit);
 	gtk_menu_shell_append(GTK_MENU_SHELL(w->drawmenu), pmenuit);
 	g_signal_connect(G_OBJECT(menuit) , "activate", G_CALLBACK(menu_setcplxplane), w);
 	g_signal_connect(G_OBJECT(pmenuit), "activate", G_CALLBACK(menu_setcplxplane), w);
@@ -161,12 +166,12 @@ struct winctl *buildinterface(void)
 	gtk_menu_shell_append(GTK_MENU_SHELL(w->drawmenu), w->pmchkzoomprop);
 	g_signal_connect(G_OBJECT(w->mchkzoomprop), "toggled", G_CALLBACK(toggle_zoomprop), w);
 	g_signal_connect(G_OBJECT(w->pmchkzoomprop), "toggled", G_CALLBACK(toggle_zoomprop), w);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu)       , gtk_separator_menu_item_new());
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu)	   , gtk_separator_menu_item_new());
 	gtk_menu_shell_append(GTK_MENU_SHELL(w->drawmenu), gtk_separator_menu_item_new());
 	/* set color (div./conv.): */
 	menuit  = gtk_menu_item_new_with_mnemonic(LSETCOLOR);
 	pmenuit = gtk_menu_item_new_with_mnemonic(LSETCOLOR);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu)       , menuit);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu)	   , menuit);
 	gtk_menu_shell_append(GTK_MENU_SHELL(w->drawmenu), pmenuit);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuit)  , convdiv_menu(w));
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(pmenuit) , convdiv_menu(w));
@@ -184,28 +189,28 @@ struct winctl *buildinterface(void)
 	for (i = 0; i < getColorFunc_count(); ++i) {
 		gint *index = (gint *)g_malloc(sizeof(gint));
 		w->mcolalgo[i] = gtk_radio_menu_item_new_with_mnemonic(radio_group , _(getColorFunc_name(i)));
-		psmenuit       = gtk_radio_menu_item_new_with_mnemonic(pradio_group, _(getColorFunc_name(i)));
+		psmenuit	   = gtk_radio_menu_item_new_with_mnemonic(pradio_group, _(getColorFunc_name(i)));
 		radio_group  = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(w->mcolalgo[i]));
 		pradio_group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(psmenuit));
 		*index = i;
 		g_object_set_data_full(G_OBJECT(w->mcolalgo[i]), "index", index  , g_free);
-		g_object_set_data     (G_OBJECT(psmenuit)      , "index", index);
+		g_object_set_data	 (G_OBJECT(psmenuit)	  , "index", index);
 		g_object_set_data(G_OBJECT(w->mcolalgo[i]), "sync_obj", psmenuit);
-		g_object_set_data(G_OBJECT(psmenuit)      , "sync_obj", w->mcolalgo[i]);
+		g_object_set_data(G_OBJECT(psmenuit)	  , "sync_obj", w->mcolalgo[i]);
 		g_object_set(G_OBJECT(w->mcolalgo[i]), "has-tooltip", TRUE, NULL);
 		g_object_set(G_OBJECT(psmenuit), "has-tooltip", TRUE, NULL);
 		g_signal_connect(G_OBJECT(w->mcolalgo[i]), "toggled", G_CALLBACK(change_color_algo), w);
 		g_signal_connect(G_OBJECT(w->mcolalgo[i]), "query-tooltip", G_CALLBACK(tooltip_color), w);
-		g_signal_connect(G_OBJECT(psmenuit)      , "toggled", G_CALLBACK(change_color_algo), w);
-		g_signal_connect(G_OBJECT(psmenuit)      , "query-tooltip", G_CALLBACK(tooltip_color), w);
+		g_signal_connect(G_OBJECT(psmenuit)	  , "toggled", G_CALLBACK(change_color_algo), w);
+		g_signal_connect(G_OBJECT(psmenuit)	  , "query-tooltip", G_CALLBACK(tooltip_color), w);
 		gtk_menu_shell_append(GTK_MENU_SHELL(submenu) , w->mcolalgo[i]);
 		gtk_menu_shell_append(GTK_MENU_SHELL(psubmenu), psmenuit);
 	}
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuit) , submenu);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(pmenuit), psubmenu);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu)       , menuit);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu)	   , menuit);
 	gtk_menu_shell_append(GTK_MENU_SHELL(w->drawmenu), pmenuit);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu)       , gtk_separator_menu_item_new());
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu)	   , gtk_separator_menu_item_new());
 	/* preference: */
 #ifdef GTK_DISABLE_DEPRECATED
 	menuit = gtk_menu_item_new_with_mnemonic(LPREF);
@@ -260,10 +265,8 @@ struct winctl *buildinterface(void)
 	gtk_container_add(GTK_CONTAINER(frame2), vbox2);
 
 	vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 15);
-	align = gtk_alignment_new(0.5, 0.5, 0.6, 0.0);
-	gtk_container_add(GTK_CONTAINER(align), frame2);
 
-	gtk_box_pack_start(GTK_BOX(vbox2), align, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox2), frame2, FALSE, FALSE, 0);
 	w->drawing = gtk_drawing_area_new();
 	w->itermap = NULL;
 	w->pixbufcalc = w->pixbufshow = NULL;
@@ -273,8 +276,8 @@ struct winctl *buildinterface(void)
 	gtk_container_add(GTK_CONTAINER(frame), vbox2);
 
 	/* create options: */
-	align = gtk_alignment_new(0.0, 0.0, 0.0, 0.0);
 	vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 8);
+	gtk_box_pack_start(GTK_BOX(hbox), vbox2, FALSE, FALSE, 0);
 
 	/* setting the complex-area: */
 	gtk_box_pack_start(GTK_BOX(vbox2), createcplxplane(w->txtcplx), FALSE, FALSE, 0);
@@ -282,25 +285,25 @@ struct winctl *buildinterface(void)
 	/* setting data: */
 	frame = gtk_frame_new(LFKT);
 	grid = gtk_grid_new();
-	gtk_container_set_border_width(GTK_CONTAINER(grid), 5);
+	gtk_grid_set_column_spacing (GTK_GRID(grid), 5);
+	gtk_container_set_border_width(GTK_CONTAINER(grid), 8);
 
 	/* degree: */
 	lbl = gtk_label_new_with_mnemonic(LDEGREE);
-	gtk_misc_set_alignment(GTK_MISC(lbl), 0.0, 0.0);
+	gtk_widget_set_halign(lbl, GTK_ALIGN_START);
+	gtk_widget_set_margin_end(lbl, 10);
 	w->txtdegree = gtk_entry_new();
 	gtk_entry_set_text(GTK_ENTRY(w->txtdegree), "2");
 	gtk_entry_set_max_length(GTK_ENTRY(w->txtdegree), TEXTLEN);
-	align = gtk_alignment_new(1.0, 0.0, 0.0, 0.0);
-	gtk_widget_set_size_request(w->txtdegree, 20, -1);
+	//gtk_widget_set_size_request(w->txtdegree, 20, -1);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(lbl), w->txtdegree);
 	gtk_grid_attach(GTK_GRID(grid), lbl, 0, 0, 1, 1);
-	gtk_misc_set_alignment(GTK_MISC(lbl), 0.0, 0.5);
+	gtk_widget_set_halign(lbl, GTK_ALIGN_START);
 	gtk_grid_attach(GTK_GRID(grid), w->txtdegree, 1, 0, 1, 1);
-	gtk_widget_set_hexpand(w->txtdegree, TRUE);
 
 	/* itermax: */
 	lbl = gtk_label_new_with_mnemonic(LITERMAX);
-	gtk_misc_set_alignment(GTK_MISC(lbl), 0.0, 1.0);
+	gtk_widget_set_halign(lbl, GTK_ALIGN_START);
 	w->txtitermax = gtk_entry_new();
 	gtk_entry_set_max_length(GTK_ENTRY(w->txtitermax), TEXTLEN);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(lbl), w->txtitermax);
@@ -328,7 +331,7 @@ struct winctl *buildinterface(void)
 	//gtk_table_set_col_spacing(GTK_TABLE(table2), 0, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(grid2), 5);
 	w->lbljre = gtk_label_new_with_mnemonic(LJCRE);
-	gtk_misc_set_alignment(GTK_MISC(w->lbljre), 0.0, 0.5);
+	gtk_widget_set_halign(lbl, GTK_ALIGN_START);
 	w->txtjre = gtk_entry_new();
 	gtk_entry_set_text(GTK_ENTRY(w->txtjre), "0");
 	gtk_entry_set_max_length(GTK_ENTRY(w->txtjre), TEXTLEN);
@@ -336,9 +339,8 @@ struct winctl *buildinterface(void)
 	gtk_widget_set_size_request(w->txtjre, 50, -1);
 	gtk_grid_attach(GTK_GRID(grid2), w->lbljre, 0, 0, 1, 1);
 	gtk_grid_attach(GTK_GRID(grid2), w->txtjre, 1, 0, 1, 1);
-	gtk_widget_set_hexpand(w->txtjre, TRUE);
 	w->lbljim = gtk_label_new_with_mnemonic(LJCIM);
-	gtk_misc_set_alignment(GTK_MISC(w->lbljim), 0.0, 0.5);
+	gtk_widget_set_halign(lbl, GTK_ALIGN_START);
 	w->txtjim = gtk_entry_new();
 	gtk_entry_set_text(GTK_ENTRY(w->txtjim), "0");
 	gtk_entry_set_max_length(GTK_ENTRY(w->txtjim), TEXTLEN);
@@ -346,7 +348,6 @@ struct winctl *buildinterface(void)
 	gtk_widget_set_size_request(w->txtjim, 50, -1);
 	gtk_grid_attach(GTK_GRID(grid2), w->lbljim, 0, 1, 1, 1);
 	gtk_grid_attach(GTK_GRID(grid2), w->txtjim, 1, 1, 1, 1);
-	gtk_widget_set_hexpand(w->txtjre, TRUE);
 	gtk_container_add(GTK_CONTAINER(frame2), grid2);
 	gtk_container_add(GTK_CONTAINER(eventbox), frame2);
 	gtk_box_pack_start(GTK_BOX(vbox3), eventbox, FALSE, FALSE, 0);
@@ -361,18 +362,14 @@ struct winctl *buildinterface(void)
 	gtk_container_set_border_width(GTK_CONTAINER(vbox3), 5);
 	gtk_container_add(GTK_CONTAINER(notebook), vbox3);
 	gtk_grid_attach(GTK_GRID(grid), notebook, 0, 3, 2, 1);
-	gtk_widget_set_hexpand(notebook, TRUE);
+	//gtk_widget_set_hexpand(notebook, TRUE);
 	gtk_container_add(GTK_CONTAINER(frame), grid);
 	gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 0);
 
-	gtk_container_add(GTK_CONTAINER(align), vbox2);
-	gtk_widget_set_hexpand(align, FALSE);
-	gtk_box_pack_start(GTK_BOX(hbox), align, FALSE, FALSE, 0);
+	gtk_widget_set_halign (vbox2, GTK_ALIGN_END);
 
 	/* create calculation-/close-buttons: */
-	align = gtk_alignment_new(1.0, 0.0, 0.0, 0.0);
 	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
-	gtk_box_set_homogeneous(GTK_BOX(hbox), TRUE);
 
 	/* draw: */
 	w->btncalc = gtk_button_new_with_mnemonic(LCALC);
@@ -385,8 +382,8 @@ struct winctl *buildinterface(void)
 	/* close: */
 	w->btnclose = gtk_button_new_with_mnemonic(LCLOSE);
 	gtk_box_pack_start(GTK_BOX(hbox), w->btnclose, TRUE, TRUE, 0);
-	gtk_container_add(GTK_CONTAINER(align), hbox);
-	gtk_box_pack_start(GTK_BOX(vbox), align, FALSE, FALSE, 0);
+	gtk_widget_set_halign (hbox, GTK_ALIGN_END);
+	//gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(w->win), rootbox);
 
 	gtk_widget_show_all(w->drawmenu);
@@ -510,7 +507,7 @@ void change_color_algo(GtkWidget *widget, struct winctl *w)
 static gboolean pjmenu(GtkWidget *widget, GdkEventButton *event, struct winctl *w)
 {
 	if (event->button == 3) {
-		gtk_menu_popup(GTK_MENU(w->pjmenu), NULL, NULL, NULL, NULL, event->button, event->time);
+		gtk_menu_popup_at_pointer(GTK_MENU(w->pjmenu), (GdkEvent *)event);
 		return TRUE;
 	}
 	return FALSE;

@@ -22,7 +22,7 @@ static void btnok_clicked(GtkWidget *widget, struct prefctl *p);
 
 void preference_show(struct winctl *w)
 {
-	GtkWidget *vbox1, *vbox2, *vbox3, *hbox1, *align;
+	GtkWidget *vbox1, *vbox2, *vbox3, *hbox1;
 	GtkWidget *notebook, *frame, *lbl, *btn1, *btn2;
 	gchar buf[30];
 
@@ -41,7 +41,8 @@ void preference_show(struct winctl *w)
 	vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 3);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox2), 10);
 	lbl = gtk_label_new(LPREFLSTDCPLX);
-	gtk_misc_set_alignment(GTK_MISC(lbl), 0.0, 0.0);
+	gtk_widget_set_halign (lbl, GTK_ALIGN_START);
+
 	gtk_box_pack_start(GTK_BOX(vbox2), lbl, FALSE, FALSE, 4);
 	frame = createcplxplane(p->txtcplx);
 	gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 0);
@@ -54,7 +55,7 @@ void preference_show(struct winctl *w)
 	vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 3);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox2), 10);
 	lbl = gtk_label_new(LPREFLSTDMCPLX);
-	gtk_misc_set_alignment(GTK_MISC(lbl), 0.0, 0.0);
+	gtk_widget_set_halign (lbl, GTK_ALIGN_START);
 	gtk_box_pack_start(GTK_BOX(vbox2), lbl, FALSE, FALSE, 4);
 	frame = createcplxplane(p->txtmcplx);
 	gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 0);
@@ -73,7 +74,8 @@ void preference_show(struct winctl *w)
 	lbl = gtk_label_new(LPREFLZOOM);
 	gtk_box_pack_start(GTK_BOX(hbox1), lbl, FALSE, FALSE, 5);
 	p->sbtzoom = gtk_spin_button_new_with_range(0.1, 100.0, 1.0);
-	gtk_box_pack_start(GTK_BOX(hbox1), p->sbtzoom, FALSE, FALSE, 5);
+	gtk_widget_set_halign (p->sbtzoom, GTK_ALIGN_END);
+	gtk_box_pack_start(GTK_BOX(hbox1), p->sbtzoom, TRUE, TRUE, 5);
 	gtk_container_add(GTK_CONTAINER(frame), hbox1);
 	gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 0);
 
@@ -84,7 +86,8 @@ void preference_show(struct winctl *w)
 	lbl = gtk_label_new(LPREFTHREADSCOUNT);
 	gtk_box_pack_start(GTK_BOX(hbox1), lbl, FALSE, FALSE, 5);
 	p->sbtthreads = gtk_spin_button_new_with_range(1.0, MAXTHREADS, 1.0);
-	gtk_box_pack_start(GTK_BOX(hbox1), p->sbtthreads, FALSE, FALSE, 5);
+	gtk_widget_set_halign (p->sbtthreads, GTK_ALIGN_END);
+	gtk_box_pack_start(GTK_BOX(hbox1), p->sbtthreads, TRUE, TRUE, 5);
 	gtk_container_add(GTK_CONTAINER(frame), hbox1);
 	gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 0);
 
@@ -95,7 +98,8 @@ void preference_show(struct winctl *w)
 	lbl = gtk_label_new(LPREFLFOCUSCOLOR);
 	gtk_box_pack_start(GTK_BOX(hbox1), lbl, FALSE, FALSE, 5);
 	p->cbtfocus = gtk_color_button_new_with_rgba(&w->focus_color);
-	gtk_box_pack_start(GTK_BOX(hbox1), p->cbtfocus, FALSE, FALSE, 0);
+	gtk_widget_set_halign (p->cbtfocus, GTK_ALIGN_END);
+	gtk_box_pack_start(GTK_BOX(hbox1), p->cbtfocus, TRUE, TRUE, 0);
 	gtk_container_add(GTK_CONTAINER(frame), hbox1);
 	gtk_box_pack_start(GTK_BOX(vbox2), frame, FALSE, FALSE, 5);
 
@@ -104,7 +108,7 @@ void preference_show(struct winctl *w)
 	vbox3 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox3), 4);
 	lbl = gtk_label_new(LPREFLITER);
-	gtk_misc_set_alignment(GTK_MISC(lbl), 0.0, 0.0);
+	gtk_widget_set_halign (lbl, GTK_ALIGN_START);
 	gtk_box_pack_start(GTK_BOX(vbox3), lbl, FALSE, FALSE, 5);
 	p->txtget_jiter = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(vbox3), p->txtget_jiter, FALSE, FALSE, 5);
@@ -113,7 +117,6 @@ void preference_show(struct winctl *w)
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), vbox2, gtk_label_new(LPREFMISC));
 	gtk_box_pack_start(GTK_BOX(vbox1), notebook, FALSE, FALSE, 0);
 
-	align = gtk_alignment_new(1.0, 0.0, 0.0, 0.0);
 	hbox1 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
 	gtk_box_set_homogeneous(GTK_BOX(hbox1), TRUE);
 	btn1 = gtk_button_new_with_mnemonic(LPREFOK);
@@ -122,8 +125,8 @@ void preference_show(struct winctl *w)
 	btn1 = gtk_button_new_with_mnemonic(LPREFCANCEL);
 	g_signal_connect_swapped(G_OBJECT(btn1), "clicked", G_CALLBACK(gtk_widget_destroy), p->win);
 	gtk_box_pack_start(GTK_BOX(hbox1), btn1, FALSE, TRUE, 0);
-	gtk_container_add(GTK_CONTAINER(align), hbox1);
-	gtk_box_pack_start(GTK_BOX(vbox1), align, FALSE, FALSE, 0);
+	gtk_widget_set_halign (hbox1, GTK_ALIGN_START);
+	gtk_box_pack_start(GTK_BOX(vbox1), hbox1, FALSE, FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(p->win), vbox1);
 	g_signal_connect(G_OBJECT(p->win), "destroy", G_CALLBACK(prefdestroy), p);
 	gtk_window_set_position(GTK_WINDOW(p->win), GTK_WIN_POS_CENTER);
@@ -180,16 +183,15 @@ static void defaultmcplx(struct prefctl *p)
 
 static GtkWidget *createbtn(GtkWidget **btn1, GtkWidget **btn2)
 {
-	GtkWidget *align, *hbox;
-	align = gtk_alignment_new(1.0, 0.0, 0.0, 0.0);
+	GtkWidget *hbox;
 	hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
 	gtk_box_set_homogeneous(GTK_BOX(hbox), TRUE);
 	*btn1 = gtk_button_new_with_mnemonic(LPREFRESET);
 	*btn2 = gtk_button_new_with_mnemonic(LPREFDEFAULT);
 	gtk_box_pack_start(GTK_BOX(hbox), *btn1, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), *btn2, FALSE, TRUE, 0);
-	gtk_container_add(GTK_CONTAINER(align), hbox);
-	return align;
+	gtk_widget_set_halign (hbox, GTK_ALIGN_END);
+	return hbox;
 }
 
 static void prefdestroy(GtkWidget *widget, struct prefctl *p)

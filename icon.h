@@ -1,3 +1,6 @@
+
+#include <gdk-pixbuf/gdk-pixbuf.h>
+
 /* GdkPixbuf RGBA C-Source image dump 1-byte-run-length-encoded */
 
 static const GdkPixdata app_icon = {
