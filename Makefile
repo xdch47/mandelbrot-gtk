@@ -153,7 +153,7 @@ endif
 # ------------  remove generated files  ----------------------------------------
 clean:
 	$Qrm -rf $(DEBUG_DIR) $(RELEASE_DIR)
-	$Qrm ./i18n/*.mo
+	$Qrm -f ./i18n/*.mo
 	$Q+make -C ./libcolor clean
 
 # ------------  tarball generation  --------------------------------------------
