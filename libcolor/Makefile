@@ -29,7 +29,7 @@ ifeq (YES, ${SHARED})
 TARGET          := libmbcolor.so.0.0
 LIBRARY_NAME    := libmbcolor.so
 else
-TARGET          := libmbcolor.a.0.0
+TARGET          := libmbcolor.a
 LIBRARY_NAME    := libmbcolor.a
 endif
 
@@ -40,8 +40,8 @@ SOURCES         := color.c colormapfunc.c lookuptable.c avltree.c
 CC              := gcc
 
 # ------------  compiler flags  ------------------------------------------------
-DEBUG_CFLAGS    := -Wall -pedantic -ansi -O0 -g
-RELEASE_CFLAGS  := -Wall -pedantic -ansi -O4 -pipe -mtune=native -march=native \
+DEBUG_CFLAGS    := -Wall -O0 -g
+RELEASE_CFLAGS  := -Wall -O2 -pipe -mtune=native -march=native \
 	-DNDEBUG
 
 #-------------  Directories  ---------------------------------------------------
@@ -56,12 +56,19 @@ ifeq (YES, ${DEBUG})
 CFLAGS          := ${DEBUG_CFLAGS}
 LDFLAGS         := ${DEBUG_LDFLAGS}
 OUT_DIR         := ${DEBUG_DIR}
+QUIET           := NO
 else
 CFLAGS          := ${RELEASE_CFLAGS}
 LDFLAGS         := ${RELEASE_LDFLAGS}
 OUT_DIR         := ${RELEASE_DIR}
+QUIET           := YES
 endif
 
+ifeq (YES, $(QUIET))
+Q := @
+else
+Q :=
+endif
 
 # ------------  additional pkg-config includes and libraries  ------------------
 # gtk-libs
@@ -120,38 +127,45 @@ endif
 
 # ------------  make the executable  -------------------------------------------
 $(OUT_DIR)/$(TARGET): $(OUT_DIR) $(OBJECTS)
+ifeq (YES, ${QUIET})
+	$Qecho "Building library $..."
+endif
 ifeq (YES, ${SHARED})
-	$(CC) $(ALL_LFLAGS) -o $(OUT_DIR)/$(TARGET) $(OBJECTS) \
+	$Q$(CC) $(ALL_LFLAGS) -o $(OUT_DIR)/$(TARGET) $(OBJECTS) \
 		$(ALL_LIB_DIR) $(LIBS) $(LIBS_PKG_CONF)
-	ln -sf $(OUT_DIR)/$(TARGET) ./$(LIBRARY_NAME)
+	$Qln -sf $(OUT_DIR)/$(TARGET) ./$(LIBRARY_NAME)
 else
-	$(AR) cr $(OUT_DIR)/$(TARGET) $(OBJECTS)
-	ln -sf $(OUT_DIR)/$(TARGET) ./$(LIBRARY_NAME)
-	ranlib ./$(LIBRARY_NAME)
+	$Q$(AR) cr $(OUT_DIR)/$(TARGET) $(OBJECTS)
+	$Qln -sf $(OUT_DIR)/$(TARGET) ./$(LIBRARY_NAME)
+	$Qranlib ./$(LIBRARY_NAME)
 endif
 
 #-------------  Create the directories -----------------------------------------
 $(OUT_DIR):
-	@mkdir -p $(OUT_DIR)
+	$Qmkdir -p $(OUT_DIR)
 
 # ------------  make the objects  ----------------------------------------------
 $(OUT_DIR)/%.o:	%.c
-	$(CC)  -c $(ALL_CFLAGS) $< -o $@
+ifeq (YES, ${QUIET})
+	$Qecho "Compling $<..."
+	$Q$(CC)  -c $(ALL_CFLAGS) $< -o $@ 2> /dev/null
+else
+	$Q$(CC)  -c $(ALL_CFLAGS) $< -o $@
+endif
 
+-include .depend
 #-------------  create dependencies  -------------------------------------------
 depend:
-	gcc -MM -E  $(SOURCES) | awk '{ printf("$(OUT_DIR)/%s\n", $$0); }' > ./.depend
-
-include .depend
+	$Qgcc -MM -E  $(SOURCES) | awk '{ printf("$(OUT_DIR)/%s\n", $$0); }' > ./.depend
 
 # ------------  remove generated files  ----------------------------------------
 clean:
-	@rm -rf $(DEBUG_DIR) $(RELEASE_DIR)
-	@rm -rf ./$(LIBRARY_NAME)
+	$Qrm -rf $(DEBUG_DIR) $(RELEASE_DIR)
+	$Qrm -rf ./$(LIBRARY_NAME)
 
 # ------------  tarball generation  --------------------------------------------
 tarball:
-	@lokaldir=`pwd`; lokaldir=$${lokaldir##*/};   \
+	$Qlokaldir=`pwd`; lokaldir=$${lokaldir##*/};   \
 		rm --force $$lokaldir.tar.gz;             \
 		tar --exclude=$(TARBALL_EXCLUDE)          \
 		--create                                  \
@@ -161,14 +175,14 @@ tarball:
 
 # ------------  zip  -----------------------------------------------------------
 zip:
-	@lokaldir=`pwd`; lokaldir=$${lokaldir##*/}; \
+	$Qlokaldir=`pwd`; lokaldir=$${lokaldir##*/}; \
 		zip -r  $$lokaldir.zip * -x $(ZIP_EXCLUDE)
 
 # ------------  installl  ------------------------------------------------------
-install:
+install: $(TARGET)
 ifeq (YES, ${SHARED})
-	install -D -m755 $(RELEASE_DIR)/$(TARGET) ${DESTDIR}$(PREFIX)/lib/${RPATH}$(TARGET)
-	ln -sf ${DESTDIR}$(PREFIX)/lib/${RPATH}$(TARGET) \
+	$Qinstall -D -m755 $(RELEASE_DIR)/$(TARGET) ${DESTDIR}$(PREFIX)/lib/${RPATH}$(TARGET)
+	$Qln -sf ${DESTDIR}$(PREFIX)/lib/${RPATH}$(TARGET) \
 		${DESTDIR}$(PREFIX)/lib/${RPATH}$(LIBRARY_NAME)
 endif
 

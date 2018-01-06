@@ -191,18 +191,15 @@ static void writexmlfile(const char *configfile, const struct winctl *w, enum xm
 	/* <convergent-color/> */
 	xmlTextWriterWriteElement(writer, BAD_CAST XML_COLOR_CONVERGET, BAD_CAST NULL);
 	xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_RGBA, BAD_CAST gdk_rgba_to_string(&w->convcol));
-	xmlTextWriterEndElement(writer);
 	if (type == SAVE_APPSETTINGS || w->it_param.color_func_index == getDivConv_idx()) {
 		/* <divergent-color/> */
 		xmlTextWriterWriteElement(writer, BAD_CAST XML_COLOR_DIVERGENT, BAD_CAST NULL);
 		xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_RGBA, BAD_CAST gdk_rgba_to_string(&w->divcol));
-		xmlTextWriterEndElement(writer);
 	}
 	if (type == SAVE_APPSETTINGS) {
 		/* <focus-color/> */
 		xmlTextWriterWriteElement(writer, BAD_CAST XML_COLOR_FOCUS, BAD_CAST NULL);
 		xmlTextWriterWriteAttribute(writer, BAD_CAST XML_COLOR_RGBA, BAD_CAST gdk_rgba_to_string(&w->focus_color));
-		xmlTextWriterEndElement(writer);
 	}
 	/* </color> */
 	xmlTextWriterEndElement(writer);
