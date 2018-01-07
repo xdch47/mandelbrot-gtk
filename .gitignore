@@ -1,0 +1,4 @@
+**/release/*
+**/debug/*
+libcolor/libmbcolor.so*
+libcolor/libmbcolor.a*

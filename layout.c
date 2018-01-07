@@ -383,7 +383,7 @@ struct winctl *buildinterface(void)
 	w->btnclose = gtk_button_new_with_mnemonic(LCLOSE);
 	gtk_box_pack_start(GTK_BOX(hbox), w->btnclose, TRUE, TRUE, 0);
 	gtk_widget_set_halign (hbox, GTK_ALIGN_END);
-	gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(vbox2), hbox, FALSE, FALSE, 0);
 
 	gtk_container_add(GTK_CONTAINER(w->win), rootbox);
 
