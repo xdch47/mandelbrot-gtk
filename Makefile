@@ -173,7 +173,9 @@ zip:
 
 
 LOCALE_DIR := ${DESTDIR}$(MO_DIR)/$(basename $POFILE .po)/LC_MESSAGES
-MO_FILES   := $(addsuffix .mo,$(basename $(wildcard i18n/*.po) .po))
+LANGUAGES  := $(notdir $(basename $(wildcard i18n/*.po) .po))
+MO_FILES   := $(addsuffix .mo, $(addprefix ./i18n/, $(LANGUAGES)))
+
 # ------------  installl  ------------------------------------------------------
 i18n/%.mo: i18n/%.po
 	$Qmkdir -p ./mo
@@ -183,8 +185,8 @@ install: $(OUT_DIR)/$(EXECUTABLE) $(MO_FILES)
 ifeq (YES, $(QUIET))
 	$Qecho "Installing application..."
 endif
-	$Qfor lang in $(MO_FILES); do \
-		$Qinstall -D -m644 $$lang $(DESTDIR)$(PREFIX)/share/locale/$$lang ; \
+	$Qfor lang in $(LANGUAGES) ; do \
+		install -D -m644 ./i18n/$${lang}.mo $(DESTDIR)$(PREFIX)/share/locale/$$lang/LC_MESSAGES/mandelbrot.mo ; \
 	done
 	$Qinstall -D -m644 ./mandelbrot.xml ${DESTDIR}$(DOC_DIR)/$(EXECUTABLE)/mandelbrot.xml
 	$Qinstall -D -m755 $(RELEASE_DIR)/$(EXECUTABLE) ${DESTDIR}$(PREFIX)/bin/$(EXECUTABLE)
@@ -193,9 +195,9 @@ endif
 
 # ------------  uninstall  -----------------------------------------------------
 uninstall:
-	for POFILE in ./i18n/*.po; do  \
-		LOCALE_DIR=${DESTDIR}$(MO_DIR)/$$(basename $$POFILE .po)/LC_MESSAGES; \
-		rm -rf  $$LOCALE_DIR/$(EXECUTABLE).mo; \
+	for POFILE in ./i18n/*.po ; do  \
+		LOCALE_DIR=${DESTDIR}$(MO_DIR)/$$(basename $$POFILE .po)/LC_MESSAGES ; \
+		rm -rf  $$LOCALE_DIR/$(EXECUTABLE).mo ; \
 	done
 	rm -rf ${DESTDIR}$(PREFIX)/bin/$(EXECUTABLE)
 	rm -rf ${DESTDIR}$(DOC_DIR)/$(EXECUTABLE)
