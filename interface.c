@@ -323,9 +323,11 @@ void reset(GtkWidget *widget, struct winctl *w)
 
 static void get_julia_set(GtkWidget *widget, struct winctl *w)
 {
-    GdkCursor* c;
+    GdkDisplay *display;
+    GdkCursor *c;
 
-    c = gdk_cursor_new(GDK_TCROSS);
+    display = gtk_widget_get_display(GTK_WIDGET(w->win));
+    c = gdk_cursor_new_for_display(display, GDK_TCROSS);
     gdk_window_set_cursor(gtk_widget_get_window(w->win), c);
     g_object_unref(c);
     w->get_j = TRUE;
@@ -374,15 +376,19 @@ void zoom(struct winctl *w, enum zoom_mode mode)
     gdouble sf;
     GdkDisplay *display;
     GdkDevice *dev;
-    GdkScreen *s;
+    GdkSeat *seat;
+    GdkScreen *screen;
     GtkAllocation drawing_alloc;
 
     sf = (mode == ZOOM_IN) ? w->zoomfactor: 1.0 / w->zoomfactor;
 
     gtk_widget_get_allocation(w->drawing, &drawing_alloc);
     display = gtk_widget_get_display(GTK_WIDGET(w->win));
-    dev = gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(display));
+
+    seat = gdk_display_get_default_seat(display);
+    dev = gdk_seat_get_pointer(seat);
     gdk_window_get_device_position(gtk_widget_get_window(w->drawing), dev, &px, &py, NULL);
+
     dre = (w->it_param.cplxplane[1] - w->it_param.cplxplane[0]) / (gdouble)drawing_alloc.width;
     dim = (w->it_param.cplxplane[3] - w->it_param.cplxplane[2]) / (gdouble)drawing_alloc.height;
     b_re = w->it_param.cplxplane[0] + dre * (px - sf * (gdouble)drawing_alloc.width / 2.0);
@@ -392,9 +398,8 @@ void zoom(struct winctl *w, enum zoom_mode mode)
     val[2] = b_im;
     val[3] = b_im - sf * dim * drawing_alloc.height;
     setcplxplane(w->txtcplx, val, drawing_alloc.width, drawing_alloc.height);
-    s = gdk_display_get_default_screen(display);
-    gdk_device_get_position(dev, NULL, &pwx, &pwy);
-    gdk_device_warp(dev, s, pwx - px + drawing_alloc.width / 2, pwy - py + drawing_alloc.height / 2);
+    gdk_device_get_position(dev, &screen, &pwx, &pwy);
+    gdk_device_warp(dev, screen, pwx - px + drawing_alloc.width / 2, pwy - py + drawing_alloc.height / 2);
     start_calc(w);
 }
 
@@ -404,11 +409,13 @@ static void setj(struct winctl *w)
     gdouble dim, dre;
     gint px, py;
     GtkAllocation drawing_alloc;
+    GdkDisplay *display;
+    GdkSeat *seat;
     GdkDevice *dev;
 
-    dev = gdk_device_manager_get_client_pointer(
-            gdk_display_get_device_manager(
-                gtk_widget_get_display(GTK_WIDGET(w->win))));
+    display = gtk_widget_get_display(GTK_WIDGET(w->win));
+    seat = gdk_display_get_default_seat(display);
+    dev = gdk_seat_get_pointer(seat);
     gdk_window_get_device_position(gtk_widget_get_window(w->drawing), dev, &px, &py, NULL);
 
     gtk_widget_get_allocation(w->drawing, &drawing_alloc);
@@ -439,7 +446,7 @@ static gboolean button_press_event(GtkWidget *widget, GdkEventButton *event, str
     }
 
     if (event->button == 3) {
-        gtk_menu_popup(GTK_MENU(w->drawmenu), NULL, NULL, NULL, NULL, event->button, event->time);
+        gtk_menu_popup_at_pointer(GTK_MENU(w->drawmenu), (GdkEvent *)event);
         return TRUE;
     }
     w->focus_x = event->x;
@@ -463,15 +470,17 @@ static gboolean motion_notify_event(GtkWidget *widget, GdkEventMotion *event, st
 
     if (event->state & GDK_BUTTON1_MASK) {
         GdkDevice *dev;
+        GdkDisplay *display;
+        GdkSeat *seat;
         GdkCursor *c;
         gint x, y, px, py, width, height, sw, sh;
         gint delta;
         gint pos = 0;
         cairo_t *cr;
 
-        dev = gdk_device_manager_get_client_pointer(
-                gdk_display_get_device_manager(
-                    gtk_widget_get_display(GTK_WIDGET(w->win))));
+        display = gtk_widget_get_display(GTK_WIDGET(w->win));
+        seat = gdk_display_get_default_seat(display);
+        dev = gdk_seat_get_pointer(seat);
         gdk_window_get_device_position(gtk_widget_get_window(w->drawing), dev, &px, &py, NULL);
         width = w->focus_x - px;
         sw = SIGN(width);
@@ -485,25 +494,19 @@ static gboolean motion_notify_event(GtkWidget *widget, GdkEventMotion *event, st
         if (sh < 0)
             pos += 2;
 
-        c = gdk_cursor_new(cursortype[pos]);
+        c = gdk_cursor_new_for_display(display, cursortype[pos]);
         gdk_window_set_cursor(gtk_widget_get_window(w->win), c);
         g_object_unref(c);
         if (w->zoomprop) {
             GtkAllocation drawing_alloc;
+            GdkScreen *screen;
 
             gtk_widget_get_allocation(w->drawing, &drawing_alloc);
             delta = height;
             height = width * drawing_alloc.height / drawing_alloc.width;
             delta -= height;
             if (delta) {
-                GdkDisplay *display;
-                GdkScreen *screen;
-                GdkDevice *dev;
-
-                display = gdk_display_get_default();
-                dev = gdk_device_manager_get_client_pointer(gdk_display_get_device_manager(display));
-                screen = gdk_display_get_default_screen(display);
-                gdk_device_get_position(dev, NULL, &px, &py);
+                gdk_device_get_position(dev, &screen, &px, &py);
                 py += sh * delta;
                 gdk_device_warp(dev, screen, px, py);
                 return TRUE;
