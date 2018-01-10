@@ -37,8 +37,8 @@ msgstr "misiurewicz-Punkt"
 msgid "_Open"
 msgstr "Ö_ffnen"
 
-msgid "_Speicher"
-msgstr ""
+msgid "_Save"
+msgstr "_Speicher"
 
 msgid "_Close"
 msgstr "S_chließen"
@@ -108,13 +108,11 @@ msgstr " _Stop "
 msgid " _Reset "
 msgstr " _Reset "
 
-msgid " _Quit "
+msgid " _Close "
 msgstr " _Beenden "
 
 msgid "The renderprocess has been interrupted. Continue or restart process?"
-msgstr ""
-"Der Renderprozess wurde gestoppt. Soll er fortgesetzt oder neugestartet "
-"werden?"
+msgstr "Der Renderprozess wurde gestoppt. Soll er fortgesetzt oder neugestartet werden?"
 
 msgid " _Continue"
 msgstr "_Fortsetzen"

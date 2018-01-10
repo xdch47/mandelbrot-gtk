@@ -22,7 +22,7 @@
 #else
   #define CONFIGDIR g_path_get_dirname(file_name)
 #endif
-#define CONFIGFILE "mandelbrot.xml"
+#define CONFIGFILE "mandelbrot-gtk.xml"
 
 /* labels: */
 #define LWCAP _("Mandelbrot- / Juliaset")

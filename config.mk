@@ -11,4 +11,4 @@ DOC_DIR := ${PREFIX}/share/doc
 SHARED  := NO
 
 # Must end with / -> ${PREFIX}/lib/$(RPATH)$(LIBRARYNAME)
-RPATH   := mandelbrot/
+RPATH   := mandelbrot-gtk/

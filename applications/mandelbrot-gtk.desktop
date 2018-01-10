@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Mandelbrot GTK
+GenericName=Mandelbrot GTK
+Type=Application
+Comment=Multithreaded GTK Application for rendering the mandelbrot and julia-set.
+Comment[de]=Multithread GTK Anwendung zur Berechnung der Mandelbrot und Julia Menge.
+Exec=mandelbrot-gtk
+Icon=mandelbrot-gtk
+Categories=Education;GTK
+Keywords=mandelbrot

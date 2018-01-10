@@ -102,7 +102,7 @@ msgstr ""
 msgid " _Reset "
 msgstr ""
 
-msgid " _Quit "
+msgid " _Close "
 msgstr ""
 
 msgid "The renderprocess has been interrupted. Continue or restart process?"

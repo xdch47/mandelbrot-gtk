@@ -23,7 +23,7 @@ DEBUG           := NO
 PARAMS          :=
 
 # ------------  name of the executable  ----------------------------------------
-EXECUTABLE      := mandelbrot
+APPNAME         := mandelbrot-gtk
 
 # ------------  list of all source files  --------------------------------------
 SOURCES         := main.c defs.c interface.c layout.c config.c \
@@ -42,8 +42,8 @@ CFLAGS_G_DISABLE_SINGLE_INCLUDES = -DG_DISABLE_SINGLE_INCLUDES -DGDK_PIXBUF_DISA
 #CFLAGS_G_DISABLE_DEPRECATED = -DG_DISABLE_DEPRECATED -DGDK_PIXBUF_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED
 CFLAGS_G_DISABLE_DEPRECATED = -DG_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED
 DEBUG_CFLAGS    := -Wall -O0 -g -DMO_DIR="\"./mo\"" ${CFLAGS_G_DISABLE_SINGLE_INCLUDES} ${CFLAGS_G_DISABLE_DEPRECATED}
-RELEASE_CFLAGS  := $(CFLAGS) -pipe \
-				   -DNDEBUG -DPACKAGE="\"$(EXECUTABLE)\"" -DMO_DIR="\"$(MO_DIR)\"" \
+RELEASE_CFLAGS  := ${CFLAGS} -pipe \
+				   -DNDEBUG -DPACKAGE="\"${APPNAME}\"" -DMO_DIR="\"${MO_DIR}\""
 
 #-------------  Directories  ---------------------------------------------------
 DEBUG_DIR       := ./debug
@@ -67,7 +67,7 @@ ifneq (YES, ${SHARED})
 STATIC=-Wl,-Bstatic
 endif
 
-ifeq (YES, $(QUIET))
+ifeq (YES, ${QUIET})
 	Q := @
 else
 	Q := 
@@ -83,7 +83,7 @@ INC_DIR  =
 LIB_DIR  = ./libcolor
 
 # ------------  additional libraries  ------------------------------------------
-LIBS     = $(STATIC) -lmbcolor -Wl,-Bdynamic -lm
+LIBS     = ${STATIC} -lmbcolor -Wl,-Bdynamic -lm
 
 # ------------  archive generation ---------------------------------------------
 TARBALL_EXCLUDE = *.{o,gz,zip}
@@ -97,16 +97,15 @@ LIBS_PKG_CONF    = $(shell pkg-config --libs $(PKG_CONF_ARG))
 endif
 
 
-
 #===============================================================================
 # The following statements usually need not to be changed
 #===============================================================================
-C_SOURCES       = $(SOURCES)
-ALL_INC_DIR     = $(addprefix -I, $(INC_DIR)) $(INC_DIR_PKG_CONF)
-ALL_LIB_DIR     = $(addprefix -L, $(LIB_DIR))
-ALL_CFLAGS      = $(CFLAGS) $(ALL_INC_DIR)
-ALL_LFLAGS      = $(LDFLAGS) $(ALL_LIB_DIR)
-BASENAMES       = $(basename $(C_SOURCES))
+C_SOURCES       = ${SOURCES}
+ALL_INC_DIR     = $(addprefix -I, ${INC_DIR}) ${INC_DIR_PKG_CONF}
+ALL_LIB_DIR     = $(addprefix -L, ${LIB_DIR})
+ALL_CFLAGS      = ${CFLAGS} ${ALL_INC_DIR}
+ALL_LFLAGS      = ${LDFLAGS} ${ALL_LIB_DIR}
+BASENAMES       = $(basename ${C_SOURCES})
 
 ifeq (YES, ${SHARED})
 ifdef RPATH
@@ -115,44 +114,44 @@ endif
 endif
 
 # ------------  generate the names of the object files  ------------------------
-OBJECTS         = $(addprefix $(OUT_DIR)/, $(addsuffix .o,$(BASENAMES)))
+OBJECTS         = $(addprefix ${OUT_DIR}/, $(addsuffix .o,${BASENAMES}))
 
 # ------------  execute the executable  ----------------------------------------
-all: $(OUT_DIR)/$(EXECUTABLE)
+all: ${OUT_DIR}/${APPNAME}
 
-run: $(OUT_DIR)/$(EXECUTABLE)
+run: ${OUT_DIR}/${APPNAME}
 ifeq (YES, ${DEBUG})
-	$Qgdb $(OUT_DIR)/$(EXECUTABLE) $(PARAMS)
+	$Qgdb ${OUT_DIR}/${APPNAME} ${PARAMS}
 else
-	$Q$(OUT_DIR)/$(EXECUTABLE) $(PARAMS)
+	$Q${OUT_DIR}/${APPNAME} ${PARAMS}
 endif
 
 # ------------  make the executable  -------------------------------------------
-$(OUT_DIR)/$(EXECUTABLE): $(OUT_DIR) $(OBJECTS)
-	$Q$(MAKE) -C ./libcolor CC=${CC} AR=${AR} CFLAGS="${CFLAGS}" DEBUG=${DEBUG} SHARED=${SHARED} \
+${OUT_DIR}/${APPNAME}: ${OUT_DIR} ${OBJECTS}
+	$Q${MAKE} -C ./libcolor CC=${CC} AR=${AR} CFLAGS="${CFLAGS}" DEBUG=${DEBUG} SHARED=${SHARED} \
 		DESTDIR=${DESTDIR} PREFIX=${PREFIX} RPATH=${RPATH}
 ifeq (YES, ${QUIET})
-	$Qecho "Linking $(EXECUTABLE)..."
+	$Qecho "Linking ${APPNAME}..."
 endif
-	$Q$(CC) -o $(OUT_DIR)/$(EXECUTABLE) $(OBJECTS) \
-		$(ALL_LFLAGS) $(ALL_LIB_DIR) $(LIBS) $(LIBS_PKG_CONF)
+	$Q${CC} -o ${OUT_DIR}/${APPNAME} ${OBJECTS} \
+		${ALL_LFLAGS} ${ALL_LIB_DIR} ${LIBS} ${LIBS_PKG_CONF}
 
 #-------------  Create the directories -----------------------------------------
-$(OUT_DIR):
-	$Qmkdir -p $(OUT_DIR)
+${OUT_DIR}:
+	$Qmkdir -p ${OUT_DIR}
 
 # ------------  make the objects  ----------------------------------------------
-$(OUT_DIR)/%.o:	%.c
+${OUT_DIR}/%.o:	%.c
 ifeq (YES, ${QUIET})
 	$Qecho "Compling $<..."
-	$Q$(CC)  -c $(ALL_CFLAGS) $< -o $@ 2> /dev/null
+	$Q${CC}  -c ${ALL_CFLAGS} $< -o $@ 2> /dev/null
 else
-	$Q$(CC)  -c $(ALL_CFLAGS) $< -o $@
+	$Q${CC}  -c ${ALL_CFLAGS} $< -o $@
 endif
 
 # ------------  remove generated files  ----------------------------------------
 clean:
-	$Qrm -rf $(DEBUG_DIR) $(RELEASE_DIR)
+	$Qrm -rf ${DEBUG_DIR} ${RELEASE_DIR}
 	$Qrm -f ./i18n/*.mo
 	$Q+make -C ./libcolor clean
 
@@ -160,7 +159,7 @@ clean:
 tarball:
 	$Qlokaldir=`pwd`; lokaldir=$${lokaldir##*/}; \
 		rm --force $$lokaldir.tar.gz;               \
-		tar --exclude=$(TARBALL_EXCLUDE)            \
+		tar --exclude=${TARBALL_EXCLUDE}            \
 		--create                                    \
 		--gzip                                      \
 		--verbose                                   \
@@ -169,39 +168,41 @@ tarball:
 # ------------  zip  -----------------------------------------------------------
 zip:
 	$Qlokaldir=`pwd`; lokaldir=$${lokaldir##*/}; \
-		zip -r  $$lokaldir.zip * -x $(ZIP_EXCLUDE)
+		zip -r  $$lokaldir.zip * -x ${ZIP_EXCLUDE}
 
 
-LOCALE_DIR := ${DESTDIR}$(MO_DIR)/$(basename $POFILE .po)/LC_MESSAGES
+LOCALE_DIR := ${DESTDIR}${MO_DIR}/$(basename ${POFILE} .po)/LC_MESSAGES
 LANGUAGES  := $(notdir $(basename $(wildcard i18n/*.po) .po))
-MO_FILES   := $(addsuffix .mo, $(addprefix ./i18n/, $(LANGUAGES)))
+MO_FILES   := $(addsuffix .mo, $(addprefix ./i18n/, ${LANGUAGES}))
 
 # ------------  installl  ------------------------------------------------------
 i18n/%.mo: i18n/%.po
 	$Qmkdir -p ./mo
 	$Qmsgfmt $< -o $@
 
-install: $(OUT_DIR)/$(EXECUTABLE) $(MO_FILES)
-ifeq (YES, $(QUIET))
+install: ${OUT_DIR}/${APPNAME} ${MO_FILES}
+ifeq (YES, ${QUIET})
 	$Qecho "Installing application..."
 endif
-	$Qfor lang in $(LANGUAGES) ; do \
-		install -D -m644 ./i18n/$${lang}.mo $(DESTDIR)$(PREFIX)/share/locale/$$lang/LC_MESSAGES/mandelbrot.mo ; \
+	$Qinstall -m755 -D  ${RELEASE_DIR}/${APPNAME}        ${DESTDIR}${PREFIX}/bin/${APPNAME}
+	$Qfor lang in ${LANGUAGES} ; do \
+		install -m644 -D ./i18n/$${lang}.mo              ${DESTDIR}${PREFIX}/share/locale/$$lang/LC_MESSAGES/${APPNAME}.mo ; \
 	done
-	$Qinstall -D -m644 ./mandelbrot.xml ${DESTDIR}$(DOC_DIR)/$(EXECUTABLE)/mandelbrot.xml
-	$Qinstall -D -m755 $(RELEASE_DIR)/$(EXECUTABLE) ${DESTDIR}$(PREFIX)/bin/$(EXECUTABLE)
-	$Q$(MAKE) -C ./libcolor DEBUG=${DEBUG} SHARED=${SHARED}                                                                              \
+	$Qinstall -m644 -D  ./${APPNAME}.xml                 ${DESTDIR}${DOC_DIR}/${APPNAME}/${APPNAME}.xml
+	$Qinstall -m644 -D ./applications/${APPNAME}.desktop ${DESTDIR}${PREFIX}/share/applications/${APPNAME}.desktop
+	$Qinstall -m644 -D ./pixmaps/${APPNAME}.png          ${DESTDIR}${PREFIX}/share/pixmaps/${APPNAME}.png
+	$Q${MAKE} -C ./libcolor DEBUG=${DEBUG} SHARED=${SHARED} \
 		DESTDIR=${DESTDIR} PREFIX=${PREFIX} RPATH=${RPATH} install
 
 # ------------  uninstall  -----------------------------------------------------
 uninstall:
 	for POFILE in ./i18n/*.po ; do  \
-		LOCALE_DIR=${DESTDIR}$(MO_DIR)/$$(basename $$POFILE .po)/LC_MESSAGES ; \
-		rm -rf  $$LOCALE_DIR/$(EXECUTABLE).mo ; \
+		LOCALE_DIR=${DESTDIR}${MO_DIR}/$${basename $$POFILE .po}/LC_MESSAGES ; \
+		rm -rf  $$LOCALE_DIR/${APPNAME}.mo ; \
 	done
-	rm -rf ${DESTDIR}$(PREFIX)/bin/$(EXECUTABLE)
-	rm -rf ${DESTDIR}$(DOC_DIR)/$(EXECUTABLE)
-	$(MAKE) -C ./libcolor DEBUG=${DEBUG} SHARED=${SHARED} \
+	rm -rf ${DESTDIR}${PREFIX}/bin/${APPNAME}
+	rm -rf ${DESTDIR}${DOC_DIR}/${APPNAME}
+	${MAKE} -C ./libcolor DEBUG=${DEBUG} SHARED=${SHARED} \
 		DESTDIR=${DESTDIR} PREFIX=${PREFIX} RPATH=${RPATH} uninstall
 
 # ------------  xgettext  ------------------------------------------------------
@@ -211,7 +212,7 @@ xgettext:
 
 #-------------  create dependencies  -------------------------------------------
 depend:
-	$Qgcc -MM -E  $(SOURCES) | awk '{ printf("$(OUT_DIR)/%s\n", $$0); }' > ./.depend
+	$Qgcc -MM -E  ${SOURCES} | awk '{ printf("${OUT_DIR}/%s\n", $$0); }' > ./.depend
 
 -include .depend
 
