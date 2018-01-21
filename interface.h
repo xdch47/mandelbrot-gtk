@@ -32,6 +32,7 @@ struct winctl {
 	GtkWidget **mcolalgo;
 	GdkPixbuf *pixbufcalc;
 	GdkPixbuf *pixbufshow;
+	GdkPixbuf *pixbufdraw;
 	IterationInfo *itermap;
 	/* render thread */
 	struct render_thread *render_thread;
@@ -41,6 +42,7 @@ struct winctl {
 	gint focus_y;
 	GdkRGBA focus_color;
 	GdkRectangle focus_area;
+    gboolean focus_draw;
 	gdouble zoomfactor;
 	gboolean zoomprop;
 	gint get_jitermax;

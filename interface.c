@@ -161,10 +161,14 @@ static gboolean start_calc(struct winctl *w)
     }
 
     w->succ_render = FALSE;
-    if (w->pixbufcalc)
+    if (w->pixbufcalc) {
         g_object_unref(w->pixbufcalc);
-    if (w->pixbufshow)
+        w->pixbufcalc = NULL;
+    }
+    if (w->pixbufshow) {
         g_object_unref(w->pixbufshow);
+        w->pixbufshow = NULL;
+    }
 
     g_free(w->itermap);
 
@@ -176,10 +180,8 @@ static gboolean start_calc(struct winctl *w)
     w->pixbufshow = g_object_ref(w->pixbufcalc);
     gdk_window_invalidate_rect(gtk_widget_get_window(w->drawing), NULL, FALSE);
 
-    cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(w->drawing));
-    gdk_cairo_set_source_pixbuf(cr, w->pixbufcalc, 0, 0);
-    cairo_paint(cr);
-    cairo_destroy(cr);
+    w->pixbufdraw = w->pixbufcalc;
+    gtk_widget_queue_draw(w->drawing);
 
     gtk_button_set_label(GTK_BUTTON(w->btncalc), LSTOP);
 
@@ -213,6 +215,9 @@ static gboolean start_calc(struct winctl *w)
         w->it_param.iterate_func = (degree == 2.0) ? (GThreadFunc)julia_set : (GThreadFunc)julia_set_deg;
     }
 
+    if (is_render_thread_alive(w->render_thread)) {
+        render_thread_kill(w->render_thread);
+    }
     start_render_thread(w->render_thread, &w->it_param);
     return TRUE;
 }
@@ -230,10 +235,9 @@ static gboolean render_thread_done(struct ThreaddestroyData *data)
         gtk_widget_get_allocation(w->drawing, &drawing_alloc);
         w->pixbufshow = gdk_pixbuf_scale_simple(w->pixbufcalc, drawing_alloc.width, drawing_alloc.height, INTERPOLATION);
 
-        cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(w->drawing));
-        gdk_cairo_set_source_pixbuf(cr, w->pixbufshow, 0, 0);
-        cairo_paint(cr);
-        cairo_destroy(cr);
+
+        w->pixbufdraw = w->pixbufshow;
+        gtk_widget_queue_draw(w->drawing);
 
         gtk_button_set_label(GTK_BUTTON(w->btncalc), LCALC);
         gtk_window_set_resizable(GTK_WINDOW(w->win), TRUE);
@@ -342,6 +346,10 @@ static gboolean draw_event(GtkWidget *widget, cairo_t *cr, struct winctl *w)
 {
     gdk_cairo_set_source_pixbuf(cr, w->pixbufshow, 0, 0);
     cairo_paint(cr);
+
+    if (w->focus_draw) {
+        gtk_render_focus(gtk_widget_get_style_context(widget), cr, w->focus_area.x, w->focus_area.y, w->focus_area.width, w->focus_area.height);
+    }
     return FALSE;
 }
 
@@ -519,12 +527,8 @@ static gboolean motion_notify_event(GtkWidget *widget, GdkEventMotion *event, st
         w->focus_area.y = y;
         w->focus_area.width = width;
         w->focus_area.height = height;
-        redraw_drawing(w);
-
-        cr =  gdk_cairo_create(gtk_widget_get_window(widget));
-        gtk_render_focus(gtk_widget_get_style_context(widget), cr, x, y, width, height);
-
-        cairo_destroy(cr);
+        w->focus_draw = TRUE;
+        gtk_widget_queue_draw(widget);
     }
 
     return TRUE;
@@ -537,6 +541,7 @@ static gboolean button_release_event(GtkWidget *widget, GdkEventButton *event, s
     gdouble val[4];
     GtkAllocation drawing_alloc;
 
+    w->focus_draw = FALSE;
     gdk_window_set_cursor(gtk_widget_get_window(w->win), NULL);
     if (w->get_j) {
         w->get_j = FALSE;
@@ -546,10 +551,9 @@ static gboolean button_release_event(GtkWidget *widget, GdkEventButton *event, s
         return TRUE;
     }
     if (w->pixbufshow) {
-        cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(widget));
-        gdk_cairo_set_source_pixbuf(cr, w->pixbufshow, 0, 0);
-        cairo_paint(cr);
-        cairo_destroy(cr);
+
+        w->pixbufdraw = w->pixbufcalc;
+        gtk_widget_queue_draw(w->drawing);
     }
 
     if (!w->focus_area.width) {
@@ -599,10 +603,8 @@ static void redraw_idle(struct winctl *w)
 
 static void redraw_drawing(struct winctl *w)
 {
-    cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(w->drawing));
-    gdk_cairo_set_source_pixbuf(cr, w->pixbufshow, 0, 0);
-    cairo_paint(cr);
-    cairo_destroy(cr);
+    w->pixbufdraw = w->pixbufshow;
+    gtk_widget_queue_draw(w->drawing);
 }
 
 void clearpixbuf(GdkPixbuf *pixbuf)

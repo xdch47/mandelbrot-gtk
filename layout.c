@@ -267,9 +267,12 @@ struct winctl *buildinterface(void)
 	vbox2 = gtk_box_new(GTK_ORIENTATION_VERTICAL, 15);
 
 	gtk_box_pack_start(GTK_BOX(vbox2), frame2, FALSE, FALSE, 0);
+	w->pixbufcalc = NULL;
+	w->pixbufdraw = NULL;
+	w->pixbufshow = NULL;
+    w->focus_draw = FALSE;
 	w->drawing = gtk_drawing_area_new();
 	w->itermap = NULL;
-	w->pixbufcalc = w->pixbufshow = NULL;
 	gtk_widget_set_size_request(w->drawing, 400, -1);
 	gtk_box_pack_start(GTK_BOX(vbox2), w->drawing, TRUE, TRUE, 0);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox2), 10);
