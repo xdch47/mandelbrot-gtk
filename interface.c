@@ -484,7 +484,6 @@ static gboolean motion_notify_event(GtkWidget *widget, GdkEventMotion *event, st
         gint x, y, px, py, width, height, sw, sh;
         gint delta;
         gint pos = 0;
-        cairo_t *cr;
 
         display = gtk_widget_get_display(GTK_WIDGET(w->win));
         seat = gdk_display_get_default_seat(display);
