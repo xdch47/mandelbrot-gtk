@@ -5,7 +5,7 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 
-#define LVERSION "0.4"
+#define LVERSION "0.5"
 
 #ifndef MO_DIR
 	#define MO_DIR g_path_get_dirname(*argv)
